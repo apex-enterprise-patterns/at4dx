@@ -1,0 +1,30 @@
+# General Project related
+.DS_Store
+target/
+temp/
+/deploy/*
+/debug/
+**/dep-dir.txt
+*.prefs
+build.properties
+
+# MavensMate IDE related
+*mm.log
+*.sublime-build
+*.sublime-project
+*.sublime-settings
+*.sublime-workspace
+.sublime-project
+.tm_properties
+
+# Eclipse IDE Related
+.project
+.settings/
+salesforce.schema
+Referenced Packages/
+
+# VS Code IDE Related
+.vscode/
+
+# SFDX Related
+.sfdx/

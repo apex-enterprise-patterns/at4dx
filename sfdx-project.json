@@ -1,0 +1,19 @@
+{
+  "packageDirectories": [
+    {
+      "path": "sfdx-source/common-base",
+      "default": true
+    },
+    {
+        "path": "sfdx-source/other",
+        "default": false
+    },
+    {
+        "path": "sfdx-source/reference-implementations",
+        "default": false
+    }
+  ],
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "43.0"
+}
