@@ -1,5 +1,5 @@
 public with sharing class AccountsSelector 
-    extends fflib_SObjectSelector
+    extends ApplicationSelector
     implements IAccountsSelector
 {
     public static IAccountsSelector newInstance()
