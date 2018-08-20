@@ -1,5 +1,5 @@
 public interface IAccountsSelector 
-    extends fflib_ISObjectSelector
+    extends IApplicationSObjectSelector
 {
     List<Account> selectById( Set<Id> idSet );
 }

@@ -1,5 +1,5 @@
 public with sharing class AccountsSelector 
-    extends ApplicationSelector
+    extends ApplicationSObjectSelector
     implements IAccountsSelector
 {
     public static IAccountsSelector newInstance()

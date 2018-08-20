@@ -1,5 +1,5 @@
 public with sharing class Accounts 
-    extends ApplicationDomain
+    extends ApplicationSObjectDomain
     implements IAccounts
 {
     public static IAccounts newInstance(List<Account> records)

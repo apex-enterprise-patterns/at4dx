@@ -35,15 +35,15 @@ public class Application
 	 **/
     public class SelectorFactory
     {
-        private Map<SObjectType, fflib_ISObjectSelector> m_sObjectByMockSelector = new Map<SObjectType, fflib_ISObjectSelector>();
+        // private Map<SObjectType, fflib_ISObjectSelector> m_sObjectByMockSelector = new Map<SObjectType, fflib_ISObjectSelector>();
 
         private SelectorFactory() {  }
 
         public fflib_ISObjectSelector newInstance(SObjectType sObjectType)
 		{
             // Mock implementation?
-			if (m_sObjectByMockSelector.containsKey(sObjectType))
-				return m_sObjectByMockSelector.get(sObjectType);
+			//if (m_sObjectByMockSelector.containsKey(sObjectType))
+			//	return m_sObjectByMockSelector.get(sObjectType);
 
             return (fflib_ISObjectSelector) di_Injector.Org.getInstance( CMT_RECORD_SELECTOR_FACTORY_PREFIX + sObjectType.getDescribe().getName() );
 		}
@@ -106,7 +106,9 @@ public class Application
 		@TestVisible
 		private void setMock(fflib_ISObjectSelector selectorInstance)
 		{
-			m_sObjectByMockSelector.put(selectorInstance.sObjectType(), selectorInstance);
+			// m_sObjectByMockSelector.put(selectorInstance.sObjectType(), selectorInstance);
+
+			di_Injector.Org.Bindings.set( new di_Module().bind( determineClassType( selectorInstance) ).toObject( selectorInstance.sObjectType().getDescribe().getName()  )  );
 		} 
     }
 
@@ -116,7 +118,7 @@ public class Application
 	 **/
 	public class ServiceFactory
 	{
-        private Map<Type, Object> m_serviceInterfaceTypeByMockService = new Map<Type, Object>();
+        //private Map<Type, Object> m_serviceInterfaceTypeByMockService = new Map<Type, Object>();
 
         private ServiceFactory() {  }
 
@@ -131,8 +133,8 @@ public class Application
 		public Object newInstance(System.Type serviceInterfaceType)
 		{
 			// Mock implementation?
-			if(m_serviceInterfaceTypeByMockService.containsKey(serviceInterfaceType))
-				return m_serviceInterfaceTypeByMockService.get(serviceInterfaceType);
+			//if(m_serviceInterfaceTypeByMockService.containsKey(serviceInterfaceType))
+			//	return m_serviceInterfaceTypeByMockService.get(serviceInterfaceType);
 
             return di_Injector.Org.getInstance( CMT_RECORD_SERVICE_FACTORY_PREFIX + serviceInterfaceType );
         }
@@ -140,7 +142,8 @@ public class Application
 		@TestVisible
 		private void setMock(System.Type serviceInterfaceType, Object serviceImpl)
 		{
-			m_serviceInterfaceTypeByMockService.put(serviceInterfaceType, serviceImpl);
+			// m_serviceInterfaceTypeByMockService.put(serviceInterfaceType, serviceImpl);
+			di_Injector.Org.Bindings.set( new di_Module().bind( serviceInterfaceType ).toObject( serviceImpl  )  );
 		}
     }
 
@@ -149,7 +152,7 @@ public class Application
 	 **/
 	public class DomainFactory 
     {
-		private Map<SObjectType, fflib_ISObjectDomain> m_sObjectByMockDomain = new Map<SObjectType, fflib_ISObjectDomain>();
+		//private Map<SObjectType, fflib_ISObjectDomain> m_sObjectByMockDomain = new Map<SObjectType, fflib_ISObjectDomain>();
 
         private DomainFactory() {  }
 
@@ -181,8 +184,8 @@ public class Application
 				throw new DeveloperException('Unable to determine SObjectType');
 
 			// Mock implementation?
-			if(m_sObjectByMockDomain.containsKey(domainSObjectType))
-				return m_sObjectByMockDomain.get(domainSObjectType);
+			//if(m_sObjectByMockDomain.containsKey(domainSObjectType))
+			//	return m_sObjectByMockDomain.get(domainSObjectType);
 
             // Construct Domain class passing in the queried records
             fflib_SObjectDomain.IConstructable domainConstructor = (fflib_SObjectDomain.IConstructable) di_Injector.Org.getInstance( CMT_RECORD_DOMAIN_FACTORY_PREFIX + domainSObjectType.getDescribe().getName() );
@@ -207,8 +210,8 @@ public class Application
 				throw new DeveloperException('Must specify sObjectType');
 
 			// Mock implementation?
-			if(m_sObjectByMockDomain.containsKey(domainSObjectType))
-				return m_sObjectByMockDomain.get(domainSObjectType);
+			//if(m_sObjectByMockDomain.containsKey(domainSObjectType))
+			//	return m_sObjectByMockDomain.get(domainSObjectType);
 
             // Construct Domain class passing in the queried records
             fflib_SObjectDomain.IConstructable2 domainConstructor = (fflib_SObjectDomain.IConstructable2) di_Injector.Org.getInstance( CMT_RECORD_DOMAIN_FACTORY_PREFIX + domainSObjectType.getDescribe().getName() );
@@ -219,7 +222,8 @@ public class Application
 		@TestVisible
 		private void setMock(fflib_ISObjectDomain mockDomain)
 		{
-			m_sObjectByMockDomain.put(mockDomain.sObjectType(), mockDomain);
+			//m_sObjectByMockDomain.put(mockDomain.sObjectType(), mockDomain);
+			di_Injector.Org.Bindings.set( new di_Module().bind( determineClassType( mockDomain ) ).toObject( mockDomain.sObjectType().getDescribe().getName()  )  );
 		}
     }
 
@@ -254,6 +258,22 @@ public class Application
 			return new fflib_SObjectUnitOfWork(objectTypes);
 		}
     }
+
+	private static Type determineClassType( Object instantiatedClass )
+	{
+		String instantiatedClassName = 'DateTime';
+    	try
+		{
+        	DateTime typeCheck = (DateTime)instantiatedClass;
+    	}
+    	catch(System.TypeException te)
+		{
+        	String message = te.getMessage().substringAfter('Invalid conversion from runtime type ');
+        	instantiatedClassName = message.substringBefore(' to Datetime');
+    	}
+
+		return Type.forName( instantiatedClassName );
+	}
 
 	public class ApplicationException extends Exception { }			
 
