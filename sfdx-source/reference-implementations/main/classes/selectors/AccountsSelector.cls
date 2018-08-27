@@ -7,12 +7,12 @@ public with sharing class AccountsSelector
         return (IAccountsSelector) Application.Selector.newInstance( Account.SObjectType );
     }
 
-    private Schema.sObjectType getSObjectType()
+    public Schema.sObjectType getSObjectType()
     {
         return Account.SObjectType;
     }
 
-    public List<Schema.SObjectField> getSObjectFieldList()
+    public override List<Schema.SObjectField> getSObjectFieldList()
     {
         return new List<Schema.SObjectField> {
             Account.Id,
@@ -32,4 +32,8 @@ public with sharing class AccountsSelector
         return (List<Account>) selectSObjectsById( idSet == null ? new Set<Id>() : idSet );
     }
 
+    public List<Account> selectByName( Set<String> nameSet )
+    {
+        return Database.query( newQueryFactory().setCondition( Account.Name + ' in :nameSet').toSOQL() );
+    }
 }

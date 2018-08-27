@@ -108,7 +108,20 @@ public class Application
 		{
 			// m_sObjectByMockSelector.put(selectorInstance.sObjectType(), selectorInstance);
 
-			di_Injector.Org.Bindings.set( new di_Module().bind( determineClassType( selectorInstance) ).toObject( selectorInstance.sObjectType().getDescribe().getName()  )  );
+			Schema.SObjectType sobjectToBindTo = selectorInstance.sObjectType();
+
+			System.Type bindingType = determineClassType( selectorInstance );
+
+			System.debug( di_Injector.Org.getInstance( CMT_RECORD_SELECTOR_FACTORY_PREFIX + sobjectToBindTo.getDescribe().getName() )) ;
+
+			System.debug( 'AVailable bindings include ' + di_Injector.Org.Bindings);
+
+			//di_Injector.Org.Bindings.set( new di_Module().bind( bindingType ).toObject( sobjectToBindTo )  );
+			di_Injector.Org.Bindings.add( new di_Module().apex().bind( sobjectToBindTo ).bind( bindingType ).toObject( sobjectToBindTo )  );
+
+			System.debug( 'Available bindings after include ' + di_Injector.Org.Bindings);
+
+			System.debug( di_Injector.Org.getInstance( CMT_RECORD_SELECTOR_FACTORY_PREFIX + sobjectToBindTo.getDescribe().getName() )) ;
 		} 
     }
 

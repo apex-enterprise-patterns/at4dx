@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>All Force-DI bindings for SObject Selectors to the ApplicationSObjectSelectorDIModule</description>
+    <label>ApplicationFactory_SelectorBinding</label>
+    <pluralLabel>ApplicationFactory_SelectorBindings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
