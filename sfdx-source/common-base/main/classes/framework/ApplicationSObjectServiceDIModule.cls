@@ -1,29 +1,26 @@
 /**
  *
- * di_Module based class used to manage the Application Factory mappings of for the SOBject
+ * di_Module based class used to manage the Application Factory mappings of for services
  */
 public class ApplicationSObjectServiceDIModule 
     extends di_Module
 {
     public override void configure() 
     {
-        System.debug('loading the SObjectSelector bindings for Application Factory');
-        Schema.DescribeSobjectResult[] results = null;
+        System.debug('loading the Service bindings for Application Factory');
 
-        for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingSObject__c 
-                                                                         from ApplicationFactory_SelectorBinding__mdt])
+        Type interfaceType = null;
+
+        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c 
+                                                                         from ApplicationFactory_ServiceBinding__mdt])
         {
             apex();
-            if (String.isNotBlank(bindingConfig.BindingSObject__c)) 
-            {
-                results = Schema.describeSObjects(new String[] { bindingConfig.BindingSObject__c.toLowerCase().trim() });
-                if(results.size() != 1) 
-                {
-                    throw new di_Injector.InjectorException('Failed to find SObject ' + bindingConfig.BindingSObject__c + ' referened by binding ' + bindingConfig.DeveloperName + ' for ApplicationSObjectSelectorDIModule di_Injectory module.');
-                }
-                bind(results[0].getSObjectType());
-                bind(IApplicationSObjectSelector.class);
+            try {
+                Type.forName(bindingConfig.BindingInterface__c);
+            } catch (TypeException te) {
+                throw new di_Injector.InjectorException('Service Interface ' + bindingConfig.BindingInterface__c + ' referened by binding ' + bindingConfig.DeveloperName + ' does not exist.');
             }
+            bind(bindingConfig.BindingInterface__c);
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
