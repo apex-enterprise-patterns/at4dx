@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>To__c</fullName>
+    <fullName>BindingInterface__c</fullName>
     <caseSensitive>false</caseSensitive>
-    <description>The Selector implementation class that is an implementation of the IApplicationSObjectSelector</description>
+    <description>The Service Interface that this Application Factory Service Binding is mapped to.</description>
     <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>
-    <inlineHelpText>The Selector implementation class that is an implementation of the IApplicationSObjectSelector</inlineHelpText>
-    <label>To</label>
+    <inlineHelpText>The Service Interface that this Application Factory Service Binding is mapped to.</inlineHelpText>
+    <label>Binding Interface</label>
     <length>255</length>
     <required>true</required>
     <type>Text</type>
