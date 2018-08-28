@@ -2,7 +2,7 @@
  *
  * di_Module based class used to manage the Application Factory mappings of for services
  */
-public class ApplicationSObjectServiceDIModule 
+public class ApplicationServiceDIModule 
     extends di_Module
 {
     public override void configure() 

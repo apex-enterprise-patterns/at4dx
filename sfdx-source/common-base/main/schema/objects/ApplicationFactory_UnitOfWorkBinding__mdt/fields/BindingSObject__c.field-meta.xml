@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BindingSObject__c</fullName>
+    <description>The SObject that this Application Factory Unit Of Work manages the sequence for.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>The SObject that this Application Factory Unit Of Work manages the sequence for.</inlineHelpText>
+    <label>Binding SObject</label>
+    <referenceTo>EntityDefinition</referenceTo>
+    <relationshipLabel>ApplicationFactory_UnitOfWorkBindings</relationshipLabel>
+    <relationshipName>ApplicationFactory_UnitOfWorkBindings</relationshipName>
+    <required>true</required>
+    <type>MetadataRelationship</type>
+    <unique>true</unique>
+</CustomField>
