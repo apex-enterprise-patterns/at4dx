@@ -7,7 +7,6 @@ public class ApplicationSObjectDomainDIModule
 {
     public override void configure() 
     {
-        System.debug('loading the SObjectDomain bindings for Application Factory');
         Schema.DescribeSobjectResult[] results = null;
 
         for ( ApplicationFactory_DomainBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingSObject__c 
