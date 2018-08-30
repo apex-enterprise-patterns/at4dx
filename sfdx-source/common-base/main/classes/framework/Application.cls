@@ -93,20 +93,9 @@ public class Application
 		@TestVisible
 		private void setMock(IApplicationSObjectSelector selectorInstance)
 		{
-			Schema.SObjectType sobjectToBindTo = selectorInstance.sObjectType();
-
-			System.Type bindingType = determineClassType( selectorInstance );
-
-			System.debug( di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sobjectToBindTo )) ;
-
-			System.debug( 'AVailable bindings include ' + di_Injector.Org.Bindings);
-
-			//di_Injector.Org.Bindings.set( new di_Module().bind( bindingType ).toObject( sobjectToBindTo )  );
-			di_Injector.Org.Bindings.add( new di_Module().apex().bind( sobjectToBindTo ).bind( bindingType ).toObject( sobjectToBindTo )  );
-
-			System.debug( 'Available bindings after include ' + di_Injector.Org.Bindings);
-
-			System.debug( di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sobjectToBindTo )) ;
+			di_Injector.Org.Bindings.byName( IApplicationSObjectSelector.class.getName() )
+									.bySObject( selectorInstance.sObjectType() )
+									.replaceBindingWith( selectorInstance );
 		} 
     }
 
@@ -134,7 +123,8 @@ public class Application
 		@TestVisible
 		private void setMock(System.Type serviceInterfaceType, Object serviceImpl)
 		{
-			di_Injector.Org.Bindings.set( new di_Module().bind( serviceInterfaceType ).toObject( serviceImpl  )  );
+			di_Injector.Org.Bindings.byName( serviceInterfaceType.getName() )
+									.replaceBindingWith( serviceImpl );
 		}
     }
 
@@ -203,7 +193,9 @@ public class Application
 		@TestVisible
 		private void setMock(IApplicationSObjectDomain mockDomain)
 		{
-			di_Injector.Org.Bindings.set( new di_Module().bind( determineClassType( mockDomain ) ).toObject( mockDomain.sObjectType().getDescribe().getName()  )  );
+			di_Injector.Org.Bindings.byName( IApplicationSObjectDomain.class.getName() )
+									.bySObject( mockDomain.sObjectType() )
+									.replaceBindingWith( mockDomain );
 		}
     }
 
@@ -237,6 +229,12 @@ public class Application
             // TODO: Need to make this ForceDI-aware
 			return new ApplicationSObjectUnitOfWork(objectTypes);
 		}
+
+		@TestVisible
+        private void setMock(IApplicationSObjectUnitOfWork mockUow)
+        {
+            //m_mockUow = mockUow;
+        }
     }
 
 	private static Type determineClassType( Object instantiatedClass )
