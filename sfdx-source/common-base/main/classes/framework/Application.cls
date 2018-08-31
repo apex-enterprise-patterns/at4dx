@@ -24,239 +24,239 @@ public class Application
     public static final Application.UnitOfWorkFactory UnitOfWork = new Application.UnitOfWorkFactory();
 
     /**
-	 * Class implements a Selector class factory
-	 **/
+     * Class implements a Selector class factory
+     **/
     public class SelectorFactory
     {
         private SelectorFactory() {  }
 
         public IApplicationSObjectSelector newInstance(SObjectType sObjectType)
-		{
+        {
             return (IApplicationSObjectSelector) di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sObjectType );
-		}
+        }
 
         /**
-		 * Helper method to query the given SObject records
-		 *   Internally creates an instance of the registered Selector and calls its
-		 *     selectSObjectById method
-		 *
-		 * @param recordIds The SObject record Ids, must be all the same SObjectType
-		 * @exception Is thrown if the record Ids are not all the same or the SObjectType is not registered
-		 **/
+         * Helper method to query the given SObject records
+         *   Internally creates an instance of the registered Selector and calls its
+         *     selectSObjectById method
+         *
+         * @param recordIds The SObject record Ids, must be all the same SObjectType
+         * @exception Is thrown if the record Ids are not all the same or the SObjectType is not registered
+         **/
         public List<SObject> selectById(Set<Id> recordIds)
         {
-			// No point creating an empty Domain class, nor can we determine the SObjectType anyway
-			if(recordIds == null || recordIds.isEmpty())
-				throw new DeveloperException('Invalid record Id\'s set');	
+            // No point creating an empty Domain class, nor can we determine the SObjectType anyway
+            if(recordIds == null || recordIds.isEmpty())
+                throw new DeveloperException('Invalid record Id\'s set');    
 
-			// Determine SObjectType
-			SObjectType domainSObjectType = new List<Id>(recordIds)[0].getSObjectType();
+            // Determine SObjectType
+            SObjectType domainSObjectType = new List<Id>(recordIds)[0].getSObjectType();
 
-			for (Id recordId : recordIds)
+            for (Id recordId : recordIds)
             {
-				if (recordId.getSobjectType() != domainSObjectType)
+                if (recordId.getSobjectType() != domainSObjectType)
                 {
-                    throw new DeveloperException('Unable to determine SObjectType, Set contains Id\'s from different SObject types');	
+                    throw new DeveloperException('Unable to determine SObjectType, Set contains Id\'s from different SObject types');    
                 }
             }
 
-			// Construct Selector class and query by Id for the records
-			return newInstance(domainSObjectType).selectSObjectsById(recordIds);
+            // Construct Selector class and query by Id for the records
+            return newInstance(domainSObjectType).selectSObjectsById(recordIds);
         }
 
         /**
-		 * Helper method to query related records to those provided, for example
-		 *   if passed a list of Opportunity records and the Account Id field will
-		 *   construct internally a list of Account Ids and call the registered 
-		 *   Account selector to query the related Account records, e.g.
-		 *
-		 *     List<Account> accounts = 
-		 *        (List<Account>) Applicaiton.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
-		 *
-		 * @param relatedRecords used to extract the related record Ids, e.g. Opportunty records
-		 * @param relationshipField field in the passed records that contains the relationship records to query, e.g. Opportunity.AccountId
-		 **/
-		public List<SObject> selectByRelationship(List<SObject> relatedRecords, SObjectField relationshipField)
+         * Helper method to query related records to those provided, for example
+         *   if passed a list of Opportunity records and the Account Id field will
+         *   construct internally a list of Account Ids and call the registered 
+         *   Account selector to query the related Account records, e.g.
+         *
+         *     List<Account> accounts = 
+         *        (List<Account>) Applicaiton.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
+         *
+         * @param relatedRecords used to extract the related record Ids, e.g. Opportunty records
+         * @param relationshipField field in the passed records that contains the relationship records to query, e.g. Opportunity.AccountId
+         **/
+        public List<SObject> selectByRelationship(List<SObject> relatedRecords, SObjectField relationshipField)
         {
             Set<Id> relatedIds = new Set<Id>();
-			for (SObject relatedRecord : relatedRecords)
-			{
-				Id relatedId = (Id) relatedRecord.get(relationshipField);
-				if (relatedId != null)
+            for (SObject relatedRecord : relatedRecords)
+            {
+                Id relatedId = (Id) relatedRecord.get(relationshipField);
+                if (relatedId != null)
                 {
                     relatedIds.add(relatedId);
                 }
-			}
-			return selectById(relatedIds);
+            }
+            return selectById(relatedIds);
         }
 
-		@TestVisible
-		private void setMock(IApplicationSObjectSelector selectorInstance)
-		{
-			di_Injector.Org.Bindings.byName( IApplicationSObjectSelector.class.getName() )
-									.bySObject( selectorInstance.sObjectType() )
-									.replaceBindingWith( selectorInstance );
-		} 
+        @TestVisible
+        private void setMock(IApplicationSObjectSelector selectorInstance)
+        {
+            di_Injector.Org.Bindings.byName( IApplicationSObjectSelector.class.getName() )
+                                    .bySObject( selectorInstance.sObjectType() )
+                                    .replaceBindingWith( selectorInstance );
+        } 
     }
 
 
-	/**
-	 * Simple Service Factory implementaiton
-	 **/
-	public class ServiceFactory
-	{
+    /**
+     * Simple Service Factory implementaiton
+     **/
+    public class ServiceFactory
+    {
         private ServiceFactory() {  }
 
         /**
-		 * Returns a new instance of the Apex class associated with the given Apex interface
-		 *   Will return any mock implementation of the interface provided via setMock
-		 *   Note that this method will not check the configured Apex class actually implements the interface
-		 *
-		 * @param serviceInterfaceType Apex interface type
-		 * @exception Is thrown if there is no registered Apex class for the interface type
-		 **/
-		public Object newInstance(System.Type serviceInterfaceType)
-		{
+         * Returns a new instance of the Apex class associated with the given Apex interface
+         *   Will return any mock implementation of the interface provided via setMock
+         *   Note that this method will not check the configured Apex class actually implements the interface
+         *
+         * @param serviceInterfaceType Apex interface type
+         * @exception Is thrown if there is no registered Apex class for the interface type
+         **/
+        public Object newInstance(System.Type serviceInterfaceType)
+        {
             return di_Injector.Org.getInstance( serviceInterfaceType );
         }
 
-		@TestVisible
-		private void setMock(System.Type serviceInterfaceType, Object serviceImpl)
-		{
-			di_Injector.Org.Bindings.byName( serviceInterfaceType.getName() )
-									.replaceBindingWith( serviceImpl );
-		}
+        @TestVisible
+        private void setMock(System.Type serviceInterfaceType, Object serviceImpl)
+        {
+            di_Injector.Org.Bindings.byName( serviceInterfaceType.getName() )
+                                    .replaceBindingWith( serviceImpl );
+        }
     }
 
     /**
-	 * Class implements a Domain class factory
-	 **/
-	public class DomainFactory 
+     * Class implements a Domain class factory
+     **/
+    public class DomainFactory 
     {
         private DomainFactory() {  }
 
         /**
-		 * Dynamically constructs an instance of a Domain class for the given record Ids
-		 *   Internally uses the Selector Factory to query the records before passing to a
-		 *   dynamically constructed instance of the application Apex Domain class
-		 *
-		 * @param recordIds A list of Id's of the same type
-		 * @exception Throws an exception via the Selector Factory if the Ids are not all of the same SObjectType
-		 **/
-		public IApplicationSObjectDomain newInstance(Set<Id> recordIds)
-		{
-			return newInstance( Application.Selector.selectById(recordIds) );
-		}	
+         * Dynamically constructs an instance of a Domain class for the given record Ids
+         *   Internally uses the Selector Factory to query the records before passing to a
+         *   dynamically constructed instance of the application Apex Domain class
+         *
+         * @param recordIds A list of Id's of the same type
+         * @exception Throws an exception via the Selector Factory if the Ids are not all of the same SObjectType
+         **/
+        public IApplicationSObjectDomain newInstance(Set<Id> recordIds)
+        {
+            return newInstance( Application.Selector.selectById(recordIds) );
+        }    
 
-		/**
-		 * Dynamically constructs an instace of the Domain class for the given records
-		 *   Will return a Mock implementation if one has been provided via setMock
-		 *
-		 * @param records A concreate list (e.g. List<Account> vs List<SObject>) of records
-		 * @exception Throws an exception if the SObjectType cannot be determined from the list 
-		 *              or the constructor for Domain class was not registered for the SOBjectType
-		 **/
-		public IApplicationSObjectDomain newInstance(List<SObject> records)
-		{
-			SObjectType domainSObjectType = records.getSObjectType();
-			if (domainSObjectType == null)
-				throw new DeveloperException('Unable to determine SObjectType');
+        /**
+         * Dynamically constructs an instace of the Domain class for the given records
+         *   Will return a Mock implementation if one has been provided via setMock
+         *
+         * @param records A concreate list (e.g. List<Account> vs List<SObject>) of records
+         * @exception Throws an exception if the SObjectType cannot be determined from the list 
+         *              or the constructor for Domain class was not registered for the SOBjectType
+         **/
+        public IApplicationSObjectDomain newInstance(List<SObject> records)
+        {
+            SObjectType domainSObjectType = records.getSObjectType();
+            if (domainSObjectType == null)
+                throw new DeveloperException('Unable to determine SObjectType');
 
             // Construct Domain class passing in the queried records
             fflib_SObjectDomain.IConstructable domainConstructor = (fflib_SObjectDomain.IConstructable) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
             return (IApplicationSObjectDomain) domainConstructor.construct(records);
-		}	
+        }    
 
-		/**
-		 * Dynamically constructs an instace of the Domain class for the given records and SObjectType
-		 *   Will return a Mock implementation if one has been provided via setMock
-		 *
-		 * @param records A list records
-		 * @param domainSObjectType SObjectType for list of records
-		 * @exception Throws an exception if the SObjectType is not specified or if constructor for Domain class was not registered for the SObjectType
-		 *
-		 * @remark Will support List<SObject> but all records in the list will be assumed to be of
-		 *         the type specified in sObjectType
-		 **/
-		public IApplicationSObjectDomain newInstance(List<SObject> records, SObjectType domainSObjectType)
-		{
-			if(domainSObjectType==null)
-				throw new DeveloperException('Must specify sObjectType');
+        /**
+         * Dynamically constructs an instace of the Domain class for the given records and SObjectType
+         *   Will return a Mock implementation if one has been provided via setMock
+         *
+         * @param records A list records
+         * @param domainSObjectType SObjectType for list of records
+         * @exception Throws an exception if the SObjectType is not specified or if constructor for Domain class was not registered for the SObjectType
+         *
+         * @remark Will support List<SObject> but all records in the list will be assumed to be of
+         *         the type specified in sObjectType
+         **/
+        public IApplicationSObjectDomain newInstance(List<SObject> records, SObjectType domainSObjectType)
+        {
+            if(domainSObjectType==null)
+                throw new DeveloperException('Must specify sObjectType');
 
             // Construct Domain class passing in the queried records
             fflib_SObjectDomain.IConstructable2 domainConstructor = (fflib_SObjectDomain.IConstructable2) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
             return (IApplicationSObjectDomain) domainConstructor.construct(records, domainSObjectType);
-		}
+        }
 
-		@TestVisible
-		private void setMock(IApplicationSObjectDomain mockDomain)
-		{
-			di_Injector.Org.Bindings.byName( IApplicationSObjectDomain.class.getName() )
-									.bySObject( mockDomain.sObjectType() )
-									.replaceBindingWith( mockDomain );
-		}
+        @TestVisible
+        private void setMock(IApplicationSObjectDomain mockDomain)
+        {
+            di_Injector.Org.Bindings.byName( IApplicationSObjectDomain.class.getName() )
+                                    .bySObject( mockDomain.sObjectType() )
+                                    .replaceBindingWith( mockDomain );
+        }
     }
 
     /**
-	 * Class implements a Unit of Work factory
-	 **/
+     * Class implements a Unit of Work factory
+     **/
     public class UnitOfWorkFactory
-	{
+    {
         private UnitOfWorkFactory() {  }
 
         /**
-		 * Returns a new IApplicationSObjectUnitOfWork configured with the 
-		 *   SObjectType list provided in the constructor, returns a Mock implementation
-		 *   if set via the setMock method
-		 **/
+         * Returns a new IApplicationSObjectUnitOfWork configured with the 
+         *   SObjectType list provided in the constructor, returns a Mock implementation
+         *   if set via the setMock method
+         **/
         public IApplicationSObjectUnitOfWork newInstance()
-		{
+        {
             return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class );
         }
 
         /**
-		 * Returns a new IApplicationSObjectUnitOfWork configured with the 
-		 *   SObjectType list specified, returns a Mock implementation
-		 *   if set via the setMock method
-		 *
-		 * @remark If mock is set, the list of SObjectType in the mock could be different
-		 *         then the list of SObjectType specified in this method call
-		 **/
-		public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes)
-		{
+         * Returns a new IApplicationSObjectUnitOfWork configured with the 
+         *   SObjectType list specified, returns a Mock implementation
+         *   if set via the setMock method
+         *
+         * @remark If mock is set, the list of SObjectType in the mock could be different
+         *         then the list of SObjectType specified in this method call
+         **/
+        public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes)
+        {
             // TODO: Need to make this ForceDI-aware
-			return new ApplicationSObjectUnitOfWork(objectTypes);
-		}
+            return new ApplicationSObjectUnitOfWork(objectTypes);
+        }
 
-		@TestVisible
+        @TestVisible
         private void setMock(IApplicationSObjectUnitOfWork mockUow)
         {
             //m_mockUow = mockUow;
         }
     }
 
-	private static Type determineClassType( Object instantiatedClass )
-	{
-		String instantiatedClassName = 'DateTime';
-    	try
-		{
-        	DateTime typeCheck = (DateTime)instantiatedClass;
-    	}
-    	catch(System.TypeException te)
-		{
-        	String message = te.getMessage().substringAfter('Invalid conversion from runtime type ');
-        	instantiatedClassName = message.substringBefore(' to Datetime');
-    	}
+    private static Type determineClassType( Object instantiatedClass )
+    {
+        String instantiatedClassName = 'DateTime';
+        try
+        {
+            DateTime typeCheck = (DateTime)instantiatedClass;
+        }
+        catch(System.TypeException te)
+        {
+            String message = te.getMessage().substringAfter('Invalid conversion from runtime type ');
+            instantiatedClassName = message.substringBefore(' to Datetime');
+        }
 
-		return Type.forName( instantiatedClassName );
-	}
+        return Type.forName( instantiatedClassName );
+    }
 
-	public class ApplicationException extends Exception { }			
+    public class ApplicationException extends Exception { }            
 
-	/**
-	 * Exception representing a developer coding error, not intended for end user eyes
-	 **/
-	public class DeveloperException extends Exception { } 
+    /**
+     * Exception representing a developer coding error, not intended for end user eyes
+     **/
+    public class DeveloperException extends Exception { } 
 }
