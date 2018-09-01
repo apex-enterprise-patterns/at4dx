@@ -32,3 +32,4 @@ Referenced Packages/
 # NPM Related
 package.json
 /node_modules
+package-lock.json
