@@ -34,6 +34,7 @@ public with sharing class AccountsSelector
 
     public List<Account> selectByName( Set<String> nameSet )
     {
+        // system.debug('AccountsSelector.selectByName(Set<String>) method is called');
         return Database.query( newQueryFactory().setCondition( Account.Name + ' in :nameSet').toSOQL() );
     }
 }
