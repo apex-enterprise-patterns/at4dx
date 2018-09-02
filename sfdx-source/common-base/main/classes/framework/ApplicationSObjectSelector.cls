@@ -23,37 +23,35 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
 
     private void incorporateAdditionalSObjectFields()
     {
-//        // query the SObject FieldSet Inclusion records for this object.
-//        list<SObjectFieldSetInclusion__mdt> fieldsetsToIncludeForThisSObjectList = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
-//                                                                                               , SObjectType__c, IsActive__c
-//                                                                                            from SObjectFieldSetInclusion__mdt
-//                                                                                           where IsActive__c = true 
-//                                                                                             and SObjectType__c = :this.getSObjectType().getDescribe().getName()];//
-//        Map<String, Schema.FieldSet> fieldSetMap = null;//
-//        for ( SObjectFieldSetInclusion__mdt customMetadataRecord : fieldsetsToIncludeForThisSObjectList )
-//        {
-//            system.debug(LoggingLevel.Fine, 'Including the fieldset ' + customMetadataRecord.MasterLabel);
-//            if ( getSObjectType().getDescribe().getName().equalsIgnoreCase( customMetadataRecord.SObjectType__c ) )
-//            {
-//                // find the related fieldset and then add all of those fields to the 
-//                this.sObjectFieldSetList = new List<Schema.FieldSet>();//
-//                fieldSetMap = getSObjectType().getDescribe().fieldSets.getMap();
-//                
-//                system.debug(LoggingLevel.Fine, 'fieldSetMap.containsKey( customMetadataRecord.QualifiedApiName.toLowerCase() ) == ' + fieldSetMap.containsKey( customMetadataRecord.QualifiedApiName.toLowerCase() ) );//
-//                if ( fieldSetMap.containsKey( customMetadataRecord.QualifiedApiName.toLowerCase() ) )
-//                {
-//                    this.sObjectFieldSetList.add( fieldSetMap.get( customMetadataRecord.QualifiedApiName ) );
-//                }
-//                else 
-//                {
-//                    System.debug(LoggingLevel.ERROR, 'mmlib_SObjectFieldSetInclusion__mdt record ' + customMetadataRecord.QualifiedApiName + ' specifies field set of ' + customMetadataRecord.QualifiedApiName + ' which was not found.');
-//                }
-//            }
-//            else 
-//            {
-//                System.debug(LoggingLevel.ERROR, 'mmlib_SObjectFieldSetInclusion__mdt record ' + customMetadataRecord.QualifiedApiName + ' specifies SObjectType__c of ' + customMetadataRecord.SObjectType__c + ' which was not found.');
-//            }
-//        }
+        Map<String, Schema.FieldSet> fieldSetMap = null;
+
+        // replace the right side with the di_Injector.Org.getInstances() method.
+        for ( SelectorConfig_FieldSetInclusion__mdt customMetadataRecord : getFieldsetInclusionRecords() )
+        {
+            if ( getSObjectType().getDescribe().getName().equalsIgnoreCase( customMetadataRecord.SObjectType__c ) )
+            {
+                // find the related fieldset and then add all of those fields to the 
+                this.sObjectFieldSetList = new List<Schema.FieldSet>();
+                fieldSetMap = getSObjectType().getDescribe().fieldSets.getMap();
+                
+                if ( fieldSetMap.containsKey( customMetadataRecord.FieldsetName__c.toLowerCase() ) )
+                {
+                    this.sObjectFieldSetList.add( fieldSetMap.get( customMetadataRecord.FieldsetName__c ) );
+                }
+                else 
+                {
+                    System.debug(
+                        LoggingLevel.ERROR, 'SelectorConfig_FieldSetInclusion__mdt record ' + customMetadataRecord.FieldsetName__c + 
+                        ' specifies field set of ' + customMetadataRecord.FieldsetName__c + ' which was not found.');
+                }
+            }
+            else 
+            {
+                System.debug(
+                    LoggingLevel.ERROR, 'SelectorConfig_FieldSetInclusion__mdt record ' + customMetadataRecord.FieldsetName__c + 
+                    ' specifies SObjectType__c of ' + customMetadataRecord.SObjectType__c + ' which was not found.');
+            }
+        }
     }
 
     public ApplicationSObjectSelector() {
@@ -124,6 +122,18 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
             }
         }
         return standardFields;
+    }
+
+    private List<SelectorConfig_FieldSetInclusion__mdt> getFieldsetInclusionRecords()
+    {
+        return
+        [
+            select
+                Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName, 
+                SObjectType__c, FieldsetName__c, IsActive__c
+            from SelectorConfig_FieldSetInclusion__mdt
+            where IsActive__c = true and SObjectType__c = :this.getSObjectType().getDescribe().getName()
+        ];
     }
 
     public ApplicationSObjectSelector addQueryFactoryParentSelect(fflib_QueryFactory parentQueryFactory, Schema.SObjectField relationshipField)

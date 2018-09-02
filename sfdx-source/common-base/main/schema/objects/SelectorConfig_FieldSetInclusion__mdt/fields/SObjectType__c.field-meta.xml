@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SObjectType__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Specifies the selector, via the SObject Type, to which the fieldset&#39;s items will be added.</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Specifies the selector, via the SObject Type, to which the fieldset&#39;s items will be added.</inlineHelpText>
+    <label>SObject Type</label>
+    <length>255</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>
