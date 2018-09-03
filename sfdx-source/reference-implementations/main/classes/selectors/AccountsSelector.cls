@@ -22,9 +22,7 @@ public with sharing class AccountsSelector
 
     private List<Schema.SObjectField> getAdditionalSObjectFieldList()
     {
-        return new List<Schema.SObjectField> {
-            
-        };
+        return new List<Schema.SObjectField> { };
     }
 
     public List<Account> selectById(Set<Id> idSet)
@@ -35,6 +33,6 @@ public with sharing class AccountsSelector
     public List<Account> selectByName( Set<String> nameSet )
     {
         // system.debug('AccountsSelector.selectByName(Set<String>) method is called');
-        return Database.query( newQueryFactory().setCondition( Account.Name + ' in :nameSet').toSOQL() );
+        return Database.query( newQueryFactory().selectFieldSet(sObjectFieldSetList.get(0)).setCondition( Account.Name + ' in :nameSet').toSOQL() );
     }
 }
