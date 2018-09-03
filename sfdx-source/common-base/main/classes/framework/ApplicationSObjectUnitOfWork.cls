@@ -14,7 +14,7 @@ public class ApplicationSObjectUnitOfWork
         super(sObjectTypes);
     }
 
-    public ApplicationSObjectUnitOfWork(List<Schema.SObjectType> sObjectTypes, fflib_SObjectUnitOfWork.IDML dml)
+    public ApplicationSObjectUnitOfWork( List<Schema.SObjectType> sObjectTypes, fflib_SObjectUnitOfWork.IDML dml )
     {
         super(sObjectTypes, dml);
     }

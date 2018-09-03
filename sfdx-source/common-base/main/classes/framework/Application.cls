@@ -102,7 +102,6 @@ public class Application
         } 
     }
 
-
     /**
      * Simple Service Factory implementaiton
      **/
@@ -187,7 +186,7 @@ public class Application
          **/
         public IApplicationSObjectDomain newInstance(List<SObject> records, SObjectType domainSObjectType)
         {
-            if(domainSObjectType==null)
+            if(domainSObjectType == null)
                 throw new DeveloperException('Must specify sObjectType');
 
             // Construct Domain class passing in the queried records
@@ -214,8 +213,9 @@ public class Application
 
         /**
          * Returns a new IApplicationSObjectUnitOfWork configured with the 
-         *   SObjectType list provided in the constructor, returns a Mock implementation
-         *   if set via the setMock method
+         *   SObjectType list provided by the ApplicationFactory_UnitOfWorkBinding__mdt records
+         *
+         *  @returns IApplicationSObjectUnitOfWork
          **/
         public IApplicationSObjectUnitOfWork newInstance()
         {
@@ -224,22 +224,53 @@ public class Application
 
         /**
          * Returns a new IApplicationSObjectUnitOfWork configured with the 
-         *   SObjectType list specified, returns a Mock implementation
-         *   if set via the setMock method
+         *   SObjectType list provided
          *
-         * @remark If mock is set, the list of SObjectType in the mock could be different
-         *         then the list of SObjectType specified in this method call
+         *  @param list of SObjectTypes
+         *  @returns IApplicationSObjectUnitOfWork
          **/
         public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes)
         {
-            // TODO: Need to make this ForceDI-aware
-            return new ApplicationSObjectUnitOfWork(objectTypes);
+            return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class, objectTypes );
+        }
+
+        /**
+         * Returns a new IApplicationSObjectUnitOfWork configured with the 
+         *   fflib_SObjectUnitOfWork.IDML specified and the SObjectType list
+         *   provided by the ApplicationFactory_UnitOfWorkBinding__mdt records
+         *
+         *  @param an implementation of fflib_SObjectUnitOfWork.IDML to replace the standard fflib_SObjectUnitOfWork.SimpleDML implementation.
+         *  @returns IApplicationSObjectUnitOfWork
+         **/
+        public IApplicationSObjectUnitOfWork newInstance(fflib_SObjectUnitOfWork.IDML dml)
+        {
+            return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class, dml );
+        }
+
+        /**
+         * Returns a new IApplicationSObjectUnitOfWork configured with the 
+         *   fflib_SObjectUnitOfWork.IDML specified and the SObjectType list
+         *   provided.
+         *
+         *  @param list of SObjectTypes
+         *  @param an implementation of fflib_SObjectUnitOfWork.IDML to replace the standard fflib_SObjectUnitOfWork.SimpleDML implementation.
+         *  @returns IApplicationSObjectUnitOfWork
+         **/
+        public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes, fflib_SObjectUnitOfWork.IDML dml)
+        {
+            List<Object> params = new List<Object>();
+
+            params.add( objectTypes );
+            params.add( dml );
+
+            return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class, params );
         }
 
         @TestVisible
         private void setMock(IApplicationSObjectUnitOfWork mockUow)
         {
-            //m_mockUow = mockUow;
+            di_Injector.Org.Bindings.byName( IApplicationSObjectUnitOfWork.class.getName() )
+                        .replaceBindingWith( mockUow );
         }
     }
 
