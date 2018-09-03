@@ -32,3 +32,5 @@ Referenced Packages/
 # NPM Related
 package.json
 /node_modules
+package-lock.json
+sfdx-source/common-base/main/default/

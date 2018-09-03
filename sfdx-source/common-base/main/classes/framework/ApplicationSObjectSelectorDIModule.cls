@@ -7,7 +7,6 @@ public class ApplicationSObjectSelectorDIModule
 {
     public override void configure() 
     {
-        System.debug('loading the SObjectSelector bindings for Application Factory');
         Schema.DescribeSobjectResult[] results = null;
 
         for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingSObject__c 
