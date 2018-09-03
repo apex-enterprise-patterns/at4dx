@@ -7,7 +7,7 @@ public class ApplicationServiceDIModule
 {
     public override void configure() 
     {
-        System.debug('loading the Service bindings for Application Factory');
+        // System.debug('loading the Service bindings for Application Factory');
 
         Type interfaceType = null;
 
@@ -24,5 +24,6 @@ public class ApplicationServiceDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
+        // System.debug('loading the Service bindings for Application Factory completed');
     }
 }
