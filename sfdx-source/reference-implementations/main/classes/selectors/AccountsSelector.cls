@@ -27,12 +27,23 @@ public with sharing class AccountsSelector
 
     public List<Account> selectById(Set<Id> idSet)
     {
+        // How do we incorporate fieldsets here, using the abstract functionality?
         return (List<Account>) selectSObjectsById( idSet == null ? new Set<Id>() : idSet );
     }
 
     public List<Account> selectByName( Set<String> nameSet )
     {
-        // system.debug('AccountsSelector.selectByName(Set<String>) method is called');
-        return Database.query( newQueryFactory().selectFieldSet(sObjectFieldSetList.get(0)).setCondition( Account.Name + ' in :nameSet').toSOQL() );
+        fflib_QueryFactory qf = newQueryFactory();
+        
+        for (FieldSet fs : sObjectFieldSetList)
+        {
+            qf.selectFieldSet(fs);
+        }
+
+        qf.setCondition( Account.Name + ' in :nameSet');
+        return Database.query(qf.toSOQL() );
+
+        // The above is not as fluid as ...
+        // return Database.query(newQueryFactory().selectFieldSets(sObjectFieldSetList).setCondition( Account.Name + ' in :nameSet').toSOQL());
     }
 }
