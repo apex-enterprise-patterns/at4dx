@@ -16,15 +16,15 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
-                <field>SObjectType__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
                 <field>FieldsetName__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>IsActive__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>SObjectType__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
