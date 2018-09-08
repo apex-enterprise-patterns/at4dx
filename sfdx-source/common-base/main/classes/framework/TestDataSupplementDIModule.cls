@@ -1,14 +1,28 @@
 public class TestDataSupplementDIModule
+    extends di_Module
 {
-    public void configure()
+    public override void configure()
     {
-        // for loop from TestDataSupplementer_mdt records {
+        Schema.DescribeSobjectResult[] results = null;
 
-            // bind(SObjecType);
-            // bind(ITestDataSupplementer.class);
-            // data(mdt_record);
-            // to(mdt_record.To__c);
-
-        //}
+        for (TestDataSupplementer__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSObjectType__c, SupplementingClass__c from TestDataSupplementer__mdt order by Sequence__c])
+        {
+            apex();
+            if (String.isNotBlank(bindingConfig.BindingSObjectType__c)) 
+            {
+                results = Schema.describeSObjects(new String[] { bindingConfig.BindingSObjectType__c.toLowerCase().trim() });
+                if(results.size() != 1) 
+                {
+                    throw new di_Injector.InjectorException(
+                        'Failed to find SObject ' + bindingConfig.BindingSObjectType__c + 
+                        ' referened by binding ' + bindingConfig.DeveloperName + 
+                        ' for TestDataSupplementDIModule di_Injection module.');
+                }
+                bind(results[0].getSObjectType());
+                bind(ITestDataSupplement.class);
+            }
+            data(bindingConfig);
+            to(bindingConfig.SupplementingClass__c);
+        }
     }
 }

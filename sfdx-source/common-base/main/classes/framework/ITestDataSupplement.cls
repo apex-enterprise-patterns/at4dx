@@ -1,4 +1,4 @@
 public interface ITestDataSupplement
 {
-    void supplement(SObject sobj);
+    void supplement(List<SObject> sobjectList);
 }
