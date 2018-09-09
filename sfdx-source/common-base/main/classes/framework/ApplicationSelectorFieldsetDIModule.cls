@@ -40,13 +40,6 @@ public class ApplicationSelectorFieldsetDIModule
             }
         }
 
-        System.debug(
-            LoggingLevel.DEBUG,
-            getConfigurationRecords() + '\n' +
-            globalDescribeMap + '\n' +
-            fieldsetMap
-        );
-
         for (SelectorConfig_FieldSetInclusion__mdt scfi : getConfigurationRecords())
         {
             SObjectType soType = globalDescribeMap.get(scfi.SObjectType__c);
@@ -60,8 +53,6 @@ public class ApplicationSelectorFieldsetDIModule
             data(scfi);
             to(fieldsetMap.get(soType).get(scfi.FieldsetName__c.toLowerCase()).getName());
         }
-
-        System.debug(LoggingLevel.DEBUG, di_Injector.Org.Bindings.get());
     }
 
     private List<SelectorConfig_FieldSetInclusion__mdt> configurationRecords = null;
