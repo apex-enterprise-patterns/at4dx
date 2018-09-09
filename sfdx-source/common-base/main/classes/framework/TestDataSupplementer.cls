@@ -1,3 +1,4 @@
+@IsTest
 public class TestDataSupplementer
 {
     private Map<SObjectType, List<ITestDataSupplement>> supplementerMap = new Map<SObjectType, List<ITestDataSupplement>>();

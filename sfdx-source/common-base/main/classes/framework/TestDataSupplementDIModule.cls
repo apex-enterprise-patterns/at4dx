@@ -1,3 +1,4 @@
+@IsTest
 public class TestDataSupplementDIModule
     extends di_Module
 {
