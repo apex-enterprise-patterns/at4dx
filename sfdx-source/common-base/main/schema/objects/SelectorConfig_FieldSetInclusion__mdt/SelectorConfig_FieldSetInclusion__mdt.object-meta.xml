@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Defines a SObject fieldset that should be added to a selector&#39;s defined fields.</description>
+    <label>Selector Config - Fieldset Inclusion</label>
+    <pluralLabel>Selector Config - Fieldset Inclusions</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
