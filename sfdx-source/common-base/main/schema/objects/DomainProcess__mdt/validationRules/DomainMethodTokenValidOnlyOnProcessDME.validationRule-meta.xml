@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DomainMethodTokenValidOnlyOnProcessDME</fullName>
+    <active>true</active>
+    <description>DomainMethodToken__c can only be populated for ProcessContext__c = "DomainMethodExecution"</description>
+    <errorConditionFormula>not( isblank( DomainMethodToken__c ) ) &amp;&amp; text( ProcessContext__c  ) != "DomainMethodExecution"</errorConditionFormula>
+    <errorDisplayField>DomainMethodToken__c</errorDisplayField>
+    <errorMessage>The "Domain Method Token" should only be populated when the process context is "Domain Method Execution"</errorMessage>
+</ValidationRule>

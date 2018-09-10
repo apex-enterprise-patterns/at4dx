@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ExecuteAsynchronous__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If checked, then the action will be executed in Queueable context and not the primary execution thread.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>If checked, then the action will be executed in Queueable context and not the primary execution thread.</inlineHelpText>
+    <label>Execute Asynchronous</label>
+    <type>Checkbox</type>
+</CustomField>

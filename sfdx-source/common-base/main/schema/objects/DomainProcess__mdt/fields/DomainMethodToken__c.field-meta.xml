@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DomainMethodToken__c</fullName>
+    <description>In a process context of Domain Method Execution, you will need to provide a Domain Method Token -- some unique string that will be supplied to the dependency injection process from the domain class method.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>In a process context of Domain Method Execution, you will need to provide a Domain Method Token -- some unique string that will be supplied to the dependency injection process from the domain class method.</inlineHelpText>
+    <label>Domain Method Token</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

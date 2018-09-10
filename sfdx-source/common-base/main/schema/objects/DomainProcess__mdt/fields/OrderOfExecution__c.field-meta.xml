@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrderOfExecution__c</fullName>
+    <description>Within a process context and "trigger operation"/"domain method token", you will have one or more criteria and one or more actions.  This allows you to specify what the execution order is.  If more than one sequence of criteria and actions are required, then designate this by using decimal numbers.  i.e. 1.1-criteria, 1.2-critera, 1.3-action, 2.1-criteria, 2.2-action</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Within a process context and "trigger operation"/"domain method token", you will have one or more criteria and one or more actions.  This allows you to specify what the execution order is.</inlineHelpText>
+    <label>Order Of Execution</label>
+    <precision>4</precision>
+    <required>true</required>
+    <scale>2</scale>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
