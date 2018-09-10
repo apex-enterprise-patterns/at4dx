@@ -7,8 +7,6 @@ public class ApplicationServiceDIModule
 {
     public override void configure() 
     {
-        // System.debug('loading the Service bindings for Application Factory');
-
         Type interfaceType = null;
 
         for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c 
@@ -24,6 +22,5 @@ public class ApplicationServiceDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
-        // System.debug('loading the Service bindings for Application Factory completed');
     }
 }
