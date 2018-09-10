@@ -7,7 +7,6 @@ public class ApplicationSObjectUnitOfWorkDIModule
 {
     public override void configure() 
     {
-        System.debug('loading the SObjectUnitOfWork bindings for Application Factory');
         apex().bind( IApplicationSObjectUnitOfWork.class ).to( ApplicationSObjectUnitOfWorkDIProvider.class );
     }
 }

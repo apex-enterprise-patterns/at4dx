@@ -27,27 +27,14 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
 
         Map<String, Schema.FieldSet> fieldSetMap = getSObjectType().getDescribe().fieldSets.getMap();
 
-        System.debug(
-            LoggingLevel.DEBUG,
-            di_Injector.Org.Bindings
-                .byName(Schema.FieldSet.class.getName())
-                .bySObject(getSObjectType())
-                .get() + '\n' +
-            fieldsetMap
-        );
-
-        for (
-            di_Binding binding
-            :
-            di_Injector.Org.Bindings
-                .byName(Schema.FieldSet.class.getName())
-                .bySObject(getSObjectType())
-                .get()
+        for ( di_Binding binding : di_Injector.Org.Bindings
+                                                    .byName(Schema.FieldSet.class.getName())
+                                                    .bySObject(getSObjectType())
+                                                    .get()
         )
         {
             results.add(fieldsetMap.get(((String)binding.To).toLowerCase()));
         }
-
         this.sObjectFieldSetList.addAll(results);
     }
 
