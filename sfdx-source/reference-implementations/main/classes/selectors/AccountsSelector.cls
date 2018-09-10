@@ -41,7 +41,7 @@ public with sharing class AccountsSelector
         }
 
         qf.setCondition( Account.Name + ' in :nameSet');
-        return Database.query(qf.toSOQL() );
+        return Database.query(qf.toSOQL());
 
         // The above is not as fluid as ...
         // return Database.query(newQueryFactory().selectFieldSets(sObjectFieldSetList).setCondition( Account.Name + ' in :nameSet').toSOQL());
