@@ -13,15 +13,4 @@ public class DomainProcessConstants
         CRITERIA,
         ACTION
     }
-
-//    public enum TRIGGER_OPERATION_TYPE
-//    {
-//        AfterInsert,
-//        BeforeInsert,
-//        AfterUpdate,
-//        BeforeUpdate,
-//        AfterDelete,
-//        BeforeDelete,
-//        AfterUndelete
-//    } 
 }
