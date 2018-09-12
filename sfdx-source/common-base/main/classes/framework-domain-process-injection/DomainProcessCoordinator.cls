@@ -1,7 +1,96 @@
 public class DomainProcessCoordinator 
 {
-    public DomainProcessCoordinator() {
+    private Schema.DescribeSObjectResult sObjectDescribe = null;
 
+    // The domainProcessMap organizes all of the domain process custom metadata record entries
+    // The map is organized by ProcessContext__c, DomainMethodToken__c/TriggerOperation__c, "Sequence" (infered from the OrderOfExecution__c), Type__c, OrderOfExecution__c, --- DomainProcess__mdt record which contains the ClassToInject__c
+    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>> domainProcessMap = new Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>>();
+
+    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>> getDomainProcessMap()
+    {
+        //system.debug( 'getDomainProcessMap() called');
+        if ( this.domainProcessMap.isEmpty() )
+        {
+            // system.debug( 'domainProcessMap found to be empty.  Now prime the relevant Domain Logic Injections records');
+            primeDomainLogicInjections();
+        }
+        return this.domainProcessMap;
+    }
+
+    @TestVisible
+    private list<DomainProcess__mdt> mockDomainProcesses = new list<DomainProcess__mdt>();
+
+    private void primeDomainLogicInjections()
+    {
+        // find all process DomainProcess__mdt records that are related
+        list<DomainProcess__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+                                                         , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
+                                                         , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
+                                                         , RelatedDomain__c, TriggerOperation__c, Type__c
+                                                      from DomainProcess__mdt
+                                                     where RelatedDomain__c = :this.sObjectDescribe.getName()
+                                                       and IsActive__c = true
+                                                     order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c];
+
+        //if (System.Test.isRunningTest() && mockDomainProcesses != null)
+        //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
+
+// TODO : Figure out how mock domain processes should be handled
+        if ( ! this.mockDomainProcesses.isEmpty() )
+        {
+            domainProcesses.clear();
+            domainProcesses.addAll( mockDomainProcesses );
+            //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
+        }
+
+        DomainProcessConstants.PROCESS_CONTEXT processContext = null;
+        String domainProcessToken = null;
+        Integer sequence = null;
+        DomainProcessConstants.PROCESS_TYPE processType = null;
+
+        // need to sort these domainProcesses by ProcessContext__c, DomainMethodToken__c/TriggerOperation__c, "Sequence" (infered from the OrderOfExecution__c), Type__c, OrderOfExecution__c, --- ClassToInject__c
+        //                                    map< string,          map< string,                              map< integer,                                      map< string, map< decimal, String> > > > >
+        for ( DomainProcess__mdt domainProcess : domainProcesses )
+        {
+            processContext = DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution.name().equalsIgnoreCase( domainProcess.ProcessContext__c ) ? DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution : DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution;
+
+            if ( ! domainProcessMap.containsKey( processContext ) )
+            {
+                domainProcessMap.put( processContext, new Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>() );
+            }
+
+            domainProcessToken = string.isBlank( domainProcess.DomainMethodToken__c ) ? domainProcess.TriggerOperation__c : domainProcess.DomainMethodToken__c;
+
+            if ( ! domainProcessMap.get( processContext ).containsKey( domainProcessToken ) )
+            {
+                domainProcessMap.get( processContext ).put( domainProcessToken, new Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>() );
+            }
+
+            sequence = Integer.valueOf( domainProcess.OrderOfExecution__c );
+
+            if ( ! domainProcessMap.get( processContext ).get( domainProcessToken ).containsKey( sequence ) )
+            {
+                domainProcessMap.get( processContext ).get( domainProcessToken ).put( sequence, new Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>() );
+            }
+
+            processType = DomainProcessConstants.PROCESS_TYPE.CRITERIA.name().equalsIgnoreCase( domainProcess.Type__c ) ? DomainProcessConstants.PROCESS_TYPE.CRITERIA : DomainProcessConstants.PROCESS_TYPE.ACTION;
+
+            if ( ! domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).containsKey( processType ) )
+            {
+                domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).put( processType, new Map<Decimal, DomainProcess__mdt>() );
+            }
+
+            domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).get( processType ).put( domainProcess.OrderOfExecution__c, domainProcess );
+        }
+    }
+
+    public DomainProcessCoordinator(Schema.DescribeSObjectResult sObjectDescribe) 
+    {
+        if ( sObjectDescribe == null )
+        {
+
+        }
+        this.sObjectDescribe = sObjectDescribe;
     }
 
     /**
@@ -22,11 +111,16 @@ public class DomainProcessCoordinator
         processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution, domainProcessToken, null, uow );
     }
 
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType )
+    {
+        processDomainLogicInjections( processContext, triggerOperationType.name(), null, null );
+    }
+
     /**
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    protected void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken )
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken )
     {
         processDomainLogicInjections( processContext, domainProcessToken, null, null );
     }
@@ -35,7 +129,7 @@ public class DomainProcessCoordinator
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    protected void processDomainLogicInjections(String domainProcessToken, Map<Id,SObject> existingRecords )
+    public void processDomainLogicInjections(String domainProcessToken, Map<Id,SObject> existingRecords )
     {
         processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution, domainProcessToken, existingRecords, null );
     }
@@ -44,16 +138,21 @@ public class DomainProcessCoordinator
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    protected void processDomainLogicInjections(String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
+    public void processDomainLogicInjections(String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
     {
         processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution, domainProcessToken, existingRecords, uow );
+    }
+
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType, Map<Id,SObject> existingRecords )
+    {
+        processDomainLogicInjections( processContext, triggerOperationType.name(), existingRecords, null );
     }
 
     /**
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    protected void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords )
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords )
     {
         processDomainLogicInjections( processContext, domainProcessToken, existingRecords, null );
     }
@@ -62,7 +161,7 @@ public class DomainProcessCoordinator
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    protected void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
     {
     }
 //         system.debug( 'mark 1 -- processContext : ' + processContext +  ' -- domainProcessToken : ' + domainProcessToken);
