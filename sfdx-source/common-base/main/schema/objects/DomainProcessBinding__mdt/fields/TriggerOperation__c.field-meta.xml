@@ -13,9 +13,9 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>After_Delete</fullName>
+                <fullName>Before_Insert</fullName>
                 <default>true</default>
-                <label>After Delete</label>
+                <label>Before Insert</label>
             </value>
             <value>
                 <fullName>After_Insert</fullName>
@@ -23,9 +23,9 @@
                 <label>After Insert</label>
             </value>
             <value>
-                <fullName>After_Undelete</fullName>
+                <fullName>Before_Update</fullName>
                 <default>false</default>
-                <label>After Undelete</label>
+                <label>Before Update</label>
             </value>
             <value>
                 <fullName>After_Update</fullName>
@@ -38,14 +38,14 @@
                 <label>Before Delete</label>
             </value>
             <value>
-                <fullName>Before_Insert</fullName>
+                <fullName>After_Delete</fullName>
                 <default>false</default>
-                <label>Before Insert</label>
+                <label>After Delete</label>
             </value>
             <value>
-                <fullName>Before_Update</fullName>
+                <fullName>After_Undelete</fullName>
                 <default>false</default>
-                <label>Before Update</label>
+                <label>After Undelete</label>
             </value>
         </valueSetDefinition>
     </valueSet>

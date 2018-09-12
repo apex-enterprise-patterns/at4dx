@@ -7,8 +7,7 @@
     <columns>OrderOfExecution__c</columns>
     <columns>PreventRecursive__c</columns>
     <columns>ProcessContext__c</columns>
-    <columns>Domain_Process_SObject_Binding__c</columns>
-    <columns>RelatedDomain__c</columns>
+    <columns>RelatedDomainBindingSObject__c</columns>
     <columns>DomainMethodToken__c</columns>
     <columns>TriggerOperation__c</columns>
     <columns>Type__c</columns>

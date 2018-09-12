@@ -6,6 +6,6 @@
     <fieldManageability>SubscriberControlled</fieldManageability>
     <inlineHelpText>Brief description of why this is present.</inlineHelpText>
     <label>Description</label>
-    <required>true</required>
+    <required>false</required>
     <type>TextArea</type>
 </CustomField>

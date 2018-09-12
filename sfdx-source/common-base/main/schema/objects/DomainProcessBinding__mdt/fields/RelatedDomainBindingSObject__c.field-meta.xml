@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Domain_Process_SObject_Binding__c</fullName>
+    <fullName>RelatedDomainBindingSObject__c</fullName>
     <externalId>false</externalId>
-    <fieldManageability>DeveloperControlled</fieldManageability>
-    <label>Domain Process SObject Binding</label>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <label>Related Domain SObject Binding</label>
     <referenceTo>EntityDefinition</referenceTo>
     <relationshipLabel>Domain_Processes</relationshipLabel>
     <relationshipName>Domain_Processes</relationshipName>

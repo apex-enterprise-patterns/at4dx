@@ -20,27 +20,19 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
-                <field>RelatedDomain__c</field>
+                <field>ProcessContext__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Domain_Process_SObject_Binding__c</field>
+                <behavior>Required</behavior>
+                <field>Type__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>RelatedDomainBindingSObject__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>DomainMethodToken__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>OrderOfExecution__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>ClassToInject__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>ProcessContext__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -48,7 +40,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
-                <field>Type__c</field>
+                <field>ClassToInject__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>OrderOfExecution__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
@@ -59,7 +55,7 @@
                 <field>LogicalInverse__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>Description__c</field>
             </layoutItems>
             <layoutItems>
@@ -114,7 +110,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h0S000000ZeIm</masterLabel>
+        <masterLabel>00h0m000000YX8Y</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

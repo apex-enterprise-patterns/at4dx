@@ -3,10 +3,10 @@ public class DomainProcessCoordinator
     private Schema.DescribeSObjectResult sObjectDescribe = null;
 
     // The domainProcessMap organizes all of the domain process custom metadata record entries
-    // The map is organized by ProcessContext__c, DomainMethodToken__c/TriggerOperation__c, "Sequence" (infered from the OrderOfExecution__c), Type__c, OrderOfExecution__c, --- DomainProcess__mdt record which contains the ClassToInject__c
-    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>> domainProcessMap = new Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>>();
+    // The map is organized by ProcessContext__c, DomainMethodToken__c/TriggerOperation__c, "Sequence" (infered from the OrderOfExecution__c), Type__c, OrderOfExecution__c, --- DomainProcessBinding__mdt record which contains the ClassToInject__c
+    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>>> domainProcessMap = new Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>>>();
 
-    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>> getDomainProcessMap()
+    private Map<DomainProcessConstants.PROCESS_CONTEXT, Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>>> getDomainProcessMap()
     {
         //system.debug( 'getDomainProcessMap() called');
         if ( this.domainProcessMap.isEmpty() )
@@ -18,17 +18,17 @@ public class DomainProcessCoordinator
     }
 
     @TestVisible
-    private list<DomainProcess__mdt> mockDomainProcesses = new list<DomainProcess__mdt>();
+    private list<DomainProcessBinding__mdt> mockDomainProcesses = new list<DomainProcessBinding__mdt>();
 
     private void primeDomainLogicInjections()
     {
-        // find all process DomainProcess__mdt records that are related
-        list<DomainProcess__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+        // find all process DomainProcessBinding__mdt records that are related
+        list<DomainProcessBinding__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                          , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
                                                          , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
-                                                         , RelatedDomain__c, TriggerOperation__c, Type__c
-                                                      from DomainProcess__mdt
-                                                     where RelatedDomain__c = :this.sObjectDescribe.getName()
+                                                         , RelatedDomainBindingSObject__c, TriggerOperation__c, Type__c
+                                                      from DomainProcessBinding__mdt
+                                                     where RelatedDomainBindingSObject__c = :this.sObjectDescribe.getName()
                                                        and IsActive__c = true
                                                      order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c];
 
@@ -50,34 +50,34 @@ public class DomainProcessCoordinator
 
         // need to sort these domainProcesses by ProcessContext__c, DomainMethodToken__c/TriggerOperation__c, "Sequence" (infered from the OrderOfExecution__c), Type__c, OrderOfExecution__c, --- ClassToInject__c
         //                                    map< string,          map< string,                              map< integer,                                      map< string, map< decimal, String> > > > >
-        for ( DomainProcess__mdt domainProcess : domainProcesses )
+        for ( DomainProcessBinding__mdt domainProcess : domainProcesses )
         {
             processContext = DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution.name().equalsIgnoreCase( domainProcess.ProcessContext__c ) ? DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution : DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution;
 
             if ( ! domainProcessMap.containsKey( processContext ) )
             {
-                domainProcessMap.put( processContext, new Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>>() );
+                domainProcessMap.put( processContext, new Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>>() );
             }
 
             domainProcessToken = string.isBlank( domainProcess.DomainMethodToken__c ) ? domainProcess.TriggerOperation__c : domainProcess.DomainMethodToken__c;
 
             if ( ! domainProcessMap.get( processContext ).containsKey( domainProcessToken ) )
             {
-                domainProcessMap.get( processContext ).put( domainProcessToken, new Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>>() );
+                domainProcessMap.get( processContext ).put( domainProcessToken, new Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>() );
             }
 
             sequence = Integer.valueOf( domainProcess.OrderOfExecution__c );
 
             if ( ! domainProcessMap.get( processContext ).get( domainProcessToken ).containsKey( sequence ) )
             {
-                domainProcessMap.get( processContext ).get( domainProcessToken ).put( sequence, new Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>() );
+                domainProcessMap.get( processContext ).get( domainProcessToken ).put( sequence, new Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>() );
             }
 
             processType = DomainProcessConstants.PROCESS_TYPE.CRITERIA.name().equalsIgnoreCase( domainProcess.Type__c ) ? DomainProcessConstants.PROCESS_TYPE.CRITERIA : DomainProcessConstants.PROCESS_TYPE.ACTION;
 
             if ( ! domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).containsKey( processType ) )
             {
-                domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).put( processType, new Map<Decimal, DomainProcess__mdt>() );
+                domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).put( processType, new Map<Decimal, DomainProcessBinding__mdt>() );
             }
 
             domainProcessMap.get( processContext ).get( domainProcessToken ).get( sequence ).get( processType ).put( domainProcess.OrderOfExecution__c, domainProcess );
@@ -174,9 +174,9 @@ public class DomainProcessCoordinator
 //             //  Sequence --------------------------------------------------------------- Sequence
 //             //  |            Type__c --------------------------------------------------- Type__c
 //             //  |            |                 OrderOfExecution__c --------------------- OrderOfExecution__c
-//             //  |            |                 |        DomainProcess__mdt ------------- DomainProcess__mdt
+//             //  |            |                 |        DomainProcessBinding__mdt ------------- DomainProcessBinding__mdt
 //             //  |            |                 |        |
-//             Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcess__mdt>>> domainProcessesToExecuteMap = getDomainProcessMap().get( processContext ).get( domainProcessToken );
+//             Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>> domainProcessesToExecuteMap = getDomainProcessMap().get( processContext ).get( domainProcessToken );
 // 
 //             List<SObject> qualifiedRecords = new List<SObject>();
 // 
@@ -191,7 +191,7 @@ public class DomainProcessCoordinator
 //             mmlib_ICriteria criteriaClazz = null;
 //             mmlib_IAction actionClazz = null;
 // 
-//             DomainProcess__mdt currentDomainProcess = null;
+//             DomainProcessBinding__mdt currentDomainProcess = null;
 // 
 //             for( Integer sequenceKey : sequenceKeysSorted )
 //             {

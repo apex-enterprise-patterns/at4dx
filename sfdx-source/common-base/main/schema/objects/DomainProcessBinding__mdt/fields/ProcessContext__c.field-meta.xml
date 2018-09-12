@@ -14,12 +14,12 @@
             <sorted>false</sorted>
             <value>
                 <fullName>DomainMethodExecution</fullName>
-                <default>true</default>
+                <default>false</default>
                 <label>Domain Method Execution</label>
             </value>
             <value>
                 <fullName>TriggerExecution</fullName>
-                <default>false</default>
+                <default>true</default>
                 <label>Trigger Execution</label>
             </value>
         </valueSetDefinition>
