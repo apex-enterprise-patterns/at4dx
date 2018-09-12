@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>TriggerOperation__c</fullName>
-    <description>For a process context of "trigger execution", you need to specify which trigger operation this criteria or action would respond to.</description>
+    <description>For a process context of &quot;trigger execution&quot;, you need to specify which trigger operation this criteria or action would respond to.</description>
     <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>
-    <inlineHelpText>For a process context of "trigger execution", you need to specify which trigger operation this criteria or action would respond to.</inlineHelpText>
+    <inlineHelpText>For a process context of &quot;trigger execution&quot;, you need to specify which trigger operation this criteria or action would respond to.</inlineHelpText>
     <label>Trigger Operation</label>
     <required>false</required>
     <type>Picklist</type>
@@ -13,37 +13,37 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>AfterDelete</fullName>
+                <fullName>After_Delete</fullName>
                 <default>true</default>
                 <label>After Delete</label>
             </value>
             <value>
-                <fullName>AfterInsert</fullName>
+                <fullName>After_Insert</fullName>
                 <default>false</default>
                 <label>After Insert</label>
             </value>
             <value>
-                <fullName>AfterUndelete</fullName>
+                <fullName>After_Undelete</fullName>
                 <default>false</default>
                 <label>After Undelete</label>
             </value>
             <value>
-                <fullName>AfterUpdate</fullName>
+                <fullName>After_Update</fullName>
                 <default>false</default>
                 <label>After Update</label>
             </value>
             <value>
-                <fullName>BeforeDelete</fullName>
+                <fullName>Before_Delete</fullName>
                 <default>false</default>
                 <label>Before Delete</label>
             </value>
             <value>
-                <fullName>BeforeInsert</fullName>
+                <fullName>Before_Insert</fullName>
                 <default>false</default>
                 <label>Before Insert</label>
             </value>
             <value>
-                <fullName>BeforeUpdate</fullName>
+                <fullName>Before_Update</fullName>
                 <default>false</default>
                 <label>Before Update</label>
             </value>
