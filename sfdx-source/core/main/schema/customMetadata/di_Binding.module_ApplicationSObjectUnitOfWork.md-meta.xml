@@ -12,7 +12,7 @@
     </values>
     <values>
         <field>To__c</field>
-        <value xsi:type="xsd:string">ApplicationSObjectUnitOfWorkDIProvider</value>
+        <value xsi:type="xsd:string">ApplicationSObjectUnitOfWorkDIModule</value>
     </values>
     <values>
         <field>Type__c</field>
