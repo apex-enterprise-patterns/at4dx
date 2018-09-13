@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LogicalInverseValidOnlyOnTypeCriteria</fullName>
+    <active>true</active>
+    <description>The LogicalInverse__c field is only valid when the type is Criteria.</description>
+    <errorConditionFormula>TEXT(Type__c) != "Criteria" &amp;&amp; LogicalInverse__c</errorConditionFormula>
+    <errorDisplayField>LogicalInverse__c</errorDisplayField>
+    <errorMessage>"Logical Inverse" can only be true when Type is "Criteria"</errorMessage>
+</ValidationRule>

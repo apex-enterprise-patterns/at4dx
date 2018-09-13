@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ProcessContext__c</fullName>
+    <description>Represents what type of process will be initiating the execution of the criteria and actions.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Represents what type of process will be initiating the execution of the criteria and actions.</inlineHelpText>
+    <label>Process Context</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>DomainMethodExecution</fullName>
+                <default>false</default>
+                <label>Domain Method Execution</label>
+            </value>
+            <value>
+                <fullName>TriggerExecution</fullName>
+                <default>true</default>
+                <label>Trigger Execution</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

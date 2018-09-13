@@ -1,7 +1,7 @@
 {
   "packageDirectories": [
     {
-      "path": "sfdx-source/common-base",
+      "path": "sfdx-source/core",
       "default": true
     },
     {
@@ -9,7 +9,23 @@
         "default": false
     },
     {
-        "path": "sfdx-source/reference-implementations",
+        "path": "sfdx-source/reference-implementation-common",
+        "default": false
+    },
+    {
+        "path": "sfdx-source/reference-implementation-marketing",
+        "default": false
+    },
+    {
+        "path": "sfdx-source/reference-implementation-sales",
+        "default": false
+    },
+    {
+        "path": "sfdx-source/reference-implementation-service",
+        "default": false
+    },
+    {
+        "path": "sfdx-source/untracked",
         "default": false
     }
   ],

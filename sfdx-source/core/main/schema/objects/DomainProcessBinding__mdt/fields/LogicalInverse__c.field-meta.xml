@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LogicalInverse__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If checked, then the logical inverse of the associated criteria will be used for the criteria.  Basically, instead of the criteria retaining the records, those records will be filtered out of the working set.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>If checked, then the logical inverse of the associated criteria will be used for the criteria.  Basically, instead of the criteria retaining the records, those records will be filtered out of the working set.</inlineHelpText>
+    <label>Logical Inverse</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>MasterLabel</columns>
+    <columns>ClassToInject__c</columns>
+    <columns>IsActive__c</columns>
+    <columns>OrderOfExecution__c</columns>
+    <columns>PreventRecursive__c</columns>
+    <columns>ProcessContext__c</columns>
+    <columns>RelatedDomainBindingSObject__c</columns>
+    <columns>DomainMethodToken__c</columns>
+    <columns>TriggerOperation__c</columns>
+    <columns>Type__c</columns>
+    <columns>ExecuteAsynchronous__c</columns>
+    <columns>Description__c</columns>
+    <columns>LogicalInverse__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

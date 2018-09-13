@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>This custom metadata type is responsible for controlling the dependency injection of domain criteria and actions.</description>
+    <label>Domain Process Binding</label>
+    <pluralLabel>Domain Process Bindings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>
