@@ -9,8 +9,6 @@ public class DefaultAccountSloganBasedOnNameAction
         {
             accountRecord = (Account)record;
             accountRecord.Slogan__c = accountRecord.name + ' is a fishy business';
-
-            this.uow.register(record);
         }
     }
 }
