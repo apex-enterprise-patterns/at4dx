@@ -61,7 +61,7 @@ public class DomainProcessCoordinator
                 domainProcessMap.put( processContext, new Map<String, Map<Integer, Map<DomainProcessConstants.PROCESS_TYPE, Map<Decimal, DomainProcessBinding__mdt>>>>() );
             }
 
-            domainProcessToken = string.isBlank( domainProcess.DomainMethodToken__c ) ? domainProcess.TriggerOperation__c : domainProcess.DomainMethodToken__c;
+            domainProcessToken = ( string.isBlank( domainProcess.DomainMethodToken__c ) ? domainProcess.TriggerOperation__c : domainProcess.DomainMethodToken__c ).toLowerCase();
 
             if ( ! domainProcessMap.get( processContext ).containsKey( domainProcessToken ) )
             {
@@ -135,7 +135,6 @@ public class DomainProcessCoordinator
 
     public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType )
     {
-        System.debug('DPI Flag trigger injection');
         processDomainLogicInjections( processContext, triggerOperationType.name(), null, null );
     }
 
@@ -186,7 +185,17 @@ public class DomainProcessCoordinator
     */
     public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
     {
+        domainProcessToken = domainProcessToken.toLowerCase();
         system.debug( 'mark 1 -- processContext : ' + processContext +  ' -- domainProcessToken : ' + domainProcessToken);
+        if ( getDomainProcessMap().containsKey( processContext ) )
+        {
+            System.debug('processContext is found and domainProcessToken was ' + (getDomainProcessMap().get( processContext ).containsKey( domainProcessToken ) ? 'found' : 'not found'));
+            System.debug('processContext is found and domainProcessToken was ' + (getDomainProcessMap().get( processContext ).keySet() ) );
+        }
+        else 
+        {
+            System.debug('processContext was not found');
+        }
         if ( getDomainProcessMap().containsKey( processContext )
             && getDomainProcessMap().get( processContext ).containsKey( domainProcessToken ) )
         {
