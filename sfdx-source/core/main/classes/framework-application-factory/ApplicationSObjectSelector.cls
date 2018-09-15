@@ -44,11 +44,6 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
         this(true, false, false);
     }
     
-    // public ApplicationSObjectSelector(Boolean includeFieldSetFields) {
-    //     // Disable the base class read security checking in preference to explicit checking elsewhere        
-    //     this(includeFieldSetFields, false, false);
-    // }
-    
     public ApplicationSObjectSelector(Boolean includeFieldSetFields, Boolean enforceCRUD, Boolean enforceFLS) {
         // Disable sorting of selected fields to aid debugging (performance optimisation)
         super(includeFieldSetFields, enforceCRUD, enforceFLS, false);
