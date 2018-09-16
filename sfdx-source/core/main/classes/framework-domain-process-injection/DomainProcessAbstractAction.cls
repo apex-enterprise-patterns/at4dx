@@ -48,10 +48,8 @@ public abstract class DomainProcessAbstractAction
         return this;
     }
 
-    public Boolean run()
+    public void run()
     {
-        Boolean response = false;
-
         if ( ( isRecordsRequired && ! this.records.isEmpty() )
             || ! isRecordsRequired )
         {
@@ -62,15 +60,9 @@ public abstract class DomainProcessAbstractAction
             }
             else
             {
-                response = runInProcess();
+                runInProcess();
             }
         }
-        else
-        {
-            response = true;
-        }
-
-        return response;
     }
 
     public void execute(QueueableContext context)
@@ -95,5 +87,5 @@ public abstract class DomainProcessAbstractAction
         }
     }
 
-    public abstract boolean runInProcess();
+    public abstract void runInProcess();
 }

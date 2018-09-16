@@ -1,74 +1,51 @@
 public class ApplicationSelectorFieldsetDIModule
     extends di_Module
 {
-    public override void configure() 
+    private static Map<SObjectType, Set<String>> FIELDSETNAMES_BY_SOBJECTTYPE_MAP;
+
+    static 
     {
-        Map<SObjectType, Map<String, Schema.FieldSet>> fieldsetMap = new Map<SObjectType, Map<String, Schema.FieldSet>>();
+        FIELDSETNAMES_BY_SOBJECTTYPE_MAP = new Map<SObjectType, Set<String>>();
 
         Map<String, Schema.SObjectType> globalDescribeMap = Schema.getGlobalDescribe();
 
-        for (SelectorConfig_FieldSetInclusion__mdt scfi : getConfigurationRecords())
-        {
-            SObjectType soType = globalDescribeMap.get(scfi.SObjectType__c.toLowerCase());
+        SObjectType soType = null;
 
-            if (soType != null)
+        for (SelectorConfig_FieldSetInclusion__mdt scfi : [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+                                                            , SObjectType__c, FieldsetName__c
+                                                         from SelectorConfig_FieldSetInclusion__mdt
+                                                        where IsActive__c = true
+                                                        order by SObjectType__c, Fieldsetname__c] )
+        {
+            soType = globalDescribeMap.get(scfi.SObjectType__c.toLowerCase());
+
+            if ( soType != null )
             {
-                if (!fieldsetMap.containsKey(soType))
+                if ( ! FIELDSETNAMES_BY_SOBJECTTYPE_MAP.containsKey(soType) )
                 {
-                    fieldsetMap.put(soType, new Map<String, Schema.FieldSet>());
-                    for (Fieldset fs : soType.getDescribe().fieldSets.getMap().values())
-                    {
-                        fieldsetMap.get(soType).put(fs.getName().toLowerCase(), fs);
-                    }
+                    FIELDSETNAMES_BY_SOBJECTTYPE_MAP.put(soType, new Set<String>());
                 }
-                else
+
+                // if the fieldset name does exist
+                if( soType.getDescribe().fieldSets.getMap().containsKey( scfi.FieldsetName__c.toLowerCase() ) )
                 {
-                    System.debug(
-                        LoggingLevel.ERROR, 
-                        'SelectorConfig_FieldSetInclusion record, ' + scfi.DeveloperName + 
-                        ', specifies field set named, ' + scfi.FieldsetName__c + 
-                        ', which was not found for SObject Type, ' + scfi.SObjectType__c);
+                    // ... then add the fieldset to the map
+                    FIELDSETNAMES_BY_SOBJECTTYPE_MAP.get(soType).add( scfi.FieldsetName__c.toLowerCase() );
                 }
             }
-            else
-            {
-                System.debug(
-                    LoggingLevel.ERROR, 
-                    'SelectorConfig_FieldSetInclusion record, ' + scfi.DeveloperName + 
-                    ', specifies SObject Type, ' + scfi.SObjectType__c +
-                    ', but was not found');
-            }
-        }
-
-        for (SelectorConfig_FieldSetInclusion__mdt scfi : getConfigurationRecords())
-        {
-            SObjectType soType = globalDescribeMap.get(scfi.SObjectType__c);
-
-            if (!fieldsetMap.containsKey(soType)) continue;
-            if (!fieldsetMap.get(soType).containsKey(scfi.FieldsetName__c.toLowerCase())) continue;
-
-            apex().bind(globalDescribeMap.get(scfi.SObjectType__c)).bind(Schema.Fieldset.class).data(scfi)
-                .to(fieldsetMap.get(soType).get(scfi.FieldsetName__c.toLowerCase()).getName());
         }
     }
 
-    private List<SelectorConfig_FieldSetInclusion__mdt> configurationRecords = null;
-
-    private List<SelectorConfig_FieldSetInclusion__mdt> getConfigurationRecords()
+    public override void configure() 
     {
-        if (configurationRecords == null)
+        // loop through the FIELDSETNAMES_BY_SOBJECTTYPE_MAP // Map<SObjectType, Set<String>>
+        for (SObjectType sobjTypeKey : FIELDSETNAMES_BY_SOBJECTTYPE_MAP.keySet())
         {
-            configurationRecords =
-            [
-                select
-                    Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName, 
-                    SObjectType__c, FieldsetName__c
-                from SelectorConfig_FieldSetInclusion__mdt
-                where IsActive__c = true
-                order by SObjectType__c, Fieldsetname__c
-            ];
+            for ( String fieldSetName : FIELDSETNAMES_BY_SOBJECTTYPE_MAP.get( sobjTypeKey ) )
+            {
+                apex().bind( sobjTypeKey ).bind( Schema.Fieldset.class )
+                    .to( fieldSetName );
+            }
         }
-
-        return configurationRecords;
     }
 }
