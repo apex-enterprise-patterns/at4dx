@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>FieldsetName__c</field>
-        <value xsi:type="xsd:string">SelectorInclusion_AccountFieldsFromMarketing</value>
+        <value xsi:type="xsd:string">SelectorInclusion_AccountFieldsMarketing</value>
     </values>
     <values>
         <field>IsActive__c</field>
