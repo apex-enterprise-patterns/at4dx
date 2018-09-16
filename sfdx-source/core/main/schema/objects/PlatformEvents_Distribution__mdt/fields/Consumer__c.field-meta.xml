@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consumer__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>The name of the Apex Class that implements mmlib_IEventConsumer that the subscription is operating on behalf of.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>The name of the Apex Class that implements mmlib_IEventConsumer that the subscription is operating on behalf of.</inlineHelpText>
+    <label>Consumer</label>
+    <length>255</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>
