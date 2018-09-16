@@ -14,7 +14,7 @@ public class PlatformEventDistributor
     {
         Map<String, List<PlatformEvents_Distribution__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Distribution__mdt>>();
 
-        for ( di_Binding binding : di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get() )
+        for (di_Binding binding : di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get())
         {
             PlatformEvents_Distribution__mdt pedConfig = (PlatformEvents_Distribution__mdt) binding.Data;
 
@@ -24,6 +24,8 @@ public class PlatformEventDistributor
             }
 
             eventBusToConfigurationMap.get(pedConfig.RelatedPlatformEventBus__c).add(pedConfig);
+
+            System.debug(eventBusToConfigurationMap);
         }
     }
 
@@ -31,7 +33,7 @@ public class PlatformEventDistributor
     {
         if (Trigger.isExecuting && Trigger.isAfter && Trigger.isInsert)
         {
-            triggerHandler( trigger.new );
+            triggerHandler(trigger.new);
         }
     }
 
