@@ -27,11 +27,9 @@ public class PlatformEventDistributorDIModule
                 continue;
             }
 
-            apex();
-            bind(bindingConfigWrapper.RelatedPlatformEventBus);
-            bind(IEventsConsumer.class);
-            data(bindingConfigWrapper.record);
-            to(bindingConfigWrapper.Consumer);
+            apex().bind(bindingConfigWrapper.RelatedPlatformEventBus).bind(IEventsConsumer.class)
+                .data(bindingConfigWrapper.record)
+                .to(bindingConfigWrapper.Consumer);
         }
     }
 
