@@ -4,10 +4,14 @@
     <protected>false</protected>
     <values>
         <field>Consumer__c</field>
-        <value xsi:type="xsd:string">PlatformEventsConsumer</value>
+        <value xsi:type="xsd:string">Sales_PlatformEventsConsumer</value>
     </values>
     <values>
-        <field>EventSObjectCategory__c</field>
+        <field>EventBus__c</field>
+        <value xsi:type="xsd:string">Event__e</value>
+    </values>
+    <values>
+        <field>EventCategory__c</field>
         <value xsi:nil="true"/>
     </values>
     <values>
@@ -20,10 +24,6 @@
     </values>
     <values>
         <field>MatcherRule__c</field>
-        <value xsi:type="xsd:string">Match Platform Event Bus and Event Name</value>
-    </values>
-    <values>
-        <field>RelatedPlatformEventBus__c</field>
-        <value xsi:type="xsd:string">All</value>
+        <value xsi:type="xsd:string">MatchEventBusAndEventName</value>
     </values>
 </CustomMetadata>

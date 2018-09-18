@@ -32,7 +32,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Required</behavior>
-                <field>RelatedPlatformEventBus__c</field>
+                <field>EventBus__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

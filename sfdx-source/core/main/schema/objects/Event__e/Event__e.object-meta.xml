@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>The standard event bus for the org.</description>
+    <eventType>StandardVolume</eventType>
+    <label>Event</label>
+    <pluralLabel>Events</pluralLabel>
+</CustomObject>

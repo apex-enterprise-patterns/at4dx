@@ -13,24 +13,24 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Match Platform Event Bus and Related SObject and Event Name</fullName>
+                <fullName>MatchEventBusAndCategoryAndEventName</fullName>
                 <default>true</default>
-                <label>Match Platform Event Bus and Related SObject and Event Name</label>
+                <label>Match Event Bus and Category and Event Name</label>
             </value>
             <value>
-                <fullName>Match Platform Event Bus and Related SObject</fullName>
+                <fullName>MatchEventBusAndCategory</fullName>
                 <default>false</default>
-                <label>Match Platform Event Bus and Related SObject</label>
+                <label>Match Event Bus and Category</label>
             </value>
             <value>
-                <fullName>Match Platform Event Bus and Event Name</fullName>
+                <fullName>MatchEventBusAndEventName</fullName>
                 <default>false</default>
-                <label>Match Platform Event Bus and Event Name</label>
+                <label>Match Event Bus and Event Name</label>
             </value>
             <value>
-                <fullName>Match Platform Event Bus Only</fullName>
+                <fullName>MatchEventBus</fullName>
                 <default>false</default>
-                <label>Match Platform Event Bus Only</label>
+                <label>Match Event Bus</label>
             </value>
         </valueSetDefinition>
     </valueSet>

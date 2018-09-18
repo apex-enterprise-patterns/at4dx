@@ -9,12 +9,12 @@ public class PlatformEventDistributorDIModule
         {
             // Validate the distribution record first.
 
-            if (String.isBlank(bindingConfigWrapper.RelatedPlatformEventBus))
+            if (String.isBlank(bindingConfigWrapper.EventBus))
             {
                 System.debug(
                     LoggingLevel.WARN, 
                     SObjectType.PlatformEvents_Distribution__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Distribution__mdt.RelatedPlatformEventBus__c.getDescribe().getLabel());
+                    ', does not have required field, ' + PlatformEvents_Distribution__mdt.EventBus__c.getDescribe().getLabel());
                 continue;
             }
 
@@ -27,9 +27,11 @@ public class PlatformEventDistributorDIModule
                 continue;
             }
 
-            apex().bind(bindingConfigWrapper.RelatedPlatformEventBus).bind(IEventsConsumer.class)
-                .data(bindingConfigWrapper.record)
-                .to(bindingConfigWrapper.Consumer);
+            apex();
+            bind(bindingConfigWrapper.EventBus);
+            bind(IEventsConsumer.class);
+            data(bindingConfigWrapper.record);
+            to(bindingConfigWrapper.Consumer);
         }
     }
 
@@ -42,7 +44,7 @@ public class PlatformEventDistributorDIModule
             PlatformEvents_Distribution__mdt bindingConfig
             :
             [select 
-                DeveloperName, Consumer__c, Event__c, EventSObjectCategory__c, MatcherRule__c, RelatedPlatformEventBus__c
+                DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c 
                 from PlatformEvents_Distribution__mdt where IsActive__c = true]
         )
         {
@@ -60,9 +62,9 @@ public class PlatformEventDistributorDIModule
         public String DeveloperName = null;
         public String Consumer = null;
         public String Event = null;
-        public String EventSObjectCategory = null;
+        public String EventCategory = null;
         public String MatcherRule = null;
-        public String RelatedPlatformEventBus = null;
+        public String EventBus = null;
         public PlatformEvents_Distribution__mdt record = null;
 
         public ConfigWrapper(PlatformEvents_Distribution__mdt bindingConfig)
@@ -70,9 +72,9 @@ public class PlatformEventDistributorDIModule
             this.DeveloperName = bindingConfig.DeveloperName;
             this.Consumer = bindingConfig.Consumer__c;
             this.Event = bindingConfig.Event__c;
-            this.EventSObjectCategory = bindingConfig.EventSObjectCategory__c;
+            this.EventCategory = bindingConfig.EventCategory__c;
             this.MatcherRule = bindingConfig.MatcherRule__c;
-            this.RelatedPlatformEventBus = bindingConfig.RelatedPlatformEventBus__c;
+            this.EventBus = bindingConfig.EventBus__c;
             this.record = bindingConfig;
         }
 
@@ -81,17 +83,17 @@ public class PlatformEventDistributorDIModule
             String DeveloperName,
             String Consumer,
             String Event,
-            String EventSObjectCategory,
+            String EventCategory,
             String MatcherRule,
-            String RelatedPlatformEventBus
+            String EventBus
         )
         {
             this.DeveloperName = DeveloperName;
             this.Consumer = Consumer;
             this.Event = Event;
-            this.EventSObjectCategory = EventSObjectCategory;
+            this.EventCategory = EventCategory;
             this.MatcherRule = MatcherRule;
-            this.RelatedPlatformEventBus = RelatedPlatformEventBus;
+            this.EventBus = EventBus;
             this.record = new PlatformEvents_Distribution__mdt();
         }
     }
