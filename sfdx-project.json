@@ -23,10 +23,6 @@
     {
         "path": "sfdx-source/reference-implementation-service",
         "default": false
-    },
-    {
-        "path": "sfdx-source/untracked",
-        "default": false
     }
   ],
   "namespace": "",
