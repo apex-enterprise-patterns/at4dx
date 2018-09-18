@@ -13,6 +13,9 @@ public class PlatformEventDistributor
 
     private Map<String, List<PlatformEvents_Distribution__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Distribution__mdt>>();
 
+    @TestVisible
+    private List<Id> jobIdList = new List<Id>();
+
     public PlatformEventDistributor()
     {
         Map<String, List<PlatformEvents_Distribution__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Distribution__mdt>>();
@@ -49,7 +52,7 @@ public class PlatformEventDistributor
 
         // extract the event payloads
         Set<String> eventNameSet = generateStringSetFromField(events, Event__e.EventName__c, false);
-        Set<String> relatedSObjectSet = generateStringSetFromField(events, Event__e.Category__c, false);
+        Set<String> eventCategorySet = generateStringSetFromField(events, Event__e.Category__c, false);
 
         Schema.DescribeSObjectResult platformEventBusDescribe = events.getSobjectType().getDescribe();
 
@@ -69,11 +72,18 @@ public class PlatformEventDistributor
             ]
         )
         {
-            if (relatedSObjectSet.contains(ped.EventCategory__c) || eventNameSet.contains(ped.Event__c))
+            if (eventCategorySet.contains(ped.EventCategory__c) || eventNameSet.contains(ped.Event__c))
             {
                 eventDistributionRecords.add(ped);
             }
         }
+
+        System.debug(
+            '\neventNameSet:\n\t' + eventNameSet + '\n' +
+            'eventCategorySet:\n\t' + eventCategorySet + '\n' +
+            'CMDT records:\n\t' + [select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c from PlatformEvents_Distribution__mdt] + '\n' +
+            'Event bus name: ' + platformEventBusDescribe.getName() + '\n' +
+            'eventDistributionRecords:\n\t' + eventDistributionRecords);
 
         IEventsConsumer consumer = null;
 
@@ -91,9 +101,8 @@ public class PlatformEventDistributor
             {
                 System.debug(
                     'Comparing ...\n' +
-                    // 'platformEventBusDescribe:\n\t' + platformEventBusDescribe + '\n' +
-                    'platformEventBusAvailableFieldsSet:\n' + new List<String>(platformEventBusAvailableFieldsSet) +
-                    'platformEventBusDescribe.getName():\n\t' + platformEventBusDescribe.getName() + '\n' +
+                    'platformEventBusAvailableFieldsSet:\n\t' + new List<String>(platformEventBusAvailableFieldsSet) + '\n' +
+                    'platformEventBusDescribe.getName(): ' + platformEventBusDescribe.getName() + '\n' +
                     'subscriptionRecord:\n\t' + subscriptionRecord + '\n' +
                     'event:\n\t' + event);
 
@@ -162,9 +171,7 @@ public class PlatformEventDistributor
                     consumer.setEvents( eventBatchForSubscriber );
 
                     //  and then enqueue the consumer class
-                    Id jobId = System.enqueueJob( consumer );
-
-                    System.debug('<ojs> job enqueued: ' + jobId);
+                    jobIdList.add(System.enqueueJob( consumer ));
                 }
                 catch (Exception e)
                 {
@@ -174,6 +181,8 @@ public class PlatformEventDistributor
                 }
             }
         }
+
+        System.debug('<ojs> jobIdList: ' + jobIdList);
     }
 
     private static Set<String> generateStringSetFromField(List<SObject> sobjList, SObjectField sobjField, Boolean includeBlankValues)

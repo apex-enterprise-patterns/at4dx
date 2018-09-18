@@ -12,11 +12,11 @@
     </values>
     <values>
         <field>EventCategory__c</field>
-        <value xsi:nil="true"/>
+        <value xsi:type="xsd:string">Account</value>
     </values>
     <values>
         <field>Event__c</field>
-        <value xsi:type="xsd:string">Account_Slogan_Has_Changed</value>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>IsActive__c</field>
@@ -24,6 +24,6 @@
     </values>
     <values>
         <field>MatcherRule__c</field>
-        <value xsi:type="xsd:string">MatchEventBusAndEventName</value>
+        <value xsi:type="xsd:string">MatchEventBusAndCategory</value>
     </values>
 </CustomMetadata>
