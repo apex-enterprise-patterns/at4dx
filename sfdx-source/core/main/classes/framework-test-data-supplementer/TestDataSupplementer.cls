@@ -25,7 +25,7 @@ public class TestDataSupplementer
         }
     }
 
-    public static void supplement (List<SObject> sobjectList)
+    public static void supplement(List<SObject> sobjectList)
     {
         if (sobjectList != null && !sobjectList.isEmpty())
         {
