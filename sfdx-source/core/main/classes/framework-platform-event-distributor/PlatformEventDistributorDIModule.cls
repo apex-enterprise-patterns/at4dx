@@ -7,14 +7,14 @@ public class PlatformEventDistributorDIModule
 
         for (ConfigWrapper bindingConfigWrapper : getConfigurationList())
         {
-            // Validate the distribution record first.
+            // Validate the subscription record first.
 
             if (String.isBlank(bindingConfigWrapper.EventBus))
             {
                 System.debug(
                     LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Distribution__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Distribution__mdt.EventBus__c.getDescribe().getLabel());
+                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
+                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel());
                 continue;
             }
 
@@ -22,8 +22,8 @@ public class PlatformEventDistributorDIModule
             {
                 System.debug(
                     LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Distribution__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Distribution__mdt.Consumer__c.getDescribe().getLabel());
+                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
+                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel());
                 continue;
             }
 
@@ -41,11 +41,11 @@ public class PlatformEventDistributorDIModule
         List<ConfigWrapper> result = new List<ConfigWrapper>();
 
         for (
-            PlatformEvents_Distribution__mdt bindingConfig
+            PlatformEvents_Subscription__mdt bindingConfig
             :
             [select 
                 DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c 
-                from PlatformEvents_Distribution__mdt where IsActive__c = true]
+                from PlatformEvents_Subscription__mdt where IsActive__c = true]
         )
         {
             result.add(new ConfigWrapper(bindingConfig));
@@ -65,9 +65,9 @@ public class PlatformEventDistributorDIModule
         public String EventCategory = null;
         public String MatcherRule = null;
         public String EventBus = null;
-        public PlatformEvents_Distribution__mdt record = null;
+        public PlatformEvents_Subscription__mdt record = null;
 
-        public ConfigWrapper(PlatformEvents_Distribution__mdt bindingConfig)
+        public ConfigWrapper(PlatformEvents_Subscription__mdt bindingConfig)
         {
             this.DeveloperName = bindingConfig.DeveloperName;
             this.Consumer = bindingConfig.Consumer__c;
@@ -94,7 +94,7 @@ public class PlatformEventDistributorDIModule
             this.EventCategory = EventCategory;
             this.MatcherRule = MatcherRule;
             this.EventBus = EventBus;
-            this.record = new PlatformEvents_Distribution__mdt();
+            this.record = new PlatformEvents_Subscription__mdt();
         }
     }
 

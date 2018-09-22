@@ -11,22 +11,22 @@ public class PlatformEventDistributor
     private static string CATEGORY_FIELD_NAME = 'Category__c'.toLowerCase();
     private static string EVENT_NAME_FIELD_NAME = 'EventName__c'.toLowerCase();
 
-    private Map<String, List<PlatformEvents_Distribution__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Distribution__mdt>>();
+    private Map<String, List<PlatformEvents_Subscription__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Subscription__mdt>>();
 
     @TestVisible
     private List<Id> jobIdList = new List<Id>();
 
     public PlatformEventDistributor()
     {
-        Map<String, List<PlatformEvents_Distribution__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Distribution__mdt>>();
+        Map<String, List<PlatformEvents_Subscription__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Subscription__mdt>>();
 
         for (di_Binding binding : di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get())
         {
-            PlatformEvents_Distribution__mdt pedConfig = (PlatformEvents_Distribution__mdt) binding.Data;
+            PlatformEvents_Subscription__mdt pedConfig = (PlatformEvents_Subscription__mdt) binding.Data;
 
             if (!eventBusToConfigurationMap.containsKey(pedConfig.EventBus__c))
             {
-                eventBusToConfigurationMap.put(pedConfig.EventBus__c, new List<PlatformEvents_Distribution__mdt>());
+                eventBusToConfigurationMap.put(pedConfig.EventBus__c, new List<PlatformEvents_Subscription__mdt>());
             }
 
             eventBusToConfigurationMap.get(pedConfig.EventBus__c).add(pedConfig);
@@ -56,34 +56,34 @@ public class PlatformEventDistributor
 
         Schema.DescribeSObjectResult platformEventBusDescribe = events.getSobjectType().getDescribe();
 
-        // need to read all available PlatformEvents_Distribution__mdt records for this event SObjectType
+        // need to read all available PlatformEvents_Subscription__mdt records for this event SObjectType
         // SOQL targeting custom MDT tables does not support the OR operator.  Manually filter.
         // https://help.salesforce.com/articleView?id=custommetadatatypes_limitations.htm
-        List<PlatformEvents_Distribution__mdt> eventDistributionRecords = new List<PlatformEvents_Distribution__mdt>();
+        List<PlatformEvents_Subscription__mdt> eventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
         for
         (
-            PlatformEvents_Distribution__mdt ped
+            PlatformEvents_Subscription__mdt ped
             :
             [
                 select
                     Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c
-                from PlatformEvents_Distribution__mdt
+                from PlatformEvents_Subscription__mdt
                 where IsActive__c = true AND EventBus__c = :platformEventBusDescribe.getName()
             ]
         )
         {
             if (eventCategorySet.contains(ped.EventCategory__c) || eventNameSet.contains(ped.Event__c))
             {
-                eventDistributionRecords.add(ped);
+                eventSubscriptionRecords.add(ped);
             }
         }
 
         System.debug(
             '\neventNameSet:\n\t' + eventNameSet + '\n' +
             'eventCategorySet:\n\t' + eventCategorySet + '\n' +
-            'CMDT records:\n\t' + [select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c from PlatformEvents_Distribution__mdt] + '\n' +
+            'CMDT records:\n\t' + [select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c from PlatformEvents_Subscription__mdt] + '\n' +
             'Event bus name: ' + platformEventBusDescribe.getName() + '\n' +
-            'eventDistributionRecords:\n\t' + eventDistributionRecords);
+            'eventSubscriptionRecords:\n\t' + eventSubscriptionRecords);
 
         IEventsConsumer consumer = null;
 
@@ -91,8 +91,8 @@ public class PlatformEventDistributor
 
         Set<String> platformEventBusAvailableFieldsSet = platformEventBusDescribe.fields.getMap().keyset();
 
-        // for each PlatformEvents_Distribution__mdt record, instantiate the Apex class found in the Consumer field
-        for ( PlatformEvents_Distribution__mdt subscriptionRecord : eventDistributionRecords )
+        // for each PlatformEvents_Subscription__mdt record, instantiate the Apex class found in the Consumer field
+        for ( PlatformEvents_Subscription__mdt subscriptionRecord : eventSubscriptionRecords )
         {
             eventBatchForSubscriber.clear();
 
