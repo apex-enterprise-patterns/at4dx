@@ -27,7 +27,6 @@ public with sharing class AccountsSelector
 
     public List<Account> selectById(Set<Id> idSet)
     {
-        // How do we incorporate fieldsets here, using the abstract functionality?
         return (List<Account>) selectSObjectsById( idSet == null ? new Set<Id>() : idSet );
     }
 
@@ -42,8 +41,5 @@ public with sharing class AccountsSelector
 
         qf.setCondition( Account.Name + ' in :nameSet');
         return Database.query(qf.toSOQL());
-
-        // The above is not as fluid as ...
-        // return Database.query(newQueryFactory().selectFieldSets(sObjectFieldSetList).setCondition( Account.Name + ' in :nameSet').toSOQL());
     }
 }
