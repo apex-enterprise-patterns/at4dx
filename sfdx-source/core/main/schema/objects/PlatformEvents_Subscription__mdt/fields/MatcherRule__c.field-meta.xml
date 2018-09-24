@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MatcherRule__c</fullName>
+    <description>This determines which fields must match the event in order for it to be distributed to the consumer.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>This determines which fields must match the event in order for it to be distributed to the consumer.</inlineHelpText>
+    <label>Matcher Rule</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>MatchEventBusAndCategoryAndEventName</fullName>
+                <default>true</default>
+                <label>Match Event Bus and Category and Event Name</label>
+            </value>
+            <value>
+                <fullName>MatchEventBusAndCategory</fullName>
+                <default>false</default>
+                <label>Match Event Bus and Category</label>
+            </value>
+            <value>
+                <fullName>MatchEventBusAndEventName</fullName>
+                <default>false</default>
+                <label>Match Event Bus and Event Name</label>
+            </value>
+            <value>
+                <fullName>MatchEventBus</fullName>
+                <default>false</default>
+                <label>Match Event Bus</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
