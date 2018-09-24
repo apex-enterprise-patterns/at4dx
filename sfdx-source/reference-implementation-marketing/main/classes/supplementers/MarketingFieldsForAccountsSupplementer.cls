@@ -1,5 +1,5 @@
 @IsTest
-public class AccountsSupplementer
+public class MarketingFieldsForAccountsSupplementer
     implements ITestDataSupplement
 {
     public void supplement(List<SObject> accountSObjectList)
