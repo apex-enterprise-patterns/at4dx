@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EventCategory__c</fullName>
+    <description>Specifies a division for further matching options.  Typically this will be the related SObject name (Example: &quot;Account&quot;, &quot;Intake__c&quot;), but may represent a non-SObject, arbitrary, category (Example: &quot;SalesActivity&quot;)..  This helps to filter subscriptions better.</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Specifies a division for further matching options.  Typically this will be the related SObject name (Example: &quot;Account&quot;, &quot;Intake__c&quot;), but may represent a non-SObject, arbitrary, category (Example: &quot;SalesActivity&quot;)..  This helps to filter subscriptions be</inlineHelpText>
+    <label>Event Category</label>
+    <length>255</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
