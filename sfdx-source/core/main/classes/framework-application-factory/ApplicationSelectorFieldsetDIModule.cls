@@ -14,8 +14,7 @@ public class ApplicationSelectorFieldsetDIModule
         for (SelectorConfig_FieldSetInclusion__mdt scfi : [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                                 , SObjectType__c, SObjectType__r.QualifiedApiName, FieldsetName__c
                                                              from SelectorConfig_FieldSetInclusion__mdt
-                                                            where IsActive__c = true
-                                                            order by SObjectType__r.QualifiedApiName, Fieldsetname__c] )
+                                                            where IsActive__c = true] )
         {
             soType = globalDescribeMap.get(scfi.SObjectType__r.QualifiedApiName.toLowerCase());
 
