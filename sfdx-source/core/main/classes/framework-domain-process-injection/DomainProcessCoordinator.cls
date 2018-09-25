@@ -28,9 +28,9 @@ public class DomainProcessCoordinator
         list<DomainProcessBinding__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                          , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
                                                          , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
-                                                         , RelatedDomainBindingSObject__c, TriggerOperation__c, Type__c
+                                                         , RelatedDomainBindingSObject__c, RelatedDomainBindingSObject__r.QualifiedApiName, TriggerOperation__c, Type__c
                                                       from DomainProcessBinding__mdt
-                                                     where RelatedDomainBindingSObject__c = :this.sObjectDomain.getSObjectDescribe().getName()
+                                                     where RelatedDomainBindingSObject__r.QualifiedApiName = :this.sObjectDomain.getSObjectDescribe().getName()
                                                        and IsActive__c = true
                                                      order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c];
 

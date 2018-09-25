@@ -12,12 +12,11 @@ public class ApplicationSelectorFieldsetDIModule
         SObjectType soType = null;
 
         for (SelectorConfig_FieldSetInclusion__mdt scfi : [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
-                                                            , SObjectType__c, FieldsetName__c
-                                                         from SelectorConfig_FieldSetInclusion__mdt
-                                                        where IsActive__c = true
-                                                        order by SObjectType__c, Fieldsetname__c] )
+                                                                , SObjectType__c, SObjectType__r.QualifiedApiName, FieldsetName__c
+                                                             from SelectorConfig_FieldSetInclusion__mdt
+                                                            where IsActive__c = true] )
         {
-            soType = globalDescribeMap.get(scfi.SObjectType__c.toLowerCase());
+            soType = globalDescribeMap.get(scfi.SObjectType__r.QualifiedApiName.toLowerCase());
 
             if ( soType != null )
             {

@@ -55,17 +55,20 @@ public class ApplicationSObjectUnitOfWorkDIProvider
             this.sObjTypesParam = new List<Schema.SObjectType>();
             Schema.DescribeSobjectResult[] sobjDescribe = null;
 
-            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSequence__c, BindingSObject__c 
-                                                                            from ApplicationFactory_UnitOfWorkBinding__mdt
-                                                                            order by BindingSequence__c])
+            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSequence__c
+                                                                                  , BindingSObject__c, BindingSObject__r.QualifiedApiName
+                                                                               from ApplicationFactory_UnitOfWorkBinding__mdt
+                                                                              order by BindingSequence__c])
             {
                 if (String.isNotBlank(bindingConfig.BindingSObject__c)) 
                 {
-                    sobjDescribe = Schema.describeSObjects(new String[] { bindingConfig.BindingSObject__c.toLowerCase().trim() });
+                    sobjDescribe = Schema.describeSObjects(new String[] { bindingConfig.BindingSObject__r.QualifiedApiName.toLowerCase().trim() });
 
                     if(sobjDescribe.size() != 1) 
                     {
-                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingConfig.BindingSObject__c + ' referened by binding ' + bindingConfig.DeveloperName + ' for ApplicationSObjectUnitOfWorkDIModule di_Injectory module.');
+                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingConfig.BindingSObject__r.QualifiedApiName 
+                                                                     + ' referened by binding ' + bindingConfig.DeveloperName 
+                                                                     + ' for ApplicationSObjectUnitOfWorkDIModule di_Injectory module.');
                     }
                     this.sObjTypesParam.add( sobjDescribe[0].getSObjectType() );
                 }
