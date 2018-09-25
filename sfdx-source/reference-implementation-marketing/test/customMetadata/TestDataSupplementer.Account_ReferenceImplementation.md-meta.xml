@@ -12,6 +12,6 @@
     </values>
     <values>
         <field>SupplementingClass__c</field>
-        <value xsi:type="xsd:string">AccountsSupplementer</value>
+        <value xsi:type="xsd:string">MarketingFieldsForAccountsSupplementer</value>
     </values>
 </CustomMetadata>
