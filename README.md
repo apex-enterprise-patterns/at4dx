@@ -16,7 +16,7 @@ Project Folders
 
 Setup
 -----
-This [wiki article gives](https://github.com/ImJohnMDaniel/advanced-techniques-to-adopt-salesforcedx-unlocked-packages/wiki/Environment-Setup) instructions on how to setup the codebase in a SalesforceDX Scratch org.
+This [wiki article](https://github.com/ImJohnMDaniel/advanced-techniques-to-adopt-salesforcedx-unlocked-packages/wiki/Environment-Setup) gives instructions on how to setup the codebase in a SalesforceDX Scratch org.
 
 
 
