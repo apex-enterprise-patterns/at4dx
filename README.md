@@ -1,7 +1,7 @@
 # Advanced Techniques To Adopt SalesforceDX Unlocked Packages
 This is an example set of code to demonstrate the techniques that [@ImJohnMDaniel](https://twitter.com/ImJohnMDaniel) and [@Stohn777](https://twitter.com/stohn777) used to adopt Salesforce DX Unlocked Packages.
 
-The Wiki for this codebase goes over these concepts in depth.
+The [Wiki](https://github.com/ImJohnMDaniel/advanced-techniques-to-adopt-salesforcedx-unlocked-packages/wiki) for this codebase goes over these concepts in depth.
 
 Project Folders
 ---------------
@@ -16,7 +16,7 @@ Project Folders
 
 Setup
 -----
-
+This [wiki article gives](https://github.com/ImJohnMDaniel/advanced-techniques-to-adopt-salesforcedx-unlocked-packages/wiki/Environment-Setup) instructions on how to setup the codebase in a SalesforceDX Scratch org.
 
 
 
