@@ -14,7 +14,8 @@ public class TestDataSupplementer
         )
         {
             TestDataSupplementer__mdt tds_mdt = (TestDataSupplementer__mdt) binding.Data;
-            SObjectType sobjType = Schema.getGlobalDescribe().get(tds_mdt.BindingSObjectType__c);
+
+            SObjectType sobjType = Schema.getGlobalDescribe().get( String.isNotBlank(tds_mdt.BindingSObject__c) ? tds_mdt.BindingSObject__c : tds_mdt.BindingSObjectAlternate__c );
 
             if (!supplementerMap.containsKey(sobjType))
             {

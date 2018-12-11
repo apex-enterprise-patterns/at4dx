@@ -3,7 +3,8 @@
     <fullName>All</fullName>
     <columns>MasterLabel</columns>
     <columns>DeveloperName</columns>
-    <columns>SObjectType__c</columns>
+    <columns>BindingSObject__c</columns>
+    <columns>BindingSObjectAlternate__c</columns>
     <columns>FieldsetName__c</columns>
     <columns>IsActive__c</columns>
     <filterScope>Everything</filterScope>

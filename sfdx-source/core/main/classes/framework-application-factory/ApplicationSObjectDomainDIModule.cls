@@ -9,17 +9,21 @@ public class ApplicationSObjectDomainDIModule
     {
         Schema.DescribeSobjectResult[] results = null;
 
+        String bindingSObjectAPIName = null;
+
         for ( ApplicationFactory_DomainBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c
-                                                                          , BindingSObject__c, BindingSObject__r.QualifiedApiName
+                                                                          , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
                                                                        from ApplicationFactory_DomainBinding__mdt])
         {
+            bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
+
             apex();
-            if (String.isNotBlank(bindingConfig.BindingSObject__c)) 
+            if (String.isNotBlank(bindingSObjectAPIName)) 
             {
-                results = Schema.describeSObjects(new String[] { bindingConfig.BindingSObject__r.QualifiedApiName.toLowerCase().trim() });
+                results = Schema.describeSObjects(new String[] { bindingSObjectAPIName.toLowerCase().trim() });
                 if(results.size() != 1) 
                 {
-                    throw new di_Injector.InjectorException('Failed to find SObject ' + bindingConfig.BindingSObject__r.QualifiedApiName 
+                    throw new di_Injector.InjectorException('Failed to find SObject ' + bindingSObjectAPIName 
                                                                  + ' referened by binding ' + bindingConfig.DeveloperName 
                                                                  + ' for ApplicationSObjectDomainDIModule di_Injectory module.');
                 }

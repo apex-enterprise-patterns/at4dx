@@ -9,7 +9,7 @@
     <referenceTo>EntityDefinition</referenceTo>
     <relationshipLabel>ApplicationFactory_UnitOfWorkBindings</relationshipLabel>
     <relationshipName>ApplicationFactory_UnitOfWorkBindings</relationshipName>
-    <required>true</required>
+    <required>false</required>
     <type>MetadataRelationship</type>
     <unique>true</unique>
 </CustomField>

@@ -3,8 +3,12 @@
     <label>Account - ReferenceImplementation</label>
     <protected>false</protected>
     <values>
-        <field>BindingSObjectType__c</field>
+        <field>BindingSObject__c</field>
         <value xsi:type="xsd:string">Account</value>
+    </values>
+    <values>
+        <field>BindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
     </values>
     <values>
         <field>Sequence__c</field>

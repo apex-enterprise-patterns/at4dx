@@ -7,6 +7,10 @@
         <value xsi:type="xsd:string">Account</value>
     </values>
     <values>
+        <field>BindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>BindingSequence__c</field>
         <value xsi:type="xsd:double">10.0</value>
     </values>

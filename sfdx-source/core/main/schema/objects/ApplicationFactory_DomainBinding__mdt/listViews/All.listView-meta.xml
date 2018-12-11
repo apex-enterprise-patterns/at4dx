@@ -4,6 +4,7 @@
     <columns>MasterLabel</columns>
     <columns>DeveloperName</columns>
     <columns>BindingSObject__c</columns>
+    <columns>BindingSObjectAlternate__c</columns>
     <columns>To__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>

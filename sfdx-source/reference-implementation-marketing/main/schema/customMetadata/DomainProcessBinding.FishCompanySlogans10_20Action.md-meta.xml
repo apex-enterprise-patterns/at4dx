@@ -39,6 +39,10 @@
         <value xsi:type="xsd:string">TriggerExecution</value>
     </values>
     <values>
+        <field>RelatedDomainBindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>RelatedDomainBindingSObject__c</field>
         <value xsi:type="xsd:string">Account</value>
     </values>

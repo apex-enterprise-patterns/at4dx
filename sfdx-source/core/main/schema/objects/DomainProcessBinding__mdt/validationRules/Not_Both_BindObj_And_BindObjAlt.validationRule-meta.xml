@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Not_Both_BindObj_And_BindObjAlt</fullName>
+    <active>true</active>
+    <description>This validation rule ensures that only the &quot;Related Domain Binding SObject&quot; or the &quot;Related Domain Binding SObject Alternate&quot; field is specified and not both.</description>
+    <errorConditionFormula>NOT( ISBLANK( RelatedDomainBindingSObject__c ) ) &amp;&amp; NOT( ISBLANK( RelatedDomainBindingSObjectAlternate__c ) )</errorConditionFormula>
+    <errorMessage>Only specify the &quot;Related Domain Binding SObject&quot; field or the &quot;Related Domain Binding SObject Alternate&quot; field; not both.</errorMessage>
+</ValidationRule>

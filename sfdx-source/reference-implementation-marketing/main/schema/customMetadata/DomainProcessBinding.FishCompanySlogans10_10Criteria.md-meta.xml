@@ -43,7 +43,10 @@
         <value xsi:type="xsd:string">Account</value>
     </values>
     <values>
-        <field>TriggerOperation__c</field>
+        <field>RelatedDomainBindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>        <field>TriggerOperation__c</field>
         <value xsi:type="xsd:string">Before_Insert</value>
     </values>
     <values>
