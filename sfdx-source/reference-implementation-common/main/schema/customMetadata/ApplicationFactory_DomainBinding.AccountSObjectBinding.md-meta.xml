@@ -3,6 +3,10 @@
     <label>AccountSObjectBinding</label>
     <protected>false</protected>
     <values>
+        <field>BindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>BindingSObject__c</field>
         <value xsi:type="xsd:string">Account</value>
     </values>

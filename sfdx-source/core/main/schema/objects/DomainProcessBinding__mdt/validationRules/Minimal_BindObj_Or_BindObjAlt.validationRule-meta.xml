@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Minimal_BindObj_Or_BindObjAlt</fullName>
+    <active>true</active>
+    <description>This validation rule ensures that at least the &quot;Related Domain Binding SObject&quot; or the &quot;Related Domain Binding SObject Alternate&quot; field is specified.</description>
+    <errorConditionFormula>ISBLANK( RelatedDomainBindingSObject__c ) &amp;&amp; ISBLANK(  RelatedDomainBindingSObjectAlternate__c )</errorConditionFormula>
+    <errorMessage>Either the &quot;Related Domain Binding SObject&quot; field or the &quot;Related Domain Binding SObject Alternate&quot; field must be specified.</errorMessage>
+</ValidationRule>

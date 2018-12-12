@@ -55,18 +55,22 @@ public class ApplicationSObjectUnitOfWorkDIProvider
             this.sObjTypesParam = new List<Schema.SObjectType>();
             Schema.DescribeSobjectResult[] sobjDescribe = null;
 
+            String bindingSObjectAPIName = null;
+
             for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSequence__c
-                                                                                  , BindingSObject__c, BindingSObject__r.QualifiedApiName
+                                                                                  , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
                                                                                from ApplicationFactory_UnitOfWorkBinding__mdt
                                                                               order by BindingSequence__c])
             {
-                if (String.isNotBlank(bindingConfig.BindingSObject__c)) 
+                bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
+
+                if (String.isNotBlank(bindingSObjectAPIName)) 
                 {
-                    sobjDescribe = Schema.describeSObjects(new String[] { bindingConfig.BindingSObject__r.QualifiedApiName.toLowerCase().trim() });
+                    sobjDescribe = Schema.describeSObjects(new String[] { bindingSObjectAPIName.toLowerCase().trim() });
 
                     if(sobjDescribe.size() != 1) 
                     {
-                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingConfig.BindingSObject__r.QualifiedApiName 
+                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingSObjectAPIName 
                                                                      + ' referened by binding ' + bindingConfig.DeveloperName 
                                                                      + ' for ApplicationSObjectUnitOfWorkDIModule di_Injectory module.');
                     }

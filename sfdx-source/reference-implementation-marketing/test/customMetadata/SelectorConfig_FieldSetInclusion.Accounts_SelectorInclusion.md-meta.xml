@@ -3,15 +3,19 @@
     <label>Accounts - SelectorInclusion</label>
     <protected>false</protected>
     <values>
+        <field>BindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>BindingSObject__c</field>
+        <value xsi:type="xsd:string">Account</value>
+    </values>
+    <values>
         <field>FieldsetName__c</field>
         <value xsi:type="xsd:string">SelectorInclusion</value>
     </values>
     <values>
         <field>IsActive__c</field>
         <value xsi:type="xsd:boolean">true</value>
-    </values>
-    <values>
-        <field>SObjectType__c</field>
-        <value xsi:type="xsd:string">Account</value>
     </values>
 </CustomMetadata>

@@ -7,6 +7,10 @@
         <value xsi:type="xsd:string">Lead</value>
     </values>
     <values>
+        <field>BindingSObjectAlternate__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
         <field>To__c</field>
         <value xsi:type="xsd:string">Leads.Constructor</value>
     </values>

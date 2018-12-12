@@ -24,15 +24,32 @@ public class DomainProcessCoordinator
     private void primeDomainLogicInjections()
     {
         // TODO: this should be moved to Force-DI
+
+        String sobjAPIName = this.sObjectDomain.getSObjectDescribe().getName();
+
         // find all process DomainProcessBinding__mdt records that are related
+        // Unfortuantely, you cannot query MDTs with a where clause of "this or that".  If you do, it throws a "Disjunctions not supported" exception
+        // So, you have to query the records with two queries and add them together.
+        // first query the RelatedDomainBindingSObject__r.QualifiedApiName = :sobjAPIName
         list<DomainProcessBinding__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                          , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
                                                          , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
-                                                         , RelatedDomainBindingSObject__c, RelatedDomainBindingSObject__r.QualifiedApiName, TriggerOperation__c, Type__c
+                                                         , RelatedDomainBindingSObject__c, RelatedDomainBindingSObject__r.QualifiedApiName, RelatedDomainBindingSObjectAlternate__c
+                                                         , TriggerOperation__c, Type__c
                                                       from DomainProcessBinding__mdt
-                                                     where RelatedDomainBindingSObject__r.QualifiedApiName = :this.sObjectDomain.getSObjectDescribe().getName()
+                                                     where RelatedDomainBindingSObject__r.QualifiedApiName = :sobjAPIName
                                                        and IsActive__c = true
                                                      order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c];
+        // second, query RelatedDomainBindingSObjectAlternate__c = :sobjAPIName
+        domainProcesses.addAll([select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+                                                         , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
+                                                         , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
+                                                         , RelatedDomainBindingSObject__c, RelatedDomainBindingSObject__r.QualifiedApiName, RelatedDomainBindingSObjectAlternate__c
+                                                         , TriggerOperation__c, Type__c
+                                                      from DomainProcessBinding__mdt
+                                                     where RelatedDomainBindingSObjectAlternate__c = :sobjAPIName
+                                                       and IsActive__c = true
+                                                     order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c]);
 
         //if (System.Test.isRunningTest() && mockDomainProcesses != null)
         //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
