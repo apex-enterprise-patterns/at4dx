@@ -170,8 +170,14 @@ public class PlatformEventDistributor
                     // use the setEvents() method to set the payload
                     consumer.setEvents( eventBatchForSubscriber );
 
-                    //  and then enqueue the consumer class
-                    jobIdList.add(System.enqueueJob( consumer ));
+                    if (subscriptionRecord.Run_In_Process__c != null && subscriptionRecord.Run_In_Process__c)
+                    {   // run consumer in process
+                        consumer.runInProcess();
+                    }
+                    else 
+                    {   // enqueue the consumer class for async operation
+                        jobIdList.add(System.enqueueJob( consumer ));
+                    }
                 }
                 catch (Exception e)
                 {
