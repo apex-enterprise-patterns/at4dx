@@ -42,6 +42,10 @@
                 <behavior>Edit</behavior>
                 <field>Run_In_Process__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Execute_Synchronous__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

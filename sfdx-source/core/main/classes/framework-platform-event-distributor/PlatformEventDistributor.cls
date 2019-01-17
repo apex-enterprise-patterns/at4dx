@@ -62,11 +62,10 @@ public class PlatformEventDistributor
         List<PlatformEvents_Subscription__mdt> eventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
         for
         (
-            PlatformEvents_Subscription__mdt ped
-            :
+            PlatformEvents_Subscription__mdt ped :
             [
                 select
-                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c
+                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
                 from PlatformEvents_Subscription__mdt
                 where IsActive__c = true AND EventBus__c = :platformEventBusDescribe.getName()
             ]
@@ -170,9 +169,9 @@ public class PlatformEventDistributor
                     // use the setEvents() method to set the payload
                     consumer.setEvents( eventBatchForSubscriber );
 
-                    if (subscriptionRecord.Run_In_Process__c != null && subscriptionRecord.Run_In_Process__c)
+                    if (subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c)
                     {   // run consumer in process
-                        consumer.runInProcess();
+                        consumer.run();
                     }
                     else 
                     {   // enqueue the consumer class for async operation
