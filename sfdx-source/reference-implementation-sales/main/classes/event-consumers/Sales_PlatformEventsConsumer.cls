@@ -1,27 +1,11 @@
-public class Sales_PlatformEventsConsumer
-    implements IEventsConsumer
-{
-    private List<SObject> eventSObjects = new List<SObject>();
-
-    // ============ IEventsConsumer implementation ============
-
-    public void setEvents(List<SObject> events)
-    {
-        System.debug('<ojs> Sales_PlatformEventsConsumer.setEvents:\n' + events);
-        this.eventSobjects = events;
-    }
-
-    // ============ Queueable implementation ============
-
-    public void execute(QueueableContext context)
-    {
-        System.debug('<ojs> Sales_PlatformEventsConsumer.execute');
-        System.debug('<ojs> eventSobjects:\n' + eventSobjects);
+public class Sales_PlatformEventsConsumer extends PlatformEventAbstractConsumer {
+    public override void runInProcess() {
+        System.debug('<ojs> Sales_PlatformEventsConsumer.runInProcess');
+        System.debug('<ojs> events:\n' + events);
 
         Set<Id> idSet = new Set<Id>();
 
-        for (SObject sobj : eventSObjects)
-        {
+        for (SObject sobj : events) {
             Event__e evt = (Event__e) sobj;
             idSet.addAll((Set<Id>) JSON.deserialize(evt.Payload__c, Set<Id>.class));
         }
