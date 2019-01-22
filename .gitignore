@@ -26,6 +26,7 @@ Referenced Packages/
 
 # VS Code IDE Related
 .vscode/
+.history/
 
 # SFDX Related
 .sfdx/
