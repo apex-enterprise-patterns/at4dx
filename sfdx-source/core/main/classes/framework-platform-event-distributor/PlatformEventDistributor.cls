@@ -166,17 +166,14 @@ public class PlatformEventDistributor
 
                     System.debug('<ojs> successfully constructed');
 
-                    // use the setEvents() method to set the payload
-                    consumer.setEvents( eventBatchForSubscriber );
+                    Id thisJob = subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c
+                        ? consumer.setEvents(eventBatchForSubscriber).setRunSynchronous().run()
+                        : consumer.setEvents(eventBatchForSubscriber).run();
+                    
+                    if (thisJob != null) {
+                        jobIdList.add( thisJob );
+                    }
 
-                    if (subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c)
-                    {   // run consumer in process
-                        consumer.run();
-                    }
-                    else 
-                    {   // enqueue the consumer class for async operation
-                        jobIdList.add(System.enqueueJob( consumer ));
-                    }
                 }
                 catch (Exception e)
                 {

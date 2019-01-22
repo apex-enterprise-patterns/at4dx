@@ -1,36 +1,85 @@
-// Provides default implementation of IEventsConsumer
+/*********************************************************************
+* @author Rick Parker
+* @date 2019-01-22
+*
+* @description  Default implementation of IEventsConsumer. 
+*               runInProcess() must be given a body by the implementing class.
+*
+* AUTHOR         DATE        DETAIL
+* Rick Parker    2019-01-22  Created
+**********************************************************************/ 
 public abstract class PlatformEventAbstractConsumer implements IEventsConsumer {
-    // private, backing properties
-    private List<SObject> storedEvents;
-    private QueueableContext storedContext;
+    /*******************************************************************************************************
+    * @description List of events to be processed
+    * @return List<SObject>
+    *******************************************************************************************************/
+    protected List<SObject> events = new List<SObject>();
 
-    // Interface required convenience methods
-    public QueueableContext context() { return storedContext; }
-    public Boolean isAsynchronous() { return storedContext != null; }
-    public List<SObject> events() { return storedEvents; }
+    /*******************************************************************************************************
+    * @description The QueueableContext to be executed under, if queued
+    * @return QueueableContext
+    *******************************************************************************************************/
+    protected QueueableContext context;
 
-    // Constructors
-    public PlatformEventAbstractConsumer() {
-        storedEvents = new List<SObject>();
+    /*******************************************************************************************************
+    * @description Whether the Events Consumer is being processed Synchronously, in the same process
+    * @return Boolean
+    *******************************************************************************************************/
+    protected Boolean isSynchronous = false;
+
+    /*******************************************************************************************************
+    * @description Sets the events used when processing
+    * @return IEventsConsumer, to allow chaining
+    *******************************************************************************************************/
+    public IEventsConsumer setEvents(List<SObject> events) {
+        this.events = events;
+        return this;
     }
 
-    // Interface required public methods
-    public void setEvents(List<SObject> events) {
-        storedEvents = events;
+    /*******************************************************************************************************
+    * @description Sets the processing to Synchronous
+    * @return IEventsConsumer, to allow chaining
+    *******************************************************************************************************/
+    public IEventsConsumer setRunSynchronous() {
+        isSynchronous = true;
+        return this;
     }
 
-    // called when consumer is listed as Execute_Synchronous__c == false
+    /*******************************************************************************************************
+    * @description Called when the Events Consumer is spawned as a Queueable
+    * @return void
+    *******************************************************************************************************/
     public void execute(QueueableContext context) {
-        storedContext = context;
-        run();
+        try
+        {
+            this.context = context;
+            runInProcess();
+        }
+        catch (Exception e)
+        {
+            system.debug(e);
+            system.debug(e.getStackTraceString());
+        }
     }
 
-    // called when consumer is listed as Execute_Synchronous__c == true
-    public void run() {
-        if (storedEvents == null) { storedEvents = new List<SObject>(); }
-        runInProcess();
+    /*******************************************************************************************************
+    * @description Called by the PlatformEventDistributor to spawn either a Queueable or to run in process
+    * @return Id of the queued job, if queued
+    *******************************************************************************************************/
+    public Id run() {
+        if (events == null || events.isEmpty()) { return null; }
+        if (isSynchronous) {
+            runInProcess();
+            return null;
+        }
+        else {
+            return System.enqueueJob( this );
+        }
     }
 
-    // Non-implemented, Interface required public methods
+    /*******************************************************************************************************
+    * @description Execution method where the real work is accomplished. Called by either run() or execute(context)
+    * @return void
+    *******************************************************************************************************/
     public abstract void runInProcess();
 }
