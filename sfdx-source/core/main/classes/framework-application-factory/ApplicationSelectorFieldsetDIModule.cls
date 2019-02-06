@@ -13,10 +13,12 @@ public class ApplicationSelectorFieldsetDIModule
 
         String bindingSObjectAPIName = null;
 
-        for (SelectorConfig_FieldSetInclusion__mdt scfi : [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
-                                                                , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c, FieldsetName__c
-                                                             from SelectorConfig_FieldSetInclusion__mdt
-                                                            where IsActive__c = true] )
+        list<SelectorConfig_FieldSetInclusion__mdt> bindingRecords = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+                                                                               , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c, FieldsetName__c
+                                                                            from SelectorConfig_FieldSetInclusion__mdt
+                                                                           where IsActive__c = true];
+
+        for (SelectorConfig_FieldSetInclusion__mdt scfi : bindingRecords )
         {
             bindingSObjectAPIName = String.isNotBlank(scfi.BindingSObject__c) ? scfi.BindingSObject__r.QualifiedApiName : scfi.BindingSObjectAlternate__c; 
 
