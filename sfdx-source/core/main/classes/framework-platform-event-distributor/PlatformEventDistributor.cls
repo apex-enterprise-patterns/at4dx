@@ -20,7 +20,9 @@ public class PlatformEventDistributor
     {
         Map<String, List<PlatformEvents_Subscription__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Subscription__mdt>>();
 
-        for (di_Binding binding : di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get())
+        list<di_Binding> bindings = di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get();
+
+        for (di_Binding binding : bindings)
         {
             PlatformEvents_Subscription__mdt pedConfig = (PlatformEvents_Subscription__mdt) binding.Data;
 
@@ -62,11 +64,10 @@ public class PlatformEventDistributor
         List<PlatformEvents_Subscription__mdt> eventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
         for
         (
-            PlatformEvents_Subscription__mdt ped
-            :
+            PlatformEvents_Subscription__mdt ped :
             [
                 select
-                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c
+                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
                 from PlatformEvents_Subscription__mdt
                 where IsActive__c = true AND EventBus__c = :platformEventBusDescribe.getName()
             ]
@@ -167,11 +168,14 @@ public class PlatformEventDistributor
 
                     System.debug('<ojs> successfully constructed');
 
-                    // use the setEvents() method to set the payload
-                    consumer.setEvents( eventBatchForSubscriber );
+                    Id thisJob = subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c
+                        ? consumer.setEvents(eventBatchForSubscriber).setRunSynchronous().run()
+                        : consumer.setEvents(eventBatchForSubscriber).run();
+                    
+                    if (thisJob != null) {
+                        jobIdList.add( thisJob );
+                    }
 
-                    //  and then enqueue the consumer class
-                    jobIdList.add(System.enqueueJob( consumer ));
                 }
                 catch (Exception e)
                 {

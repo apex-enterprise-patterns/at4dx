@@ -38,6 +38,10 @@
                 <behavior>Required</behavior>
                 <field>Consumer__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Execute_Synchronous__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
