@@ -20,7 +20,9 @@ public class PlatformEventDistributor
     {
         Map<String, List<PlatformEvents_Subscription__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Subscription__mdt>>();
 
-        for (di_Binding binding : di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get())
+        list<di_Binding> bindings = di_Injector.Org.Bindings.byName(IEventsConsumer.class.getName()).get();
+
+        for (di_Binding binding : bindings)
         {
             PlatformEvents_Subscription__mdt pedConfig = (PlatformEvents_Subscription__mdt) binding.Data;
 
