@@ -24,33 +24,41 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-public class AccountNameContainsFishCriteria
-    implements IDomainProcessCriteria
+@IsTest
+public class PlatformEventDistributorTest
 {
-    private list<Account> records = new list<Account>();
-
-    public IDomainProcessCriteria setRecordsToEvaluate(List<SObject> records)
+    @IsTest
+    static void EventAndCategoryTest()
     {
-        this.records.clear();
-        this.records.addAll( (list<Account>)records );
+        Event__e platformEventbus = new Event__e();
 
-        return this;
+        platformEventbus.EventName__c = 'Account_Slogan_Has_Changed';
+        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
+        platformEventbus.Payload__c = json.serialize(new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType)});
+
+        PlatformEventDistributor ped = new PlatformEventDistributor();
+
+        Test.startTest();
+        ped.triggerHandler(new List<Event__e> {platformEventbus});
+        Test.stopTest();
+
+        System.assertNotEquals(null, ped.jobIdList);
+        System.assertEquals(1, ped.jobIdList.size());
     }
 
-    public List<SObject> run()
+    @isTest
+    private static void basicTestToActivateCodeCoverage() 
     {
-        list<Account> qualifiedRecords = new list<Account>();
+        Event__e platformEventbus = new Event__e();
 
-        // Loop through the Account records.
-        for ( Account record : this.records )
-        {
-            // We are only interested in Account records that have the word fish in their name
-            if ( record.Name.containsIgnoreCase('fish') )
-            {
-                qualifiedRecords.add( record );
-            }
-        }
+        platformEventbus.EventName__c = 'bluefish';
+        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
+        platformEventbus.Payload__c = json.serialize( new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType ) } );
 
-        return qualifiedRecords;
+        Test.startTest();
+        Database.SaveResult sr = EventBus.publish(platformEventbus);
+        Test.stopTest();
+
+        System.assertEquals(true, sr.isSuccess());
     }
 }
