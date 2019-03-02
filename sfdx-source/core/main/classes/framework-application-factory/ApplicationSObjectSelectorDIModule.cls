@@ -11,9 +11,11 @@ public class ApplicationSObjectSelectorDIModule
 
         String bindingSObjectAPIName = null;
 
-        for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c
-                                                                            , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                         from ApplicationFactory_SelectorBinding__mdt])
+        list<ApplicationFactory_SelectorBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, To__c
+                                                                             , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                                                          from ApplicationFactory_SelectorBinding__mdt];
+
+        for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : bindingRecords)
         {
             bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 

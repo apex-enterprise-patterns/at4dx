@@ -57,10 +57,12 @@ public class ApplicationSObjectUnitOfWorkDIProvider
 
             String bindingSObjectAPIName = null;
 
-            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSequence__c
-                                                                                  , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                               from ApplicationFactory_UnitOfWorkBinding__mdt
-                                                                              order by BindingSequence__c])
+            list<ApplicationFactory_UnitOfWorkBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, BindingSequence__c
+                                                                                   , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                                                                from ApplicationFactory_UnitOfWorkBinding__mdt
+                                                                               order by BindingSequence__c];
+
+            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : bindingRecords)
             {
                 bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 

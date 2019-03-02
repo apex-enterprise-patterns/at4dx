@@ -7,11 +7,13 @@ public class TestDataSupplementDIModule
 
         String bindingSObjectAPIName = null;
 
-        for (TestDataSupplementer__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, BindingSObject__c
-                                                             , BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                             , SupplementingClass__c 
-                                                          from TestDataSupplementer__mdt 
-                                                         order by Sequence__c])
+        list<TestDataSupplementer__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, BindingSObject__c
+                                                               , BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                                               , SupplementingClass__c 
+                                                            from TestDataSupplementer__mdt 
+                                                           order by Sequence__c];
+
+        for (TestDataSupplementer__mdt bindingConfig : bindingRecords)
         {
             apex();
 
