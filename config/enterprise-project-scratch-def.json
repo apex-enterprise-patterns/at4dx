@@ -1,6 +1,6 @@
 {
-    "orgName": "Acme Developer Company",
-    "edition": "Developer",
+    "orgName": "Acme Enterprise Company",
+    "edition": "Enterprise",
     "orgPreferences" : {
         "enabled": ["S1DesktopEnabled"]
     }
