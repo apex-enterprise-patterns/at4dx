@@ -22,27 +22,34 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 /**
  * Applicaiton specific Domain base class, customise fflib_SObjectSelector and add common behavior
  **/
 public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
 
-    private static Map<SObjectType, Set<String>> standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap = new Map<SObjectType, Set<String>>();
+    // virtual method to be overridden by implementing class
+    // supply list of fields, by string name, that should be ignored from the standard field list
+    // should not include custom fields
+    public virtual Set<String> getStandardSObjectFieldsToIgnore() { return new Set<String>(); }
 
-    static
-    {
-        // Put the fields in as strings and not SObjectFields because sometimes you want to exclude
-        //  a field that is only present in certain orgs.  Account.OperatinHoursId and Account.NameLocal
-        //  are two such fields.
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.put( User.SObjectType, new Set<string>() );
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.get( User.SObjectType).add( 'SmallBannerPhotoUrl'.toLowerCase() );
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.get( User.SObjectType).add( 'MediumBannerPhotoUrl'.toLowerCase() );
+    // private property to hold the case shifted results of sObjectStandardFieldsToIgnore
+    private Set<String> sObjectIgnoredStandardFields = new Set<String>();
 
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.put( Account.SObjectType, new Set<string>() );
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.get( Account.SObjectType).add( 'OperatingHoursId'.toLowerCase() );
-        standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.get( Account.SObjectType).add('NameLocal'.toLowerCase() );
+    // private method used internally to access the ignored standard fields list
+    // pulls them from the virtual, overridden method initially and then returns the private property thereafter
+    private Set<String> standardFieldsToIgnore() {
+        if ( ! sObjectIgnoredStandardFields.isEmpty()) {
+            return sObjectIgnoredStandardFields;
+        }
+        Set<String> fieldsToIgnore = getStandardSObjectFieldsToIgnore();
+        // ensure that all entries are lowercase
+        for (String fieldToIgnore : fieldsToIgnore) {
+            // system.debug('fieldToIgnore == ' + fieldToIgnore);
+            sObjectIgnoredStandardFields.add(fieldToIgnore.toLowerCase().trim());
+        }
+        return sObjectIgnoredStandardFields;
     }
 
     protected List<Schema.FieldSet> sObjectFieldSetList = new List<Schema.FieldSet>();
@@ -102,13 +109,12 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
     private List<Schema.SObjectField> getStandardFields()
     {
         List<Schema.SObjectField> standardFields = new List<Schema.SObjectField>();
+        Set<String> ignoredFields = standardFieldsToIgnore();
 
         for (Schema.SObjectField field : getSObjectType().getDescribe().fields.getMap().values())
         {
             if ( string.valueOf( field ).startsWith('INVALID FIELD')
-                || (standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.containsKey( getSObjectType() )
-                    && standardSObjectFieldsNotToIncludeSetBySObjectTYpeMap.get( getSObjectType() ).contains( String.valueOf( field ).toLowerCase() )
-                    ))
+                || ignoredFields.contains( String.valueOf( field ).toLowerCase() ))
             {
                 system.debug( LoggingLevel.FINEST, 'field : ' + field + ' ignored');
                 continue;
