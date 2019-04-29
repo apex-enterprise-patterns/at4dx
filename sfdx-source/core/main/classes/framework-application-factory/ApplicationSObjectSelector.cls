@@ -146,4 +146,46 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
     {
         return newQueryFactory().setCondition('id in :idSet').toSOQL();
     }
+
+    public List<SObject> selectInjection( System.Type methodClazzType, ISelectorMethodParameterable params )
+    {
+        if ( methodClazzType == null )
+        {
+            throw new ApplicationSObjectSelector.ApplicationSObjectSelectorException('methodClazz cannot be null');
+        }
+
+        try 
+        {
+            ISelectorMethodInjectable injectionQueryClazz = (ISelectorMethodInjectable)methodClazzType.newInstance();
+
+            if ( injectionQueryClazz instanceOf ISelectorMethodSetable)
+            {
+                ISelectorMethodSetable selectorMethodSetterClazz = (ISelectorMethodSetable)injectionQueryClazz;
+                if (params != null)
+                {
+                    selectorMethodSetterClazz.setParameters( params );
+                }
+                
+                selectorMethodSetterClazz.setQueryFactory(newQueryFactory());
+            }
+            
+            return injectionQueryClazz.selectQuery();
+        }
+        catch (System.TypeException te)
+        {
+            System.debug(LoggingLevel.ERROR, te);
+            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorMethodInjectable.class.getName() + '\'');
+        }
+        catch (System.Exception e)
+        {
+            System.debug(LoggingLevel.ERROR, e);
+            throw new ApplicationSObjectSelectorException(e);
+        }
+    }
+
+    public class ApplicationSObjectSelectorException
+        extends Exception
+    {
+
+    }
 }

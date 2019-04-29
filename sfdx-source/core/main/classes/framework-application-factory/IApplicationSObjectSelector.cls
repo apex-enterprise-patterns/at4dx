@@ -34,4 +34,9 @@ public interface IApplicationSObjectSelector
      * Returns the SelectSObjectsById(Set<Id>) query string.  Useful for Database.Querylocators
      */
     String selectSObjectsByIdQuery();
+
+    /**
+     *
+     */
+    List<SObject> selectInjection( System.Type methodClazz, ISelectorMethodParameterable params );
 }
