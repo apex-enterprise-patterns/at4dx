@@ -27,7 +27,10 @@
 /**
  * Applicaiton specific Domain base class, customise fflib_SObjectSelector and add common behavior
  **/
-public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
+public abstract class ApplicationSObjectSelector 
+    extends fflib_SObjectSelector 
+    implements IApplicationSObjectSelector
+{
 
     // virtual method to be overridden by implementing class
     // supply list of fields, by string name, that should be ignored from the standard field list
@@ -62,6 +65,7 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
 
         list<di_Binding> bindings = di_Injector.Org.Bindings.byName(Schema.FieldSet.class.getName())
                                                     .bySObject(getSObjectType())
+                                                    .emptyBindingsAllowed()
                                                     .get();
 
         for ( di_Binding binding : bindings )
@@ -71,7 +75,7 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
         this.sObjectFieldSetList.addAll(results);
     }
 
-    public ApplicationSObjectSelector() {
+    public ApplicationSObjectSelector() { 
         // first parameter -- includeFieldSetFields -- must be true for the selector field injection to work
         // Disable the base class read security checking in preference to explicit checking elsewhere
         this(true, false, false);
@@ -135,7 +139,7 @@ public abstract class ApplicationSObjectSelector extends fflib_SObjectSelector {
         return standardFields;
     }
 
-    public ApplicationSObjectSelector addQueryFactoryParentSelect(fflib_QueryFactory parentQueryFactory, Schema.SObjectField relationshipField)
+    public IApplicationSObjectSelector addQueryFactoryParentSelect(fflib_QueryFactory parentQueryFactory, Schema.SObjectField relationshipField)
     {
         this.configureQueryFactoryFields( parentQueryFactory, relationshipField.getDescribe().getRelationshipName());
 

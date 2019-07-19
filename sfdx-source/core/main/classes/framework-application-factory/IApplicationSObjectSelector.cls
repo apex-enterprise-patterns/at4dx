@@ -36,7 +36,19 @@ public interface IApplicationSObjectSelector
     String selectSObjectsByIdQuery();
 
     /**
-     *
+     * Selector Method Injection // executes an injected method against a pre-existing selector
      */
     List<SObject> selectInjection( System.Type methodClazz, ISelectorMethodParameterable params );
+    
+    /**
+     * Adds specified fields to the provided queryFactory preserving reference pathing.
+     * Added to interface to allow use of newInstance() instantiation instead of "new class()" instantiation within selectors.
+     */
+    void configureQueryFactoryFields(fflib_QueryFactory queryFactory, String relationshipFieldPath);
+    
+    /**
+     * Injects a queryFactory instance as a sub-select to the queryFactory in which this method resides.
+     * Added to interface to allow use of newInstance() instantiation instead of "new class()" instantiation within selectors.
+     */
+    fflib_QueryFactory addQueryFactorySubselect(fflib_QueryFactory parentQueryFactory);
 }
