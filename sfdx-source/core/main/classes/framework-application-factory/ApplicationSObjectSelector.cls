@@ -133,7 +133,7 @@ public abstract class ApplicationSObjectSelector
             }
             else
             {
-                system.debug( LoggingLevel.FINEST, 'field : ' + field + ' ignored');
+                system.debug( LoggingLevel.FINEST, 'field : ' + field + ' added');
             }
         }
         return standardFields;
