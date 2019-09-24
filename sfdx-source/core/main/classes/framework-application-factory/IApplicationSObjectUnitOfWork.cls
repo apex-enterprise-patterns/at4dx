@@ -55,19 +55,4 @@ public interface IApplicationSObjectUnitOfWork
      **/
     void registerEmails( list<Messaging.Email> emails );
 
-
-    /**
-     * Register platform events to be emitted prior to the beginning of the data base transaction
-     */
-    void registerPublishBeforeTransaction( List<SObject> events );
-
-    /**
-     * Register platform events to be emitted after the conclusion of the data base transaction if it is successful
-     */
-    void registerPublishAfterTransactionSuccess( List<SObject> events );
-
-    /**
-     * Register platform events to be emitted after the conclusion of the data base transaction if it fails
-     */
-    void registerPublishAfterTransactionFailure( List<SObject> events );
 }
