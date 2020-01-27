@@ -79,7 +79,7 @@ public class ApplicationSObjectUnitOfWorkDIProvider
         {
             // then query default ApplicationFactory_UnitOfWorkBinding__mdt records
             this.sObjTypesParam = new List<Schema.SObjectType>();
-            Schema.DescribeSobjectResult[] sobjDescribe = null;
+            Map<String, SObjectType> sObjectTypeByName = Schema.getGlobalDescribe();
 
             String bindingSObjectAPIName = null;
 
@@ -92,17 +92,16 @@ public class ApplicationSObjectUnitOfWorkDIProvider
             {
                 bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 
-                if (String.isNotBlank(bindingSObjectAPIName)) 
+                if (String.isNotBlank(bindingSObjectAPIName))
                 {
-                    sobjDescribe = Schema.describeSObjects(new String[] { bindingSObjectAPIName.toLowerCase().trim() });
-
-                    if(sobjDescribe.size() != 1) 
+                    String sObjectApiName = bindingSObjectAPIName.toLowerCase().trim();
+                    if(!sObjectTypeByName.containsKey(sObjectApiName))
                     {
-                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingSObjectAPIName 
-                                                                     + ' referened by binding ' + bindingConfig.DeveloperName 
+                        throw new di_Injector.InjectorException('Failed to find SObject ' + bindingSObjectAPIName
+                                                                     + ' referened by binding ' + bindingConfig.DeveloperName
                                                                      + ' for ApplicationSObjectUnitOfWorkDIModule di_Injectory module.');
                     }
-                    this.sObjTypesParam.add( sobjDescribe[0].getSObjectType() );
+                    this.sObjTypesParam.add( sObjectTypeByName.get(sObjectApiName) );
                 }
             }
         }
