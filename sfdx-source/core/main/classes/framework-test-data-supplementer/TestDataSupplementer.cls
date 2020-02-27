@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, John M. Daniel
+ * Copyright (c) 2018, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
