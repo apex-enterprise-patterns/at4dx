@@ -45,6 +45,7 @@ public abstract class ApplicationSObjectDomain
     {
         super.handleBeforeInsert();
         this.getDomainProcessCoordinator().processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution, System.TriggerOperation.Before_Insert );
+        if (System.Test.isRunningTest()) TestDataSupplementer.supplement(records);
     }
 
     public virtual override void handleBeforeUpdate(Map<Id,SObject> existingRecords)

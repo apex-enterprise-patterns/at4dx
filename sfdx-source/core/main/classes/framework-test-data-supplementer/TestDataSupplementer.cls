@@ -56,9 +56,14 @@ public class TestDataSupplementer
     {
         if (sobjectList != null && !sobjectList.isEmpty())
         {
-            for (ITestDataSupplement supplementer : supplementerMap.get(sobjectList.getSObjectType()))
-            {
-                supplementer.supplement(sobjectList);
+            //now that supplement is called from ApplicationSObjectDomain
+            //a supplement might not exist for every object type would result in an eror
+            //check that ObjectType exists in the map before doing the look
+            If (supplementerMap.containsKey(sobjectList.getSObjectType())) {
+                for (ITestDataSupplement supplementer : supplementerMap.get(sobjectList.getSObjectType()))
+                {
+                    supplementer.supplement(sobjectList);
+                }
             }
         }
     }
