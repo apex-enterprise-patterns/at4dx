@@ -129,11 +129,11 @@ public abstract class ApplicationSObjectSelector
             if ( ! fieldDescribe.isCustom() )
             {
                 standardFields.add( field );
-                system.debug( LoggingLevel.FINEST, 'field : ' + field + ' added');
+                system.debug( LoggingLevel.FINEST, 'Standard field : ' + field + ' added');
             }
             else
             {
-                system.debug( LoggingLevel.FINEST, 'field : ' + field + ' added');
+                system.debug( LoggingLevel.FINEST, 'Custom field : ' + field + ' NOT added');
             }
         }
         return standardFields;
