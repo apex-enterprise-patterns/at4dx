@@ -42,3 +42,7 @@ package-lock.json
 
 sfdx-source/group*
 research/
+
+fflib-apex-mocks/
+fflib-apex-common/
+force-di/
