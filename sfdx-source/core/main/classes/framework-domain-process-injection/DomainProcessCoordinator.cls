@@ -233,7 +233,7 @@ public class DomainProcessCoordinator
     /* 
      * pass through method
      */
-    private void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
     {
         processDomainLogicInjections( processContext, domainProcessToken, existingRecords, null, uow );
     }
