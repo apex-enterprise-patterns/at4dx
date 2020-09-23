@@ -208,6 +208,14 @@ public class DomainProcessCoordinator
         processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution, domainProcessToken, existingRecords, uow );
     }
 
+    /** 
+     *  Call this method either from a domain class method and any criteria and actions for that combination will be executed. 
+     */
+    public void processDomainLogicInjections(String domainProcessToken, IDomainLogicInjectionsParameterable params, IApplicationSObjectUnitOfWork uow )
+    {
+        processDomainLogicInjections( DomainProcessConstants.PROCESS_CONTEXT.DomainMethodExecution, domainProcessToken, null, params, uow );
+    }
+
     public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType, Map<Id,SObject> existingRecords )
     {
         processDomainLogicInjections( processContext, triggerOperationType.name(), existingRecords, null );
@@ -222,11 +230,19 @@ public class DomainProcessCoordinator
         processDomainLogicInjections( processContext, domainProcessToken, existingRecords, null );
     }
 
+    /* 
+     * pass through method
+     */
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
+    {
+        processDomainLogicInjections( processContext, domainProcessToken, existingRecords, null, uow );
+    }
+
     /**
     *  Call this method either from a domain class method or it is automatically called from trigger context
     *  and any criteria and actions for that combination will be executed.
     */
-    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IApplicationSObjectUnitOfWork uow )
+    public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IDomainLogicInjectionsParameterable params, IApplicationSObjectUnitOfWork uow )
     {
         domainProcessToken = domainProcessToken.toLowerCase();
         system.debug( 'mark 1 -- processContext : ' + processContext +  ' -- domainProcessToken : ' + domainProcessToken);
@@ -313,6 +329,13 @@ public class DomainProcessCoordinator
                             {
                                 ((IDomainProcessCriteriaWithExistingRecs)criteriaClazz).setExistingRecords( existingRecords );
                             }
+
+                            if ( criteriaClazz instanceOf IDomainProcessWithParamsCriteria
+                                && params != null)
+                            {
+                                ((IDomainProcessWithParamsCriteria)criteriaClazz).setParams(params);
+                            }
+
                             // TODO: Still need to figure out how to make use of currentDomainProcess.LogicalInverse__c here.
                             qualifiedRecords = criteriaClazz.run();
                         }
@@ -370,6 +393,12 @@ public class DomainProcessCoordinator
                         {
                             // newInstance from here
                             actionClazz = (IDomainProcessAction) classToInject.newInstance();
+
+                            if ( actionClazz instanceOf IDomainProcessWithParamsAction 
+                                && params != null)
+                            {
+                                ((IDomainProcessWithParamsAction)actionClazz).setParams(params);
+                            }
 
                             actionClazz.setRecordsToActOn( qualifiedRecords );
 
