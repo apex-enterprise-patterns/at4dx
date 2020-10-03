@@ -24,7 +24,7 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-trigger PlatformEvents on Event__e 
+trigger AT4DXMessages on AT4DXMessage__e 
     (after insert) 
 {
     PlatformEventDistributor.triggerHandler();
