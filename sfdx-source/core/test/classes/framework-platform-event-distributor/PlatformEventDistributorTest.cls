@@ -30,7 +30,7 @@ public class PlatformEventDistributorTest
     @isTest
     private static void basicTestToActivateCodeCoverage() 
     {
-        Event__e platformEventbus = new Event__e();
+        AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
 
         platformEventbus.EventName__c = 'bluefish';
         platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
@@ -38,8 +38,26 @@ public class PlatformEventDistributorTest
 
         Test.startTest();
         Database.SaveResult sr = EventBus.publish(platformEventbus);
+
+        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition();
+        
         Test.stopTest();
 
+        System.assert( initialSubscriberPosition < getCurrentEventBusSubscriberPosition(), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.' );
+
         System.assertEquals(true, sr.isSuccess());
+    }
+
+    private static Integer getCurrentEventBusSubscriberPosition()
+    {
+        EventBusSubscriber at4dxMessageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
+                                                          FROM EventBusSubscriber 
+                                                         WHERE Topic = 'AT4DXMessage__e' 
+                                                           AND Type = 'ApexTrigger'
+                                                         LIMIT 1];
+        
+        System.assert(at4dxMessageBusSubscriber != null, 'Could not find the ' + AT4DXMessage__e.SobjectType + ' record');
+
+        return at4dxMessageBusSubscriber.Position;
     }
 }
