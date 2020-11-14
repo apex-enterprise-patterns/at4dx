@@ -400,6 +400,13 @@ public class DomainProcessCoordinator
                                 ((IDomainProcessWithParamsAction)actionClazz).setParams(params);
                             }
 
+                            if ( actionClazz instanceOf IDomainProcessActionWithExistingRecs 
+                                && existingRecords != null
+                                && ! existingRecords.isEmpty() )
+                            {
+                                ((IDomainProcessActionWithExistingRecs)actionClazz).setExistingRecords( existingRecords );
+                            }
+
                             actionClazz.setRecordsToActOn( qualifiedRecords );
 
                             // Should the action process execute in async/queueable mode?
