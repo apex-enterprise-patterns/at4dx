@@ -24,11 +24,11 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-public interface IDomainProcessCoordinator 
+/**
+ *  IDomainProcessActionWithExistingRecs
+ */
+public interface IDomainProcessActionWithExistingRecs
+    extends IDomainProcessAction
 {
-    void processDomainLogicInjections(String domainProcessToken );
-    void processDomainLogicInjections(String domainProcessToken, IApplicationSObjectUnitOfWork uow );
-    void processDomainLogicInjections(String domainProcessToken, IDomainLogicInjectionsParameterable params, IApplicationSObjectUnitOfWork uow );
-    void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType );
-    void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, System.TriggerOperation triggerOperationType, Map<Id, SObject> existingRecords );
+    IDomainProcessAction setExistingRecords( Map<Id, SObject> existingRecords );
 }

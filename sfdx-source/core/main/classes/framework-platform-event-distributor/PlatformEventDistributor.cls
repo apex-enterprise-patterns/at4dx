@@ -79,8 +79,8 @@ public class PlatformEventDistributor
         if (events == null || events.isEmpty()) return;
 
         // extract the event payloads
-        Set<String> eventNameSet = generateStringSetFromField(events, Event__e.EventName__c, false);
-        Set<String> eventCategorySet = generateStringSetFromField(events, Event__e.Category__c, false);
+        Set<String> eventNameSet = generateStringSetFromField(events, AT4DXMessage__e.EventName__c, false);
+        Set<String> eventCategorySet = generateStringSetFromField(events, AT4DXMessage__e.Category__c, false);
 
         Schema.DescribeSObjectResult platformEventBusDescribe = events.getSobjectType().getDescribe();
 

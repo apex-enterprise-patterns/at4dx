@@ -24,8 +24,11 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-trigger PlatformEvents on Event__e 
-    (after insert) 
+/**
+ *  IDomainProcessWithParamsAction
+ */
+public interface IDomainProcessWithParamsAction 
+    extends IDomainProcessAction
 {
-    PlatformEventDistributor.triggerHandler();
+    IDomainProcessAction setParams( IDomainLogicInjectionsParameterable params );
 }
