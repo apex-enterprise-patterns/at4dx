@@ -58,7 +58,6 @@ public class Application
 
         public IApplicationSObjectSelector newInstance(SObjectType sObjectType)
         {
-            // system.debug('Application.SelectorFactory.newInstance flag 1');
             return (IApplicationSObjectSelector) di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sObjectType );
         }
 
@@ -74,7 +73,7 @@ public class Application
         {
             // No point creating an empty Domain class, nor can we determine the SObjectType anyway
             if(recordIds == null || recordIds.isEmpty())
-                throw new DeveloperException('Invalid record Id\'s set');    
+                throw new DeveloperException('Invalid record Id\'s set');
 
             // Determine SObjectType
             SObjectType domainSObjectType = new List<Id>(recordIds)[0].getSObjectType();
@@ -98,7 +97,7 @@ public class Application
          *   Account selector to query the related Account records, e.g.
          *
          *     List<Account> accounts = 
-         *        (List<Account>) Applicaiton.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
+         *        (List<Account>) Application.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
          *
          * @param relatedRecords used to extract the related record Ids, e.g. Opportunty records
          * @param relationshipField field in the passed records that contains the relationship records to query, e.g. Opportunity.AccountId

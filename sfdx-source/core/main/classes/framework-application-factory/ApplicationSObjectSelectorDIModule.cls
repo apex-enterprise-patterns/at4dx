@@ -41,6 +41,11 @@ public class ApplicationSObjectSelectorDIModule
                                                                              , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
                                                                           from ApplicationFactory_SelectorBinding__mdt];
 
+        if (mockBindingRecords != null)
+        {
+            bindingRecords = mockBindingRecords;
+        }
+
         for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : bindingRecords)
         {
             bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
@@ -61,5 +66,16 @@ public class ApplicationSObjectSelectorDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
+    }
+
+    /********************************************************
+     *  Testing functionality
+    ********************************************************/
+    private static List<ApplicationFactory_SelectorBinding__mdt> mockBindingRecords = null;
+
+    @TestVisible
+    private static void setMock(List<ApplicationFactory_SelectorBinding__mdt> mocks)
+    {
+        mockBindingRecords = mocks;
     }
 }

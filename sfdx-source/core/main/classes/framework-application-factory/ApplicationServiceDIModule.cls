@@ -35,8 +35,15 @@ public class ApplicationServiceDIModule
     {
         Type interfaceType = null;
 
-        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c 
-                                                                         from ApplicationFactory_ServiceBinding__mdt])
+        List<ApplicationFactory_ServiceBinding__mdt> bindingRecords =
+            [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt];
+
+            if (mockBindingRecords != null)
+            {
+                bindingRecords = mockBindingRecords;
+            }
+    
+            for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : bindingRecords)
         {
             apex();
             try {
@@ -48,5 +55,16 @@ public class ApplicationServiceDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
+    }
+
+    /********************************************************
+     *  Testing functionality
+    ********************************************************/
+    private static List<ApplicationFactory_ServiceBinding__mdt> mockBindingRecords = null;
+
+    @TestVisible
+    private static void setMock(List<ApplicationFactory_ServiceBinding__mdt> mocks)
+    {
+        mockBindingRecords = mocks;
     }
 }

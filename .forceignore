@@ -2,7 +2,7 @@
 # More information: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm
 #
 
+.profile-meta.xml
+.settings-meta.xml
 package.xml
-**.profile-meta.xml
-**.settings-meta.xml
-**README.md
+README.md
