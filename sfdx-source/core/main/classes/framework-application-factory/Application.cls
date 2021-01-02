@@ -192,10 +192,19 @@ public class Application
             if (domainSObjectType == null)
                 throw new DeveloperException('Unable to determine SObjectType');
 
-            // Construct Domain class passing in the queried records
-            fflib_SObjectDomain.IConstructable domainConstructor = (fflib_SObjectDomain.IConstructable) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
+            Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
-            return (IApplicationSObjectDomain) domainConstructor.construct(records);
+            if (injector_return instanceOf fflib_SObjectDomain.IConstructable)
+            {
+                return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable) injector_return).construct(records);
+            }
+
+            if (injector_return instanceOf IApplicationSObjectDomain)
+            {
+                return (IApplicationSObjectDomain) injector_return;
+            }
+
+            throw new ApplicationException('Object returned by di_Injector is neither IConststructable nor IApplicationSObjectDomain.');
         }    
 
         /**
@@ -214,10 +223,19 @@ public class Application
             if(domainSObjectType == null)
                 throw new DeveloperException('Must specify sObjectType');
 
-            // Construct Domain class passing in the queried records
-            fflib_SObjectDomain.IConstructable2 domainConstructor = (fflib_SObjectDomain.IConstructable2) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
+            Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
-            return (IApplicationSObjectDomain) domainConstructor.construct(records, domainSObjectType);
+            if (injector_return instanceOf fflib_SObjectDomain.IConstructable2)
+            {
+                return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable2) injector_return).construct(records, domainSObjectType);
+            }
+
+            if (injector_return instanceOf IApplicationSObjectDomain)
+            {
+                return (IApplicationSObjectDomain) injector_return;
+            }
+
+            throw new ApplicationException('Object returned by di_Injector is neither IConststructable2 nor IApplicationSObjectDomain.');
         }
 
         @TestVisible

@@ -131,4 +131,63 @@ private class CustomMetadataTest
 
         ApplicationServiceDIModule.setMock(bindingList);
     }
+
+    /********************************************************
+     *    Domain-related Testing
+    ********************************************************/
+    @IsTest
+    private static void Application_Domain_ConstructorTest()
+    {
+        configureDomains();
+
+        TestOnlyAccounts.ITestOnlyAccounts test_domain = TestOnlyAccounts.newInstance(new List<Account>());
+        System.assert(test_domain != null);
+    }
+
+    @IsTest
+    private static void Application_Domain_Constructor2Test()
+    {
+        configureDomains();
+
+        TestOnlyAccounts.ITestOnlyAccounts test_domain = TestOnlyAccounts.newInstance(new List<Account>(), Account.SObjectType);
+        System.assert(test_domain != null);
+    }
+
+    @IsTest
+    private static void Application_Domain_MockDomainConstructorTest()
+    {
+        configureDomains();
+
+        TestOnlyAccounts mock_domain = new TestOnlyAccounts(new List<Account>());
+
+        Application.Domain.setMock(mock_domain);
+        TestOnlyAccounts.ITestOnlyAccounts test_domain = TestOnlyAccounts.newInstance(new List<Account>());
+        System.assert(test_domain != null);
+    }
+
+    @IsTest
+    private static void Application_Domain_MockDomainConstructor2Test()
+    {
+        configureDomains();
+
+        TestOnlyAccounts mock_domain = new TestOnlyAccounts(new List<Account>());
+
+        Application.Domain.setMock(mock_domain);
+        TestOnlyAccounts.ITestOnlyAccounts test_domain = TestOnlyAccounts.newInstance(new List<Account>(), Account.SObjectType);
+        System.assert(test_domain != null);
+    }
+
+    private static void configureDomains()
+    {
+        ApplicationFactory_DomainBinding__mdt binding = new ApplicationFactory_DomainBinding__mdt();
+        binding.BindingSObjectAlternate__c = 'Account';
+        binding.To__c = 'TestOnlyAccounts.Constructor';
+
+        List<ApplicationFactory_DomainBinding__mdt> bindingList = new List<ApplicationFactory_DomainBinding__mdt>
+        {
+            binding
+        };
+
+        ApplicationSObjectDomainDIModule.setMock(bindingList);
+    }
 }
