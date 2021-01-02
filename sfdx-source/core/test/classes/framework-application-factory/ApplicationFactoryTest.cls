@@ -1,5 +1,5 @@
 @isTest
-private class CustomMetadataTest
+private class ApplicationFactoryTest
 {
     /********************************************************
      *    Selector-related Testing
@@ -189,5 +189,74 @@ private class CustomMetadataTest
         };
 
         ApplicationSObjectDomainDIModule.setMock(bindingList);
+    }
+
+    /********************************************************
+     *    Unit-of-Work-related Testing
+    ********************************************************/
+    @IsTest
+    private static void Application_UnitOfWork_HappyPathTest()
+    {
+        configureUnitOfWork();
+
+        IApplicationSObjectUnitOfWork uow = Application.UnitOfWork.newInstance();
+        System.assert(uow != null);
+
+        uow = Application.UnitOfWork.newInstance(new List<SObjectType> {Account.SObjectType, Contact.SObjectType});
+        System.assert(uow != null);
+
+        uow = Application.UnitOfWork.newInstance(new MockDml());
+        System.assert(uow != null);
+
+        uow = Application.UnitOfWork.newInstance(new List<SObjectType> {Account.SObjectType, Contact.SObjectType}, new MockDml());
+        System.assert(uow != null);
+    }
+
+    private static void configureUnitOfWork()
+    {
+        ApplicationFactory_UnitOfWorkBinding__mdt accountBinding = new ApplicationFactory_UnitOfWorkBinding__mdt();
+        accountBinding.BindingSObjectAlternate__c = 'Account';
+        accountBinding.BindingSequence__c = 10.0;
+
+        ApplicationFactory_UnitOfWorkBinding__mdt contactBinding = new ApplicationFactory_UnitOfWorkBinding__mdt();
+        contactBinding.BindingSObjectAlternate__c = 'Contact';
+        contactBinding.BindingSequence__c = 20.0;
+
+        List<ApplicationFactory_UnitOfWorkBinding__mdt> bindingList = new List<ApplicationFactory_UnitOfWorkBinding__mdt>
+        {
+            accountBinding,
+            contactBinding
+        };
+
+        ApplicationSObjectUnitOfWorkDIProvider.setMock(bindingList);
+    }
+
+    private class MockDml
+        implements fflib_SObjectUnitOfWork.IDML
+    {
+        public void dmlInsert(List<SObject> objList)
+        {
+            //Intentionally blank
+        }
+
+        public void dmlUpdate(List<SObject> objList)
+        {
+            //Intentionally blank
+        }
+
+        public void dmlDelete(List<SObject> objList)
+        {
+            //Intentionally blank
+        }
+
+        public void eventPublish(List<SObject> objList)
+        {
+            //Intentionally blank
+        }
+
+        public void emptyRecycleBin(List<SObject> objList)
+        {
+            //Intentionally blank
+        }
     }
 }

@@ -88,6 +88,11 @@ public class ApplicationSObjectUnitOfWorkDIProvider
                                                                                 from ApplicationFactory_UnitOfWorkBinding__mdt
                                                                                order by BindingSequence__c];
 
+            if (mockBindingRecords != null)
+            {
+                bindingRecords = mockBindingRecords;
+            }
+
             for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : bindingRecords)
             {
                 bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
@@ -116,5 +121,16 @@ public class ApplicationSObjectUnitOfWorkDIProvider
         }
         
         return uow;
+    }
+
+    /********************************************************
+     *  Testing functionality
+    ********************************************************/
+    private static List<ApplicationFactory_UnitOfWorkBinding__mdt> mockBindingRecords = null;
+
+    @TestVisible
+    private static void setMock(List<ApplicationFactory_UnitOfWorkBinding__mdt> mocks)
+    {
+        mockBindingRecords = mocks;
     }
 }
