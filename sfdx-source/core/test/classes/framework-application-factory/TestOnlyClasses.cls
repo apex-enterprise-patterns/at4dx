@@ -19,14 +19,6 @@ public class TestOnlyClasses
                 return Account.SObjectType;
             }
 
-            public override List<Schema.SObjectField> getSObjectFieldList()
-            {
-                return new List<Schema.SObjectField> {
-                    Account.Id,
-                    Account.Name
-                };
-            }
-
             private List<Schema.SObjectField> getAdditionalSObjectFieldList()
             {
                 return new List<Schema.SObjectField> { };
