@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -87,21 +87,12 @@ public class PlatformEventDistributor
         // need to read all available PlatformEvents_Subscription__mdt records for this event SObjectType
         // SOQL targeting custom MDT tables does not support the OR operator.  Manually filter.
         // https://help.salesforce.com/articleView?id=custommetadatatypes_limitations.htm
-        List<PlatformEvents_Subscription__mdt> eventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
-        for
-        (
-            PlatformEvents_Subscription__mdt ped :
-            [
-                select
-                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                from PlatformEvents_Subscription__mdt
-                where IsActive__c = true AND EventBus__c = :platformEventBusDescribe.getName()
-            ]
-        )
+        List<PlatformEvents_Subscription__mdt> applicableEventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
+        for (PlatformEvents_Subscription__mdt ped : getRegisteredSubscribers(platformEventBusDescribe.getName()))
         {
             if (eventCategorySet.contains(ped.EventCategory__c) || eventNameSet.contains(ped.Event__c))
             {
-                eventSubscriptionRecords.add(ped);
+                applicableEventSubscriptionRecords.add(ped);
             }
         }
 
@@ -110,7 +101,7 @@ public class PlatformEventDistributor
             'eventCategorySet:\n\t' + eventCategorySet + '\n' +
             'CMDT records:\n\t' + [select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c from PlatformEvents_Subscription__mdt] + '\n' +
             'Event bus name: ' + platformEventBusDescribe.getName() + '\n' +
-            'eventSubscriptionRecords:\n\t' + eventSubscriptionRecords);
+            'applicableEventSubscriptionRecords:\n\t' + applicableEventSubscriptionRecords);
 
         IEventsConsumer consumer = null;
 
@@ -119,7 +110,7 @@ public class PlatformEventDistributor
         Set<String> platformEventBusAvailableFieldsSet = platformEventBusDescribe.fields.getMap().keyset();
 
         // for each PlatformEvents_Subscription__mdt record, instantiate the Apex class found in the Consumer field
-        for ( PlatformEvents_Subscription__mdt subscriptionRecord : eventSubscriptionRecords )
+        for ( PlatformEvents_Subscription__mdt subscriptionRecord : applicableEventSubscriptionRecords )
         {
             eventBatchForSubscriber.clear();
 
@@ -232,5 +223,46 @@ public class PlatformEventDistributor
         }
 
         return result;
+    }
+
+    private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
+    {
+        if (String.isBlank(eventBus))
+        {
+            throw new PlatformEventDistributorException('eventBus parameter is required');
+        }
+
+        List<PlatformEvents_Subscription__mdt> result =
+            [
+                select
+                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                from PlatformEvents_Subscription__mdt
+                where IsActive__c = true
+                AND EventBus__c = :eventBus
+            ];
+
+        if (mock_PlatformEventSubscribers != null)
+        {
+            result = mock_PlatformEventSubscribers;
+        }
+
+        return result;
+    }
+
+    public class PlatformEventDistributorException
+        extends Exception
+    {
+        // Intentionally blank
+    }
+
+    /********************************************************
+     *    Test Functionality
+    ********************************************************/
+    private static List<PlatformEvents_Subscription__mdt> mock_PlatformEventSubscribers = null;
+
+    @TestVisible
+    private static void setMockSubscribers(List<PlatformEvents_Subscription__mdt> mock_subscribers)
+    {
+        mock_PlatformEventSubscribers = mock_subscribers;
     }
 }

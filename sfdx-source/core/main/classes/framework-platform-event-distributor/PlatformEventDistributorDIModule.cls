@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -70,7 +70,7 @@ public class PlatformEventDistributorDIModule
             PlatformEvents_Subscription__mdt bindingConfig
             :
             [select 
-                DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c 
+                DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
                 from PlatformEvents_Subscription__mdt where IsActive__c = true]
         )
         {
@@ -91,6 +91,7 @@ public class PlatformEventDistributorDIModule
         public String EventCategory = null;
         public String MatcherRule = null;
         public String EventBus = null;
+        public Boolean ExecuteSynchronous = null;
         public PlatformEvents_Subscription__mdt record = null;
 
         public ConfigWrapper(PlatformEvents_Subscription__mdt bindingConfig)
@@ -101,6 +102,7 @@ public class PlatformEventDistributorDIModule
             this.EventCategory = bindingConfig.EventCategory__c;
             this.MatcherRule = bindingConfig.MatcherRule__c;
             this.EventBus = bindingConfig.EventBus__c;
+            this.ExecuteSynchronous = bindingConfig.Execute_Synchronous__c;
             this.record = bindingConfig;
         }
 
@@ -111,7 +113,8 @@ public class PlatformEventDistributorDIModule
             String Event,
             String EventCategory,
             String MatcherRule,
-            String EventBus
+            String EventBus,
+            Boolean ExecuteSynchronous
         )
         {
             this.DeveloperName = DeveloperName;
@@ -120,10 +123,19 @@ public class PlatformEventDistributorDIModule
             this.EventCategory = EventCategory;
             this.MatcherRule = MatcherRule;
             this.EventBus = EventBus;
+            this.ExecuteSynchronous = ExecuteSynchronous;
+
             this.record = new PlatformEvents_Subscription__mdt();
+            this.record.DeveloperName = DeveloperName;
+            this.record.Consumer__c = Consumer;
+            this.record.Event__c = Event;
+            this.record.EventCategory__c = EventCategory;
+            this.record.MatcherRule__c = MatcherRule;
+            this.record.EventBus__c = EventBus;
+            this.record.Execute_Synchronous__c = ExecuteSynchronous;
         }
     }
 
     @TestVisible
-    List<ConfigWrapper> mock_BindingConfigurationWrappers = null;
+    private static List<ConfigWrapper> mock_BindingConfigurationWrappers = null;
 }

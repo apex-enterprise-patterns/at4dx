@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -31,7 +31,6 @@ public class PlatformEventDistributorTest
     private static void basicTestToActivateCodeCoverage() 
     {
         AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
-
         platformEventbus.EventName__c = 'bluefish';
         platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
         platformEventbus.Payload__c = json.serialize( new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType ) } );
@@ -46,6 +45,49 @@ public class PlatformEventDistributorTest
         System.assert( initialSubscriberPosition < getCurrentEventBusSubscriberPosition(), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.' );
 
         System.assertEquals(true, sr.isSuccess());
+    }
+
+    @IsTest
+    private static void PlatformEventSubscriberTest()
+    {
+        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt();
+        pes.DeveloperName = 'At4dxUnitTest';
+        pes.Consumer__c = 'TestPlatformEventsConsumer';
+        pes.EventCategory__c = Account.getSObjectType().getDescribe().getName();
+        pes.MatcherRule__c = 'MatchEventBusAndCategory';
+        pes.EventBus__c = 'AT4DXMessage__e';
+        pes.Execute_Synchronous__c = true;
+
+        AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
+        platformEventbus.EventName__c = 'at4dx unit test';
+        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
+        platformEventbus.Payload__c = 'hello_world';
+
+        PlatformEventDistributor.setMockSubscribers(new List<PlatformEvents_Subscription__mdt> {pes});
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> {platformEventbus});
+
+        System.assert(TestPlatformEventsConsumer.wasCalled);
+        System.assertEquals(platformEventbus.Payload__c, TestPlatformEventsConsumer.data);
+    }
+
+    private static void configurePlatformEventMetadata()
+    {
+        List<PlatformEventDistributorDIModule.ConfigWrapper> platformEventConfigWrapperList =
+            new List<PlatformEventDistributorDIModule.ConfigWrapper>
+            {
+                new PlatformEventDistributorDIModule.ConfigWrapper
+                (
+                    null, //DeveloperName
+                    'TestPlatformEventsConsumer', //Consumer
+                    null, //Event
+                    'Account', //EventCategory
+                    'MatchEventBusAndCategory', //MatcherRule
+                    'AT4DXMessage__e', //EventBus
+                    true //ExecuteSynchronous
+                )
+            };
+
+        PlatformEventDistributorDIModule.mock_BindingConfigurationWrappers = platformEventConfigWrapperList;
     }
 
     private static Integer getCurrentEventBusSubscriberPosition()
