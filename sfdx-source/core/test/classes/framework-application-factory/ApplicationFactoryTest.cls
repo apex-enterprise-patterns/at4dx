@@ -94,6 +94,10 @@ private class ApplicationFactoryTest
         System.assertEquals(acct.Id, accountList.get(0).Id);
     }
 
+    /********************************************************
+     *    Configures CMD records for two selectors
+     *    for Account and Contact
+    ********************************************************/
     private static void configureSelectors()
     {
         ApplicationFactory_SelectorBinding__mdt accountsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
