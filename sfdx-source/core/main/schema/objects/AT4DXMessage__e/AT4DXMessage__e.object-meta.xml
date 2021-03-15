@@ -5,4 +5,5 @@
     <eventType>HighVolume</eventType>
     <label>AT4DX Message</label>
     <pluralLabel>AT4DX Messages</pluralLabel>
+    <publishBehavior>PublishAfterCommit</publishBehavior>
 </CustomObject>
