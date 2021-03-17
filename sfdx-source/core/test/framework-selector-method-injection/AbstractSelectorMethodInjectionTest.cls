@@ -1,7 +1,7 @@
 @IsTest
 public with sharing class AbstractSelectorMethodInjectionTest {
     @IsTest
-    static void AbstractSelectorMethodInjectionTest() {
+    static void verifyAbstractSelectorMethodInjection() {
         String slogan = 'fishy';
 
         List<Account> acctsWithSlogan = TestDataFactoryFSMI.createTestAccountsWithSlogan(2, slogan);
