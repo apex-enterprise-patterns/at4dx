@@ -70,11 +70,6 @@ public with sharing class AbstractSelectorMethodInjectionTest {
 			super();
 		}
 
-		public TestApplication_SObjectSelector(Boolean includeFieldSetFields, Boolean enforceCRUD, Boolean enforceFLS)
-		{
-			super(includeFieldSetFields, enforceCRUD, enforceFLS);
-		}
-        
         public List<Schema.SObjectField> getAdditionalSObjectFieldList()
             {
                 return new List<Schema.SObjectField> {
@@ -85,11 +80,6 @@ public with sharing class AbstractSelectorMethodInjectionTest {
 		public Schema.SObjectType getSObjectType()
 		{
 			return Account.sObjectType;
-		}
-		
-		public override String getOrderBy()
-		{
-			return 'Name DESC';
 		}
 	}
 }
