@@ -4,45 +4,51 @@ public with sharing class AbstractSelectorMethodInjectionTest {
     static void verifyAbstractSelectorMethodInjection() {
         String keyName = 'fishy';
 
-        //TODO Create 2 accounts with 2 differant names one with keyName
+        List<Account> acctList = new List<Account> {
+			new Account(Name=keyName),
+			new Account(Name='TestAccount1') 
+        };		
+		insert acctList;
 
-        TestDataFactoryFSMI.Parameters queryParams = 
-            new TestDataFactoryFSMI.Parameters();
-
-        queryParams.sloganNameSet = 
-            new Set<String>{ keyName };
+        Parameters queryParams = new Parameters();
+        queryParams.nameSet = new Set<String>{ keyName };
         
-        //Update selector to new created slected from Application S object Selector
-         
-        test.startTest();
+        TestApplication_SObjectSelector testAppSOSelector =
+            new TestApplication_SObjectSelector(); 
+
+        test.startTest(); 
         List<Account> acctsReturned = 
-            //Udpate ->AccountsSelector<-.newInstance().selectInjection( 
-                TestDataFactoryFSMI.SelectBySloganSelectorMethod.class, queryParams  
+            testAppSOSelector.selectInjection( 
+                SelectByNameSelectorTestMethod.class, 
+                queryParams  
         );
         test.stopTest();
+        
+        System.assertEquals(
+            1,
+            acctsReturned.size(),
+            'Incorrect Amount of Records Returned'
+        );
 
+        Account acctToCheck = acctsReturned[0];
         System.assertEquals( 
-            acctsWithKeyName.getName(),
-            acctsReturned.[0], // Or what ever expected place in list that holds record with keyName
+            keyName,
+            acctToCheck.Name,
             'Account Name Not Equal'
         );
     }
 
-    //TODO imbed vanilla selector method for 
-
-    
     private class SelectByNameSelectorTestMethod
     extends AbstractSelectorMethodInjectable
     implements ISelectorMethodInjectable
     {
         public List<SObject> selectQuery()
         {
-            TestDataFactoryFSMI.Parameters params = (
-                AbstractSelectorMethodInjectionTest.Parameters
+            Parameters params = (
+                Parameters
             )getParams(); 
             
-            Set<String> nameSet = 
-                params.nameSet;
+            Set<String> nameSet = params.nameSet;
             
             return Database.query( 
                 newQueryFactory().setCondition( 
@@ -56,4 +62,34 @@ public with sharing class AbstractSelectorMethodInjectionTest {
     {
         public Set<String> nameSet;
     }
+
+    private class TestApplication_SObjectSelector extends ApplicationSObjectSelector
+	{
+		public TestApplication_SObjectSelector()
+		{
+			super();
+		}
+
+		public TestApplication_SObjectSelector(Boolean includeFieldSetFields, Boolean enforceCRUD, Boolean enforceFLS)
+		{
+			super(includeFieldSetFields, enforceCRUD, enforceFLS);
+		}
+        
+        public List<Schema.SObjectField> getAdditionalSObjectFieldList()
+            {
+                return new List<Schema.SObjectField> {
+                    Account.Name
+                };
+            }
+
+		public Schema.SObjectType getSObjectType()
+		{
+			return Account.sObjectType;
+		}
+		
+		public override String getOrderBy()
+		{
+			return 'Name DESC';
+		}
+	}
 }
