@@ -25,7 +25,7 @@
 **/
 
 @IsTest
-public with sharing class AbstractSelectorMethodInjectionTest {
+public with sharing class AbstractSelectorMethodInjectableTest {
     @IsTest
     static void verifyAbstractSelectorMethodInjection() {
         String keyName = 'fishy';
