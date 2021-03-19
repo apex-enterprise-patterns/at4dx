@@ -6,7 +6,9 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
             new Account(Name='NewTestAccount1'),
             new Account(Name='NewTestAccount2')
         };
-        Account singleAccount = new Account(Name='NewTestAccount3');
+
+        Account singleAccount = 
+            new Account(Name='NewTestAccount3');
 
         List<Schema.SObjectType> sObjTypes = new List<Schema.SObjectType>();
         sObjTypes.add(Account.SOBjectType);
@@ -48,11 +50,13 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         List<Account> dirtyAcctList = new List<Account> {
 			new Account(Name='DirtyTestAccount1'),
 			new Account(Name='DirtyTestAccount2') 
-        };		
+        };	
+
 		insert dirtyAcctList;
 
         Account singleAccount = 
             new Account(Name='NewTestAccount3');
+
         insert singleAccount;
 
         List<Schema.SObjectType> sObjTypes = new List<Schema.SObjectType>();
@@ -112,6 +116,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         Account acct = new Account(
             Name='TestAccount1'
         );
+
         applicationSObjectUOW.register(acct);
 
         applicationSObjectUOW.registerEmails(emails);
