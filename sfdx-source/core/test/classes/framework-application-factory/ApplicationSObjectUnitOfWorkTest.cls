@@ -256,7 +256,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         );
     }
 
-    @isTest
+    @IsTest
     private static void verifyRegisterEmails()
     {
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
