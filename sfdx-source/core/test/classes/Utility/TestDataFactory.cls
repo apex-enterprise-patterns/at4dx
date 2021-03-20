@@ -10,7 +10,7 @@ public with sharing class TestDataFactory {
     
     public static Account getSingleAccount(){
         Account singleAccount = 
-        new Account(Name='NewTestAccount1');
+            new Account(Name='NewTestAccount1');
         return singleAccount;
     }
 }
