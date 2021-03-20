@@ -28,6 +28,8 @@
 public with sharing class ApplicationSObjectUnitOfWorkTest {
     @IsTest
     static void verifyRegisteredRecordListReturnsNewRecordsByType() {
+        List<Account> acctList = TestDataFactory.getAccList(2);
+
         //Test register list of new records
         applicationSObjectUOW.register(acctList);
 
@@ -46,6 +48,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyRegisterSingleRecordReturnsNewRecordsByType() {
+        Account singleAccount = TestDataFactory.getSingleAccount();
+
         //Test register single new record
         applicationSObjectUOW.register(
             singleAccount
@@ -71,6 +75,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
     
     @IsTest
     static void verifyRegisteredRecordListReturnDirtyRecordsByType(){
+        List<Account> acctList = TestDataFactory.getAccList(2);
 		insert acctList;
 
         //Test register List of Dirty records
@@ -95,6 +100,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
   @IsTest
     static void verifyRegisterSingleRecordReturnDirtyRecordsByType(){
+        Account singleAccount = TestDataFactory.getSingleAccount();
         insert singleAccount;
        
         //Test register single Dirty record
@@ -125,6 +131,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
   @IsTest
     static void verifyApplicationSobjectUOWConstructorWithDML(){
+        Account singleAccount = TestDataFactory.getSingleAccount();
         insert singleAccount;
 
        //Mock DML for testing constructor with Type and DML
@@ -164,6 +171,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyGetDeletedRecordsByType(){
+        List<Account> acctList = TestDataFactory.getAccList(2);
+
         //Register List of records and commit them
         applicationSObjectUOW.register(acctList);
         applicationSObjectUOW.commitWork();
@@ -190,6 +199,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyRegisterNewWithParentRecord() {
+        Account singleAccount = TestDataFactory.getSingleAccount();
+
         //Create account record to be parent
         Account parentAccount = new Account(name='parentAccount');
         insert parentAccount;
@@ -225,6 +236,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         Account parentAccount = new Account(name='parentAccount');
         insert parentAccount;
 
+        Account singleAccount = TestDataFactory.getSingleAccount();
         insert singleAccount;
 
        Schema.SObjectField parentField = Account.ParentId; 
@@ -259,6 +271,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
     @IsTest
     private static void verifyRegisterEmails()
     {
+        Account singleAccount = TestDataFactory.getSingleAccount();
+
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
         email.setToAddresses(new list<String>{ 'foobar@test.com' });
         email.setPlainTextBody('See Spot run.');
@@ -357,12 +371,4 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
                 Account.SObjectType
             }
         );
-
-    public static final List<Account> acctList = new List<Account> {
-    	new Account(Name='TestAccount1'),
-		new Account(Name='TestAccount2') 
-    };
-        
-    public static final Account singleAccount = 
-        new Account(Name='NewTestAccount1');
 }
