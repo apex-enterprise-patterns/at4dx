@@ -83,8 +83,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-        applicationSObjectUOW.getDirtyRecordsByType(
-            acctList.getSObjectType()
+            applicationSObjectUOW.getDirtyRecordsByType(
+                acctList.getSObjectType()
         );
 
         //Put mapped values to list
@@ -110,8 +110,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-        applicationSObjectUOW.getDirtyRecordsByType(
-            singleAccount.getSObjectType()
+            applicationSObjectUOW.getDirtyRecordsByType(
+                singleAccount.getSObjectType()
         );
 
         //Put mapped values in list for assertion
@@ -150,8 +150,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-        applicationSObjectUOWDML.getDirtyRecordsByType(
-            singleAccount.getSObjectType()
+            applicationSObjectUOWDML.getDirtyRecordsByType(
+                singleAccount.getSObjectType()
         );
 
         //put mapped values in list for assertion
@@ -182,8 +182,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return deleted records by type to map
         Map<Id,SObject> returnedDeletedAcctsMap = 
-        applicationSObjectUOW.getDeletedRecordsByType(
-            acctList.getSObjectType()
+            applicationSObjectUOW.getDeletedRecordsByType(
+                acctList.getSObjectType()
         );
 
         //Group accounts for assertion
@@ -251,8 +251,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-        applicationSObjectUOW.getDirtyRecordsByType(
-            singleAccount.getSObjectType()
+            applicationSObjectUOW.getDirtyRecordsByType(
+                singleAccount.getSObjectType()
         );
 
         //Put mapped values in list for assertion
@@ -370,5 +370,5 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
             new List<Schema.SObjectType>{
                 Account.SObjectType
             }
-        );
+    );
 }
