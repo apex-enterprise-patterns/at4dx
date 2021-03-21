@@ -31,20 +31,23 @@
 public class ApplicationSObjectDomainDIModule 
     extends di_Module
 {
+    @TestVisible
+    private static list<ApplicationFactory_DomainBinding__mdt> bindingRecords = new list<ApplicationFactory_DomainBinding__mdt>();
+
+    private void initializeBindingRecords()
+    {
+        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c
+                                        , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                    from ApplicationFactory_DomainBinding__mdt]);
+    }
+
     public override void configure() 
     {
         Schema.DescribeSobjectResult[] results = null;
 
         String bindingSObjectAPIName = null;
 
-        list<ApplicationFactory_DomainBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, To__c
-                                                                           , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                        from ApplicationFactory_DomainBinding__mdt];
-
-        if (mockBindingRecords != null)
-        {
-            bindingRecords = mockBindingRecords;
-        }
+        this.initializeBindingRecords();
 
         for ( ApplicationFactory_DomainBinding__mdt bindingConfig : bindingRecords)
         {
@@ -66,16 +69,5 @@ public class ApplicationSObjectDomainDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
-    }
-
-    /********************************************************
-     *  Testing functionality
-    ********************************************************/
-    private static List<ApplicationFactory_DomainBinding__mdt> mockBindingRecords = null;
-
-    @TestVisible
-    private static void setMock(List<ApplicationFactory_DomainBinding__mdt> mocks)
-    {
-        mockBindingRecords = mocks;
     }
 }
