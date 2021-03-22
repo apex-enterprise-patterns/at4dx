@@ -45,7 +45,7 @@ public with sharing class AbstractSelectorMethodInjectableTest {
         test.startTest(); 
         List<Account> acctsReturned = 
             testAppSOSelector.selectInjection( 
-                SelectByNameSelectorTestMethod.class, 
+                SelectByNameSelectorMethod.class, 
                 queryParams  
         );
         test.stopTest();
