@@ -25,9 +25,10 @@
 **/
 
 @IsTest
-public with sharing class AbstractSelectorMethodInjectableTest {
+private class AbstractSelectorMethodInjectableTest 
+{
     @IsTest
-    static void verifyAbstractSelectorMethodInjection() {
+    private static void verifyAbstractSelectorMethodInjection() {
         String keyName = 'fishy';
 
         List<Account> acctList = new List<Account> {
@@ -39,8 +40,7 @@ public with sharing class AbstractSelectorMethodInjectableTest {
         Parameters queryParams = new Parameters();
         queryParams.nameSet = new Set<String>{ keyName };
         
-        TestApplication_SObjectSelector testAppSOSelector =
-            new TestApplication_SObjectSelector(); 
+        TestApplication_SObjectSelector testAppSOSelector = new TestApplication_SObjectSelector(); 
 
         test.startTest(); 
         List<Account> acctsReturned = 
@@ -65,8 +65,8 @@ public with sharing class AbstractSelectorMethodInjectableTest {
     }
 
     private class SelectByNameSelectorMethod
-    extends AbstractSelectorMethodInjectable
-    implements ISelectorMethodInjectable
+        extends AbstractSelectorMethodInjectable
+        implements ISelectorMethodInjectable
     {
         public List<SObject> selectQuery()
         {
@@ -84,7 +84,8 @@ public with sharing class AbstractSelectorMethodInjectableTest {
         public Set<String> nameSet;
     }
 
-    private class TestApplication_SObjectSelector extends ApplicationSObjectSelector
+    private class TestApplication_SObjectSelector 
+        extends ApplicationSObjectSelector
 	{
 		public TestApplication_SObjectSelector()
 		{
@@ -92,11 +93,9 @@ public with sharing class AbstractSelectorMethodInjectableTest {
 		}
 
         public List<Schema.SObjectField> getAdditionalSObjectFieldList()
-            {
-                return new List<Schema.SObjectField> {
-                    Account.Name
-                };
-            }
+        {
+            return new List<Schema.SObjectField> { Account.Name };
+        }
 
 		public Schema.SObjectType getSObjectType()
 		{
