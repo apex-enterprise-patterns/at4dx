@@ -64,26 +64,21 @@ public with sharing class AbstractSelectorMethodInjectableTest {
         );
     }
 
-    private class SelectByNameSelectorTestMethod
+    private class SelectByNameSelectorMethod
     extends AbstractSelectorMethodInjectable
     implements ISelectorMethodInjectable
     {
         public List<SObject> selectQuery()
         {
-            Parameters params = (
-                Parameters
-            )getParams(); 
+            Parameters params = (Parameters)getParams(); 
             
             Set<String> nameSet = params.nameSet;
             
-            return Database.query( 
-                newQueryFactory().setCondition( 
-                    Account.Name+ ' in :nameSet').toSOQL() 
-            );
+            return Database.query(newQueryFactory().setCondition(Account.Name+ ' in :nameSet').toSOQL());
         }
     }
         
-    public class Parameters
+    private class Parameters
         implements ISelectorMethodParameterable
     {
         public Set<String> nameSet;
