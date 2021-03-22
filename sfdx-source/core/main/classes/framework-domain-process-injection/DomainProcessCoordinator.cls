@@ -45,7 +45,7 @@ public class DomainProcessCoordinator
     }
 
     @TestVisible
-    private list<DomainProcessBinding__mdt> mockDomainProcesses = new list<DomainProcessBinding__mdt>();
+    private static list<DomainProcessBinding__mdt> mockDomainProcesses = new list<DomainProcessBinding__mdt>();
 
     private void primeDomainLogicInjections()
     {
@@ -81,7 +81,7 @@ public class DomainProcessCoordinator
         //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
 
         // TODO : Figure out how mock domain processes should be handled
-        if ( ! this.mockDomainProcesses.isEmpty() )
+        if ( ! mockDomainProcesses.isEmpty() )
         {
             domainProcesses.clear();
             domainProcesses.addAll( mockDomainProcesses );
