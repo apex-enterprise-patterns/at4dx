@@ -83,7 +83,7 @@ public class DomainProcessInjectionTest
         };
         Accounts accounts = new Accounts(accList);
         fflib_SObjectDomain.Test.Database.onInsert(accList);
-        fflib_SObjectDomain.triggerHandler(fflib_SObjectDomain.TestSObjectDomainConstructor.class);
+        
 
         List<SObject> result = accounts.getChangedRecords(
 				new Set<String>
