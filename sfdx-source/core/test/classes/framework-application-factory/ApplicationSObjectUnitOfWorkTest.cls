@@ -28,16 +28,14 @@
 public with sharing class ApplicationSObjectUnitOfWorkTest {
     @IsTest
     static void verifyRegisteredRecordListReturnsNewRecordsByType() {
-        List<Account> acctList = TestDataFactory.getAccList(2);
+        List<Account> acctList = getAcctList(2);
 
         //Test register list of new records
         applicationSObjectUOW.register(acctList);
 
         //Test getting new records registered
         List<Account> returnedAccts = 
-            applicationSObjectUOW.getNewRecordsByType(
-                Account.SObjectType
-            );
+            applicationSObjectUOW.getNewRecordsByType(Account.SObjectType);
 
         System.assertEquals(
             acctList,
@@ -48,22 +46,17 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyRegisterSingleRecordReturnsNewRecordsByType() {
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
 
         //Test register single new record
-        applicationSObjectUOW.register(
-            singleAccount
-        );
+        applicationSObjectUOW.register(singleAccount);
 
         //Test getting new records registered
         List<Account> returnedAccts = 
-            applicationSObjectUOW.getNewRecordsByType(
-                Account.SObjectType
-            );
+            applicationSObjectUOW.getNewRecordsByType(Account.SObjectType);
 
         //Put Single account in list for assertion
-        List<Account> expectedList = 
-            new List<Account>{singleAccount};
+        List<Account> expectedList = new List<Account>{singleAccount};
           
         System.assertEquals(
             expectedList,
@@ -75,7 +68,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
     
     @IsTest
     static void verifyRegisteredRecordListReturnDirtyRecordsByType(){
-        List<Account> acctList = TestDataFactory.getAccList(2);
+        List<Account> acctList = getAcctList(2);
 		insert acctList;
 
         //Test register List of Dirty records
@@ -83,13 +76,10 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-            applicationSObjectUOW.getDirtyRecordsByType(
-                acctList.getSObjectType()
-        );
+            applicationSObjectUOW.getDirtyRecordsByType(acctList.getSObjectType());
 
         //Put mapped values to list
-        List<Account> returnedAcctsList =
-            returnedAcctsMap.values(); 
+        List<Account> returnedAcctsList = returnedAcctsMap.values(); 
 
         System.assertEquals(
             acctList,
@@ -100,27 +90,21 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
   @IsTest
     static void verifyRegisterSingleRecordReturnDirtyRecordsByType(){
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
         insert singleAccount;
        
         //Test register single Dirty record
-        applicationSObjectUOW.register(
-            singleAccount
-        );
+        applicationSObjectUOW.register(singleAccount);
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-            applicationSObjectUOW.getDirtyRecordsByType(
-                singleAccount.getSObjectType()
-        );
+            applicationSObjectUOW.getDirtyRecordsByType(singleAccount.getSObjectType());
 
         //Put mapped values in list for assertion
-        List<Account> returnedAcctsList =
-            returnedAcctsMap.values();
+        List<Account> returnedAcctsList = returnedAcctsMap.values();
 
         //Put Single account in list for assertion
-        List<Account> expectedList = 
-            new List<Account>{singleAccount};
+        List<Account> expectedList = new List<Account>{singleAccount};
 
         System.assertEquals(
             expectedList,
@@ -131,7 +115,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
   @IsTest
     static void verifyApplicationSobjectUOWConstructorWithDML(){
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
         insert singleAccount;
 
        //Mock DML for testing constructor with Type and DML
@@ -144,23 +128,17 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
             new ApplicationSObjectUnitOfWork(sObjTypes,mockDML);
 
         //Test register single Dirty record
-        applicationSObjectUOWDML.register(
-            singleAccount
-        );
+        applicationSObjectUOWDML.register(singleAccount);
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-            applicationSObjectUOWDML.getDirtyRecordsByType(
-                singleAccount.getSObjectType()
-        );
+            applicationSObjectUOWDML.getDirtyRecordsByType(singleAccount.getSObjectType());
 
         //put mapped values in list for assertion
-        List<Account> returnedAcctsList =
-            returnedAcctsMap.values(); 
+        List<Account> returnedAcctsList = returnedAcctsMap.values(); 
 
         //Put Single account in list for assertion
-        List<Account> expectedList = 
-            new List<Account>{singleAccount};
+        List<Account> expectedList = new List<Account>{singleAccount};
 
         System.assertEquals(
             expectedList,
@@ -171,7 +149,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyGetDeletedRecordsByType(){
-        List<Account> acctList = TestDataFactory.getAccList(2);
+        List<Account> acctList = getAcctList(2);
 
         //Register List of records and commit them
         applicationSObjectUOW.register(acctList);
@@ -182,13 +160,10 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return deleted records by type to map
         Map<Id,SObject> returnedDeletedAcctsMap = 
-            applicationSObjectUOW.getDeletedRecordsByType(
-                acctList.getSObjectType()
-        );
+            applicationSObjectUOW.getDeletedRecordsByType(acctList.getSObjectType());
 
         //Group accounts for assertion
-        List<Account> returnedDeletedAcctsList =
-            returnedDeletedAcctsMap.values(); 
+        List<Account> returnedDeletedAcctsList = returnedDeletedAcctsMap.values(); 
 
         System.assertEquals(
             acctList,
@@ -199,7 +174,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyRegisterNewWithParentRecord() {
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
 
         //Create account record to be parent
         Account parentAccount = new Account(name='parentAccount');
@@ -217,9 +192,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test getting new records registered
         List<Account> returnedAccts = 
-            applicationSObjectUOW.getNewRecordsByType(
-                Account.SObjectType
-            );
+            applicationSObjectUOW.getNewRecordsByType(Account.SObjectType);
 
         Account returnedAcct = returnedAccts[0];
            
@@ -236,7 +209,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         Account parentAccount = new Account(name='parentAccount');
         insert parentAccount;
 
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
         insert singleAccount;
 
        Schema.SObjectField parentField = Account.ParentId; 
@@ -251,13 +224,10 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         //Test Return Dirty Records By Type to Map
         Map<Id,SObject> returnedAcctsMap = 
-            applicationSObjectUOW.getDirtyRecordsByType(
-                singleAccount.getSObjectType()
-        );
+            applicationSObjectUOW.getDirtyRecordsByType(singleAccount.getSObjectType());
 
         //Put mapped values in list for assertion
-        List<Account> returnedAcctsList =
-            returnedAcctsMap.values();
+        List<Account> returnedAcctsList = returnedAcctsMap.values();
 
         Account returnedAcct = returnedAcctsList[0];
 
@@ -271,7 +241,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
     @IsTest
     private static void verifyRegisterEmails()
     {
-        Account singleAccount = TestDataFactory.getSingleAccount();
+        Account singleAccount = getAcctList(1)[0];
 
         Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
         email.setToAddresses(new list<String>{ 'foobar@test.com' });
@@ -291,9 +261,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         applicationSObjectUOW.commitWork();
 
         List<Account> accts = 
-            applicationSObjectUOW.getNewRecordsByType(
-                singleAccount.getSObjectType()
-            ); 
+            applicationSObjectUOW.getNewRecordsByType(singleAccount.getSObjectType()); 
 
         // assert that mock email functionality was called
         system.assert(((Mock_SendEmailWork) applicationSObjectUOW.m_emailWork).doWorkWasCalled,
@@ -371,4 +339,12 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
                 Account.SObjectType
             }
     );
+
+    public static List<Account> getAcctList(Integer numAccts){
+        List<Account> acctList = new List<Account>(); 
+        for(Integer i=0; i<numAccts; i++){
+    	    acctList.add(new Account(Name='TestAccount'+i));
+        }
+        return acctList;
+    }
 }
