@@ -27,18 +27,21 @@
 @IsTest
 public class DomainProcessInjectionTest
 {
+    public static AccountsTestDomain lastConstructed;
+    public static List<Account> processedRecords = new List<Account>();
+    
     @isTest
     private static void accountInsertTwoCriteria() 
-    {
+    { 
         List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
             new DomainProcessBinding__mdt(
                 Label = 'DallasAccountCriteria',
                 ClassToInject__c = 'DomainProcessInjectionTest.AccountIsDallasCriteriaTest',
                 IsActive__c = true,
                 OrderOfExecution__c = 10.10,
-                ProcessContext__c = 'Trigger Execution',
+                ProcessContext__c = 'TriggerExecution',
                 RelatedDomainBindingSObject__c = 'Account',
-                TriggerOperation__c = 'Before Insert',
+                TriggerOperation__c = 'Before_Insert',
                 Type__c = 'Criteria'
             ),
             new DomainProcessBinding__mdt(
@@ -46,9 +49,9 @@ public class DomainProcessInjectionTest
                 ClassToInject__c = 'DomainProcessInjectionTest.AccountIsRichmondCriteriaTest',
                 IsActive__c = true,
                 OrderOfExecution__c = 11.10,
-                ProcessContext__c = 'Trigger Execution',
+                ProcessContext__c = 'TriggerExecution',
                 RelatedDomainBindingSObject__c = 'Account',
-                TriggerOperation__c = 'Before Insert',
+                TriggerOperation__c = 'Before_Insert',
                 Type__c = 'Criteria'
             ),
             new DomainProcessBinding__mdt(
@@ -56,9 +59,9 @@ public class DomainProcessInjectionTest
                 ClassToInject__c = 'DomainProcessInjectionTest.DallasAccountActionTest',
                 IsActive__c = true,
                 OrderOfExecution__c = 10.10,
-                ProcessContext__c = 'Trigger Execution',
+                ProcessContext__c = 'TriggerExecution',
                 RelatedDomainBindingSObject__c = 'Account',
-                TriggerOperation__c = 'Before Insert',
+                TriggerOperation__c = 'Before_Insert',
                 Type__c = 'Action'
             ),
             new DomainProcessBinding__mdt(
@@ -66,9 +69,9 @@ public class DomainProcessInjectionTest
                 ClassToInject__c = 'DomainProcessInjectionTest.RichmondAccountActionTest',
                 IsActive__c = true,
                 OrderOfExecution__c = 11.10,
-                ProcessContext__c = 'Trigger Execution',
+                ProcessContext__c = 'TriggerExecution',
                 RelatedDomainBindingSObject__c = 'Account',
-                TriggerOperation__c = 'Before Insert',
+                TriggerOperation__c = 'Before_Insert',
                 Type__c = 'Action'
             )
         };
@@ -85,25 +88,9 @@ public class DomainProcessInjectionTest
         fflib_SObjectDomain.Test.Database.onInsert(accList);
         fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
 
-        /*List<SObject> result = accounts.getChangedRecords(
-				new Set<String>
-				{
-						'Name',
-						'BillingCity',
-						'BillingState'
-				}
-		);*/
-
-        /*List<Account> dallasAcccounts = [select Id, Name, BillingCity, BillingState
-                                        from Account
-                                        where BillingCity = 'Dallas'
-                                        and BillingState = 'Texas'];
-        List<Account> richmondAccounts = [select Id, Name, BillingCity, BillingState
-                                            from Account
-                                            where BillingCity = 'Richmond'
-                                            and BillingState = 'Virginia'];*/
-
-        /*for (SObject obj : result) {
+        List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
+		System.assertEquals(4, result.size(), '4 records should have been changed');
+        for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
                 System.assert(true, 'Account with city Dallas has state correctly set to Texas');
@@ -114,10 +101,182 @@ public class DomainProcessInjectionTest
             else {
                 System.assert(false, 'Account not matching any criteria');
             }
-        }*/
+        }
     }
 
-    private with sharing class AccountsTestDomain 
+    @isTest
+    private static void accountUpdateTwoCriteria() {
+        List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsDallasCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsRichmondCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.DallasAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                Type__c = 'Action'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.RichmondAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                Type__c = 'Action'
+            )
+        };
+
+        DomainProcessCoordinator.domainProcesses.addAll(config);
+
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test1', BillingCity='Dallas', Id = '0018A00000caJ6lQAE' ),
+            new Account(Name='Test2', BillingCity='Dallas', Id = '0018A00000caJ70QAE' ),
+            new Account(Name='Test3', BillingCity='Richmond', Id = '0018A00000caJ80QAE'),
+            new Account(Name='Test4', BillingCity='Richmond', Id = '0018A00000caJ90QAE')
+        };
+
+        fflib_SObjectDomain.Test.Database.onUpdate(accList, new Map<Id, SObject>(accList));
+        fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
+
+        List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
+		System.assertEquals(4, result.size(), '4 records should have been changed');
+        for (SObject obj : result) {
+            Account acc = (Account) obj;
+            if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
+                System.assert(true, 'Account with city Dallas has state correctly set to Texas');
+            }
+            else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
+                System.assert(true, 'Account with city Richmond has state correctly set to Virginia');
+            }
+            else {
+                System.assert(false, 'Account not matching any criteria');
+            }
+        }
+    }
+
+    @isTest
+    private static void accountUpdateTwoCriteriaAsync() {
+        List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsDallasCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = true,
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsRichmondCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = true,
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.DallasAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = true,
+                Type__c = 'Action'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.RichmondAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = true,
+                Type__c = 'Action'
+            )
+        };
+
+        DomainProcessCoordinator.domainProcesses.addAll(config);
+
+        Test.startTest();
+
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test1', BillingCity='Dallas', Id = '0018A00000caJ6lQAE' ),
+            new Account(Name='Test2', BillingCity='Dallas', Id = '0018A00000caJ70QAE' ),
+            new Account(Name='Test3', BillingCity='Richmond', Id = '0018A00000caJ80QAE'),
+            new Account(Name='Test4', BillingCity='Richmond', Id = '0018A00000caJ90QAE')
+        };
+
+        fflib_SObjectDomain.Test.Database.onUpdate(accList, new Map<Id, SObject>(accList));
+        fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
+        Test.stopTest();
+
+        List<SObject> result = DomainProcessInjectionTest.processedRecords;
+		System.assertEquals(4, result.size(), '4 records should have been changed');
+        for (SObject obj : result) {
+            Account acc = (Account) obj;
+            if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
+                System.assert(true, 'Account with city Dallas has state correctly set to Texas');
+            }
+            else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
+                System.assert(true, 'Account with city Richmond has state correctly set to Virginia');
+            }
+            else {
+                System.assert(false, 'Account not matching any criteria');
+            }
+        }
+    }
+
+    @isTest
+    private static void coverLinesOfCode() {
+        RichmondAccountActionTest testAction = new RichmondAccountActionTest();
+        testAction.setNextQueueableActionInChain(null);
+        testAction.setRecordsRequired(true);
+        
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test1', BillingCity='Dallas' ),
+            new Account(Name='Test2', BillingCity='Dallas' ),
+            new Account(Name='Test3', BillingCity='Richmond'),
+            new Account(Name='Test4', BillingCity='Richmond')
+        };
+
+        AccountsTestDomain domain = new AccountsTestDomain(accList);
+        DomainProcessCoordinator coordinator = new DomainProcessCoordinator(domain);
+        coordinator.processDomainLogicInjections('TriggerExecution');
+        coordinator.processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution, System.TriggerOperation.BEFORE_UPDATE);
+    }
+    
+    public with sharing class AccountsTestDomain 
     extends ApplicationSObjectDomain
     {
         public AccountsTestDomain(List<Account> records)
@@ -129,16 +288,17 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class AccountsTestDomainConstructor
+    public class AccountsTestDomainConstructor
             implements fflib_SObjectDomain.IConstructable
     {
         public fflib_SObjectDomain Construct(List<SObject> sObjectList)
         {
-            return new AccountsTestDomain(sObjectList);
+            DomainProcessInjectionTest.lastConstructed = new AccountsTestDomain(sObjectList);
+            return DomainProcessInjectionTest.lastConstructed;
         }
     }
 
-    private class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
+    public class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
     {   
         private list<Account> records = new list<Account>();
 
@@ -167,7 +327,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
+    public class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
     {
         private list<Account> records = new list<Account>();
 
@@ -196,7 +356,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class DallasAccountActionTest extends DomainProcessAbstractAction
+    public class DallasAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
@@ -206,12 +366,12 @@ public class DomainProcessInjectionTest
             {
                 accountRecord = (Account)record;
                 accountRecord.BillingState = 'Texas';
+                DomainProcessInjectionTest.processedRecords.add(accountRecord);
             }
         }
     }
-
     
-    private class RichmondAccountActionTest extends DomainProcessAbstractAction
+    public class RichmondAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
@@ -221,8 +381,8 @@ public class DomainProcessInjectionTest
             {
                 accountRecord = (Account)record;
                 accountRecord.BillingState = 'Virginia';
+                DomainProcessInjectionTest.processedRecords.add(accountRecord);
             }
         }
     }
-
 }
