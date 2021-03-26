@@ -31,19 +31,18 @@
 public class ApplicationServiceDIModule 
     extends di_Module
 {
+    @TestVisible
+    private static List<ApplicationFactory_ServiceBinding__mdt> bindingRecords = new List<ApplicationFactory_ServiceBinding__mdt>();
+
+    private static List<ApplicationFactory_ServiceBinding__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt]);
+        return bindingRecords;
+    }
+
     public override void configure() 
     {
-        Type interfaceType = null;
-
-        List<ApplicationFactory_ServiceBinding__mdt> bindingRecords =
-            [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt];
-
-            if (mockBindingRecords != null)
-            {
-                bindingRecords = mockBindingRecords;
-            }
-    
-            for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : bindingRecords)
+        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : getBindingRecords())
         {
             apex();
             try {
@@ -55,16 +54,5 @@ public class ApplicationServiceDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
-    }
-
-    /********************************************************
-     *  Testing functionality
-    ********************************************************/
-    private static List<ApplicationFactory_ServiceBinding__mdt> mockBindingRecords = null;
-
-    @TestVisible
-    private static void setMock(List<ApplicationFactory_ServiceBinding__mdt> mocks)
-    {
-        mockBindingRecords = mocks;
     }
 }

@@ -31,22 +31,25 @@
 public class ApplicationSObjectSelectorDIModule 
     extends di_Module
 {
+    @TestVisible
+    private static List<ApplicationFactory_SelectorBinding__mdt> bindingRecords = new List<ApplicationFactory_SelectorBinding__mdt>();
+
+    private static List<ApplicationFactory_SelectorBinding__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll(
+            [select DeveloperName, QualifiedAPIName, To__c, BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+            from ApplicationFactory_SelectorBinding__mdt]
+        );
+        return bindingRecords;
+    }
+
     public override void configure() 
     {
         Schema.DescribeSobjectResult[] results = null;
 
         String bindingSObjectAPIName = null;
 
-        list<ApplicationFactory_SelectorBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, To__c
-                                                                             , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                          from ApplicationFactory_SelectorBinding__mdt];
-
-        if (mockBindingRecords != null)
-        {
-            bindingRecords = mockBindingRecords;
-        }
-
-        for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : bindingRecords)
+        for ( ApplicationFactory_SelectorBinding__mdt bindingConfig : getBindingRecords())
         {
             bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 

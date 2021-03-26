@@ -34,11 +34,12 @@ public class ApplicationSObjectDomainDIModule
     @TestVisible
     private static list<ApplicationFactory_DomainBinding__mdt> bindingRecords = new list<ApplicationFactory_DomainBinding__mdt>();
 
-    private void initializeBindingRecords()
+    private list<ApplicationFactory_DomainBinding__mdt> getBindingRecords()
     {
         bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c
                                         , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
                                     from ApplicationFactory_DomainBinding__mdt]);
+        return bindingRecords;
     }
 
     public override void configure() 
@@ -47,9 +48,7 @@ public class ApplicationSObjectDomainDIModule
 
         String bindingSObjectAPIName = null;
 
-        this.initializeBindingRecords();
-
-        for ( ApplicationFactory_DomainBinding__mdt bindingConfig : bindingRecords)
+        for ( ApplicationFactory_DomainBinding__mdt bindingConfig : getBindingRecords())
         {
             bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 

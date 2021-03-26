@@ -114,7 +114,7 @@ private class ApplicationFactoryTest
             contactsSelectorBinding
         };
 
-        ApplicationSObjectSelectorDIModule.setMock(bindingList);
+        ApplicationSObjectSelectorDIModule.bindingRecords.addAll(bindingList);
     }
 
     /********************************************************
@@ -154,12 +154,7 @@ private class ApplicationFactoryTest
         binding.BindingInterface__c = 'TestOnlyClasses.ITestService';
         binding.To__c = 'TestOnlyClasses.TestServiceImpl';
 
-        List<ApplicationFactory_ServiceBinding__mdt> bindingList = new List<ApplicationFactory_ServiceBinding__mdt>
-        {
-            binding
-        };
-
-        ApplicationServiceDIModule.setMock(bindingList);
+        ApplicationServiceDIModule.bindingRecords.addAll(new List<ApplicationFactory_ServiceBinding__mdt> {binding});
     }
 
     /********************************************************
@@ -218,7 +213,7 @@ private class ApplicationFactoryTest
             binding
         };
 
-        ApplicationSObjectDomainDIModule.setMock(bindingList);
+        ApplicationSObjectDomainDIModule.bindingRecords.addAll(bindingList);
     }
 
     /********************************************************
