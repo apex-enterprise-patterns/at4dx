@@ -70,6 +70,6 @@ private class ApplicationSObjectSelectorTest
             contactsSelectorBinding
         };
 
-        ApplicationSObjectSelectorDIModule.setMock(bindingList);
+        ApplicationSObjectSelectorDIModule.bindingRecords.addAll(bindingList);
     }
 }
