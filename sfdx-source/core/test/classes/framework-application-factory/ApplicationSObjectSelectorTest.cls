@@ -32,7 +32,7 @@ private class ApplicationSObjectSelectorTest
     {
         configureSelectors();
 
-        TestOnlyClasses.TestAccountsSelector sel = (TestOnlyClasses.TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
+        TestAccountsSelector sel = (TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
         List<SObjectField> fieldList = sel.getSObjectFieldList();
 
         System.assert(fieldList != null);
@@ -44,10 +44,10 @@ private class ApplicationSObjectSelectorTest
     {
         configureSelectors();
 
-        TestSelectorMethod.Parameters queryParams = new TestSelectorMethod.Parameters();
+        TestSelectorMethodParameters queryParams = new TestSelectorMethodParameters();
         queryParams.accountNumberSet = new Set<String>{ '123456' };
 
-        TestOnlyClasses.TestAccountsSelector sel = (TestOnlyClasses.TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
+        TestAccountsSelector sel = (TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
         List<Account> accountList = sel.selectInjection(TestSelectorMethod.class, queryParams);
 
         System.assert(accountList != null);
@@ -58,11 +58,11 @@ private class ApplicationSObjectSelectorTest
     {
         ApplicationFactory_SelectorBinding__mdt accountsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
         accountsSelectorBinding.BindingSObjectAlternate__c = 'Account';
-        accountsSelectorBinding.To__c = 'TestOnlyClasses.TestAccountsSelector';
+        accountsSelectorBinding.To__c = 'ApplicationSObjectSelectorTest.TestAccountsSelector';
 
         ApplicationFactory_SelectorBinding__mdt contactsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
         contactsSelectorBinding.BindingSObjectAlternate__c = 'Contact';
-        contactsSelectorBinding.To__c = 'TestOnlyClasses.TestContactsSelector';
+        contactsSelectorBinding.To__c = 'ApplicationSObjectSelectorTest.TestContactsSelector';
 
         List<ApplicationFactory_SelectorBinding__mdt> bindingList = new List<ApplicationFactory_SelectorBinding__mdt>
         {
@@ -71,5 +71,52 @@ private class ApplicationSObjectSelectorTest
         };
 
         ApplicationSObjectSelectorDIModule.bindingRecords.addAll(bindingList);
+    }
+
+    public class TestSelectorMethod
+        extends AbstractSelectorMethodInjectable
+        implements ISelectorMethodInjectable
+    {
+        public List<SObject> selectQuery()
+        {
+            TestSelectorMethodParameters params = (TestSelectorMethodParameters) getParams();
+
+            Set<String> accountNumberSet = params.accountNumberSet;
+
+            return Database.query( newQueryFactory().setCondition( Account.AccountNumber + ' in :accountNumberSet').toSOQL() );
+        }
+    }
+
+    public class TestSelectorMethodParameters
+        implements ISelectorMethodParameterable
+    {
+        public Set<String> accountNumberSet;
+    }
+
+    public interface ITestAccountsSelector
+        extends IApplicationSObjectSelector
+    {
+        List<Account> selectById(Set<Id> idSet);
+    }
+
+    @TestVisible
+    public class TestAccountsSelector 
+        extends ApplicationSObjectSelector
+        implements ITestAccountsSelector
+    {
+        public Schema.sObjectType getSObjectType()
+        {
+            return Account.SObjectType;
+        }
+
+        private List<Schema.SObjectField> getAdditionalSObjectFieldList()
+        {
+            return new List<Schema.SObjectField> { };
+        }
+
+        public List<Account> selectById(Set<Id> idSet)
+        {
+            return (List<Account>) selectSObjectsById( idSet == null ? new Set<Id>() : idSet );
+        }
     }
 }
