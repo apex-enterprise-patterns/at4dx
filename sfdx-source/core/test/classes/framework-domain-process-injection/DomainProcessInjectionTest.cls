@@ -103,7 +103,7 @@ public class DomainProcessInjectionTest
             }
         }
     }
-
+ 
     @isTest
     private static void accountUpdateTwoCriteria() {
         List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
@@ -257,25 +257,6 @@ public class DomainProcessInjectionTest
         }
     }
 
-    @isTest
-    private static void coverLinesOfCode() {
-        RichmondAccountActionTest testAction = new RichmondAccountActionTest();
-        testAction.setNextQueueableActionInChain(null);
-        testAction.setRecordsRequired(true);
-        
-        List<Account> accList = new List<Account> {
-            new Account(Name='Test1', BillingCity='Dallas' ),
-            new Account(Name='Test2', BillingCity='Dallas' ),
-            new Account(Name='Test3', BillingCity='Richmond'),
-            new Account(Name='Test4', BillingCity='Richmond')
-        };
-
-        AccountsTestDomain domain = new AccountsTestDomain(accList);
-        DomainProcessCoordinator coordinator = new DomainProcessCoordinator(domain);
-        coordinator.processDomainLogicInjections('TriggerExecution');
-        coordinator.processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT.TriggerExecution, System.TriggerOperation.BEFORE_UPDATE);
-    }
-    
     public with sharing class AccountsTestDomain 
     extends ApplicationSObjectDomain
     {
@@ -385,4 +366,73 @@ public class DomainProcessInjectionTest
             }
         }
     }
+
+//    ================Additional Tests By Bryan========================
+    @IsTest
+    static void verifyDomainProcessCoordinatorConstructorException(){
+        try{
+            DomainProcessCoordinator domainProcessCoordinator = new DomainProcessCoordinator(null);
+        }catch(DomainProcessCoordinator.ProcessInjectionException ex){
+            System.assertEquals(
+                ex.getMessage(),
+                'The DomainProcessCoordinator must be used in conjunction with a IApplicationSObjectDomain as a constructor parameter.',
+                'Message Does Not Match'
+            );
+        }
+    }
+
+    @IsTest
+    static void verifyNewInstanceExceptionWithNullParams(){
+        DomainProcessCoordinator domainProcessCoordinator = new DomainProcessCoordinator();
+        try{
+            domainProcessCoordinator.newInstance(null);
+        }catch(di_Binding.BindingException ex){
+            System.assertEquals(
+                ex.getMessage(),
+                'No params object supplied',
+                'Message Does Not Match'
+            );
+        }
+    }   
+
+    @IsTest
+    static void verifyNewInstanceExceptionWithBadParams(){
+        DomainProcessCoordinator domainProcessCoordinator = new DomainProcessCoordinator();
+        try{
+            domainProcessCoordinator.newInstance('Test Bad Params');
+        }catch(di_Binding.BindingException ex){
+            System.assertEquals(
+                ex.getMessage(),
+                'The params object must implement IApplicationSObjectDomain',
+                'Message Does Not Match'
+            );
+        }
+    }
+/* TODO: Get use cases for testing the ProcessDomainLogicInjections method
+    @isTest
+    private static void verifyProcessDomainLogicInjectionsWithString() {
+        RichmondAccountActionTest testAction = new RichmondAccountActionTest();
+        testAction.setNextQueueableActionInChain(null);
+        testAction.setRecordsRequired(true);
+        
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test1', BillingCity='Dallas' ),
+            new Account(Name='Test2', BillingCity='Dallas' ),
+            new Account(Name='Test3', BillingCity='Richmond'),
+            new Account(Name='Test4', BillingCity='Richmond')
+        };
+
+        AccountsTestDomain domain = new AccountsTestDomain(accList);
+        DomainProcessCoordinator coordinator = new DomainProcessCoordinator(domain);e
+        try{
+            coordinator.processDomainLogicInjections('TriggerExecution');
+        }catch(DomainProcessCoordinator.ProcessInjectionException  ex){
+            System.assertEquals(
+                ex.getMessage(),
+                'Test',
+                'Exception Message Does Not match'
+            );
+        }
+    }
+    */
 }
