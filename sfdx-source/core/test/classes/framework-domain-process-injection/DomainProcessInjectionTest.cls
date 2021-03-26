@@ -300,7 +300,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
+    public class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
     {   
         private list<Account> records = new list<Account>();
 
@@ -329,7 +329,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
+    public class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
     {
         private list<Account> records = new list<Account>();
 
@@ -358,7 +358,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    private class DallasAccountActionTest extends DomainProcessAbstractAction
+    public class DallasAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
@@ -373,7 +373,7 @@ public class DomainProcessInjectionTest
         }
     }
     
-    private class RichmondAccountActionTest extends DomainProcessAbstractAction
+    public class RichmondAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
