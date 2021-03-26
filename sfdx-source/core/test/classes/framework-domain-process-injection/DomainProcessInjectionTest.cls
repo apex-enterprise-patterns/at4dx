@@ -89,14 +89,16 @@ public class DomainProcessInjectionTest
         fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
 
         List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
+
 		System.assertEquals(4, result.size(), '4 records should have been changed');
+        
         for (SObject obj : result) {
             Account acc = (Account) obj;
-            if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
-                System.assert(true, 'Account with city Dallas has state correctly set to Texas');
+            if (acc.BillingCity == 'Dallas' ) {
+                System.assert(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
-                System.assert(true, 'Account with city Richmond has state correctly set to Virginia');
+                System.assert(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
                 System.assert(false, 'Account not matching any criteria');
@@ -152,10 +154,10 @@ public class DomainProcessInjectionTest
         DomainProcessCoordinator.domainProcesses.addAll(config);
 
         List<Account> accList = new List<Account> {
-            new Account(Name='Test1', BillingCity='Dallas', Id = '0018A00000caJ6lQAE' ),
-            new Account(Name='Test2', BillingCity='Dallas', Id = '0018A00000caJ70QAE' ),
-            new Account(Name='Test3', BillingCity='Richmond', Id = '0018A00000caJ80QAE'),
-            new Account(Name='Test4', BillingCity='Richmond', Id = '0018A00000caJ90QAE')
+            new Account(Name='Test1', BillingCity='Dallas', Id = fflib_idgenerator.generate(Account.SObjectType) ),
+            new Account(Name='Test2', BillingCity='Dallas', Id = fflib_idgenerator.generate(Account.SObjectType) ),
+            new Account(Name='Test3', BillingCity='Richmond', Id = fflib_idgenerator.generate(Account.SObjectType)),
+            new Account(Name='Test4', BillingCity='Richmond', Id = fflib_idgenerator.generate(Account.SObjectType))
         };
 
         fflib_SObjectDomain.Test.Database.onUpdate(accList, new Map<Id, SObject>(accList));
@@ -166,10 +168,10 @@ public class DomainProcessInjectionTest
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
-                System.assert(true, 'Account with city Dallas has state correctly set to Texas');
+                System.assert(true, 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
-                System.assert(true, 'Account with city Richmond has state correctly set to Virginia');
+                System.assert(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
                 System.assert(false, 'Account not matching any criteria');
@@ -231,10 +233,10 @@ public class DomainProcessInjectionTest
         Test.startTest();
 
         List<Account> accList = new List<Account> {
-            new Account(Name='Test1', BillingCity='Dallas', Id = '0018A00000caJ6lQAE' ),
-            new Account(Name='Test2', BillingCity='Dallas', Id = '0018A00000caJ70QAE' ),
-            new Account(Name='Test3', BillingCity='Richmond', Id = '0018A00000caJ80QAE'),
-            new Account(Name='Test4', BillingCity='Richmond', Id = '0018A00000caJ90QAE')
+            new Account(Name='Test1', BillingCity='Dallas', Id = fflib_idgenerator.generate(Account.SObjectType) ),
+            new Account(Name='Test2', BillingCity='Dallas', Id = fflib_idgenerator.generate(Account.SObjectType) ),
+            new Account(Name='Test3', BillingCity='Richmond', Id = fflib_idgenerator.generate(Account.SObjectType)),
+            new Account(Name='Test4', BillingCity='Richmond', Id = fflib_idgenerator.generate(Account.SObjectType))
         };
 
         fflib_SObjectDomain.Test.Database.onUpdate(accList, new Map<Id, SObject>(accList));
@@ -298,7 +300,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    public class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
+    private class AccountIsDallasCriteriaTest implements IDomainProcessCriteria
     {   
         private list<Account> records = new list<Account>();
 
@@ -327,7 +329,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    public class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
+    private class AccountIsRichmondCriteriaTest implements IDomainProcessCriteria
     {
         private list<Account> records = new list<Account>();
 
@@ -356,7 +358,7 @@ public class DomainProcessInjectionTest
         }
     }
 
-    public class DallasAccountActionTest extends DomainProcessAbstractAction
+    private class DallasAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
@@ -371,7 +373,7 @@ public class DomainProcessInjectionTest
         }
     }
     
-    public class RichmondAccountActionTest extends DomainProcessAbstractAction
+    private class RichmondAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
         {
