@@ -30,6 +30,7 @@ public class ApplicationSObjectUnitOfWorkDIProvider
     private fflib_SObjectUnitOfWork.IDML dmlParam = null;
     private List<Schema.SObjectType> sObjTypesParam = null;
 
+    @TestVisible
     private static List<ApplicationFactory_UnitOfWorkBinding__mdt> bindingRecords = new List<ApplicationFactory_UnitOfWorkBinding__mdt>();
 
     private static List<ApplicationFactory_UnitOfWorkBinding__mdt> getBindingRecords()
