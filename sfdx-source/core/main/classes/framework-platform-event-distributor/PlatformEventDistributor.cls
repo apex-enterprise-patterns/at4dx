@@ -132,7 +132,7 @@ public class PlatformEventDistributor
                     && subscriptionRecord.EventCategory__c.equalsIgnoreCase( (String)event.get( CATEGORY_FIELD_NAME ) )
                     && subscriptionRecord.Event__c.equalsIgnoreCase( (String)event.get( EVENT_NAME_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #1');
+                    System.debug('match #1');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -142,7 +142,7 @@ public class PlatformEventDistributor
                     && platformEventBusAvailableFieldsSet.contains( CATEGORY_FIELD_NAME )
                     && subscriptionRecord.EventCategory__c.equalsIgnoreCase( (String)event.get( CATEGORY_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #2');
+                    System.debug('match #2');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -152,7 +152,7 @@ public class PlatformEventDistributor
                     && platformEventBusAvailableFieldsSet.contains( EVENT_NAME_FIELD_NAME )
                     && subscriptionRecord.Event__c.equalsIgnoreCase( (String)event.get( EVENT_NAME_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #3');
+                    System.debug('match #3');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -160,30 +160,30 @@ public class PlatformEventDistributor
                 else if ( platformEventBusDescribe.getName().equalsIgnoreCase( subscriptionRecord.EventBus__c )
                     && MatcherRules.MatchEventBus.name().equalsIgnoreCase( subscriptionRecord.MatcherRule__c ) )
                 {
-                    System.debug('<ojs> match #4');
+                    System.debug('match #4');
                     eventBatchForSubscriber.add( event );
                 }
 
                 else
                 {
-                    System.debug('<ojs> no match');
+                    System.debug('no match');
                 }
             }
 
-            System.debug('<ojs> eventBatchForSubscriber:\n' + eventBatchForSubscriber);
+            System.debug('eventBatchForSubscriber:\n' + eventBatchForSubscriber);
 
             if ( ! eventBatchForSubscriber.isEmpty() )
             {
                 // now that the events have been sorted for this specific subscription, distribute them to that subscriber
                 try
                 {
-                    System.debug('<ojs> attempting to construct the consumer');
-                    System.debug('<ojs> subscriptionRecord.Consumer__c:\n' + subscriptionRecord.Consumer__c);
+                    System.debug('attempting to construct the consumer');
+                    System.debug('subscriptionRecord.Consumer__c:\n' + subscriptionRecord.Consumer__c);
 
                     // verify that the class exists and that class implements the IEventsConsumer interface
                     consumer = (IEventsConsumer)(Type.forName( subscriptionRecord.Consumer__c ).newInstance());
 
-                    System.debug('<ojs> successfully constructed');
+                    System.debug('successfully constructed');
 
                     Id thisJob = subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c
                         ? consumer.setEvents(eventBatchForSubscriber).setRunSynchronous().run()
@@ -203,7 +203,7 @@ public class PlatformEventDistributor
             }
         }
 
-        System.debug('<ojs> jobIdList: ' + jobIdList);
+        System.debug('jobIdList: ' + jobIdList);
     }
 
     private static Set<String> generateStringSetFromField(List<SObject> sobjList, SObjectField sobjField, Boolean includeBlankValues)
