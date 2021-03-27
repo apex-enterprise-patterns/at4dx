@@ -191,20 +191,22 @@ public class Application
             SObjectType domainSObjectType = records.getSObjectType();
             if (domainSObjectType == null)
                 throw new DeveloperException('Unable to determine SObjectType');
-
+                
             Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
+            // This would be the case in normal execution context
             if (injector_return instanceOf fflib_SObjectDomain.IConstructable)
             {
                 return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable) injector_return).construct(records);
             }
 
+            // This would be the case in a unit test with a mocked domain class
             if (injector_return instanceOf IApplicationSObjectDomain)
             {
                 return (IApplicationSObjectDomain) injector_return;
             }
 
-            throw new ApplicationException('Object returned by di_Injector is neither IConststructable nor IApplicationSObjectDomain.');
+            throw new ApplicationException('Object returned by di_Injector is neither fflib_SObjectDomain.IConststructable nor IApplicationSObjectDomain.');
         }    
 
         /**
@@ -225,17 +227,19 @@ public class Application
 
             Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
+            // This would be the case in normal execution context
             if (injector_return instanceOf fflib_SObjectDomain.IConstructable2)
             {
                 return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable2) injector_return).construct(records, domainSObjectType);
             }
 
+            // This would be the case in a unit test with a mocked domain class
             if (injector_return instanceOf IApplicationSObjectDomain)
             {
                 return (IApplicationSObjectDomain) injector_return;
             }
 
-            throw new ApplicationException('Object returned by di_Injector is neither IConststructable2 nor IApplicationSObjectDomain.');
+            throw new ApplicationException('Object returned by di_Injector is neither fflib_SObjectDomain.IConststructable2 nor IApplicationSObjectDomain.');
         }
 
         @TestVisible
