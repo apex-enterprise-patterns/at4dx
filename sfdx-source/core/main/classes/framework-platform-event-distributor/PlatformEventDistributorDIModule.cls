@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -29,101 +29,53 @@ public class PlatformEventDistributorDIModule
 {
     public override void configure()
     {
-        Schema.DescribeSobjectResult[] results = null;
+        String warningMessage = '';
 
-        for (ConfigWrapper bindingConfigWrapper : getConfigurationList())
+        for ( PlatformEvents_Subscription__mdt registeredSubscriber : getRegisteredSubscribers())
         {
+            warningMessage = '';
+            
             // Validate the subscription record first.
-
-            if (String.isBlank(bindingConfigWrapper.EventBus))
+            if (String.isBlank(registeredSubscriber.EventBus__c))
             {
-                System.debug(
-                    LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel());
-                continue;
+                warningMessage += SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' 
+                                    + registeredSubscriber.DeveloperName + ', does not have required field, ' 
+                                    + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel();
+
             }
 
-            if (String.isBlank(bindingConfigWrapper.Consumer))
+            if (String.isBlank(registeredSubscriber.Consumer__c))
             {
-                System.debug(
-                    LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel());
+                warningMessage += (String.isNotBlank(warningMessage) ? '\n' : '')
+                                    + SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' 
+                                    + registeredSubscriber.DeveloperName + ', does not have required field, ' 
+                                    + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel();
+            }
+
+            if (String.isNotBlank(warningMessage))
+            {
+                System.debug( LoggingLevel.WARN, warningMessage );
                 continue;
             }
 
             apex();
-            bind(bindingConfigWrapper.EventBus);
+            bind(registeredSubscriber.EventBus__c);
             bind(IEventsConsumer.class);
-            data(bindingConfigWrapper.record);
-            to(bindingConfigWrapper.Consumer);
-        }
+            data(registeredSubscriber);
+            to(registeredSubscriber.Consumer__c);       
+        } 
     }
 
     @TestVisible
-    private List<ConfigWrapper> getConfigurationList()
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+
+    private List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers()
     {
-        List<ConfigWrapper> result = new List<ConfigWrapper>();
+        registeredSubscribers.addAll([select DeveloperName, Consumer__c, Event__c , EventCategory__c
+                                         , MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                      from PlatformEvents_Subscription__mdt 
+                                     where IsActive__c = true]);
 
-        for (
-            PlatformEvents_Subscription__mdt bindingConfig
-            :
-            [select 
-                DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c 
-                from PlatformEvents_Subscription__mdt where IsActive__c = true]
-        )
-        {
-            result.add(new ConfigWrapper(bindingConfig));
-        }
-
-        if (mock_BindingConfigurationWrappers != null) result = mock_BindingConfigurationWrappers;
-
-        return result;
+        return registeredSubscribers;
     }
-
-    @TestVisible
-    private class ConfigWrapper
-    {
-        public String DeveloperName = null;
-        public String Consumer = null;
-        public String Event = null;
-        public String EventCategory = null;
-        public String MatcherRule = null;
-        public String EventBus = null;
-        public PlatformEvents_Subscription__mdt record = null;
-
-        public ConfigWrapper(PlatformEvents_Subscription__mdt bindingConfig)
-        {
-            this.DeveloperName = bindingConfig.DeveloperName;
-            this.Consumer = bindingConfig.Consumer__c;
-            this.Event = bindingConfig.Event__c;
-            this.EventCategory = bindingConfig.EventCategory__c;
-            this.MatcherRule = bindingConfig.MatcherRule__c;
-            this.EventBus = bindingConfig.EventBus__c;
-            this.record = bindingConfig;
-        }
-
-        @TestVisible
-        private ConfigWrapper(
-            String DeveloperName,
-            String Consumer,
-            String Event,
-            String EventCategory,
-            String MatcherRule,
-            String EventBus
-        )
-        {
-            this.DeveloperName = DeveloperName;
-            this.Consumer = Consumer;
-            this.Event = Event;
-            this.EventCategory = EventCategory;
-            this.MatcherRule = MatcherRule;
-            this.EventBus = EventBus;
-            this.record = new PlatformEvents_Subscription__mdt();
-        }
-    }
-
-    @TestVisible
-    List<ConfigWrapper> mock_BindingConfigurationWrappers = null;
 }
