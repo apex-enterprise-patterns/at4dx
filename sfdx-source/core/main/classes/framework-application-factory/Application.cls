@@ -317,22 +317,6 @@ public class Application
         }
     }
 
-    // private static Type determineClassType( Object instantiatedClass )
-    // {
-    //     String instantiatedClassName = 'DateTime';
-    //     try
-    //     {
-    //         DateTime typeCheck = (DateTime)instantiatedClass;
-    //     }
-    //     catch(System.TypeException te)
-    //     {
-    //         String message = te.getMessage().substringAfter('Invalid conversion from runtime type ');
-    //         instantiatedClassName = message.substringBefore(' to Datetime');
-    //     }
-
-    //     return Type.forName( instantiatedClassName );
-    // }
-
     public class ApplicationException extends Exception { }
 
     /**
