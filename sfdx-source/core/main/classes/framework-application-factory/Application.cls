@@ -333,6 +333,8 @@ public class Application
         return Type.forName( instantiatedClassName );
     }
 
+    public class ApplicationException extends Exception { }
+
     /**
      * Exception representing a developer coding error, not intended for end user eyes
      **/
