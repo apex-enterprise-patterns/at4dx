@@ -40,7 +40,7 @@ package.json
 package-lock.json
 
 # Really exotic IDE folders
-.vim-force.com/*  # KIs exist for complete removal of this old VS Code extension
+.vim-force.com/
 
 sfdx-source/group*
 research/
