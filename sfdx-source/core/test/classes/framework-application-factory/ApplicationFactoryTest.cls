@@ -253,7 +253,7 @@ private class ApplicationFactoryTest
             contactBinding
         };
 
-        ApplicationSObjectUnitOfWorkDIProvider.setMock(bindingList);
+        ApplicationSObjectUnitOfWorkDIProvider.bindingRecords.addAll(bindingList);
     }
 
     private class MockDml

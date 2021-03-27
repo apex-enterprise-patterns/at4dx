@@ -30,6 +30,18 @@ public class ApplicationSObjectUnitOfWorkDIProvider
     private fflib_SObjectUnitOfWork.IDML dmlParam = null;
     private List<Schema.SObjectType> sObjTypesParam = null;
 
+    private static List<ApplicationFactory_UnitOfWorkBinding__mdt> bindingRecords = new List<ApplicationFactory_UnitOfWorkBinding__mdt>();
+
+    private static List<ApplicationFactory_UnitOfWorkBinding__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, BindingSequence__c
+                                    , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                from ApplicationFactory_UnitOfWorkBinding__mdt
+                                order by BindingSequence__c]
+                            );
+        return bindingRecords;
+    }
+
     private void parseParamType(Object param)
     {
         if ( param != null )
@@ -83,17 +95,7 @@ public class ApplicationSObjectUnitOfWorkDIProvider
 
             String bindingSObjectAPIName = null;
 
-            list<ApplicationFactory_UnitOfWorkBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, BindingSequence__c
-                                                                                   , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                                from ApplicationFactory_UnitOfWorkBinding__mdt
-                                                                               order by BindingSequence__c];
-
-            if (mockBindingRecords != null)
-            {
-                bindingRecords = mockBindingRecords;
-            }
-
-            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : bindingRecords)
+            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : getBindingRecords())
             {
                 bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 
@@ -121,16 +123,5 @@ public class ApplicationSObjectUnitOfWorkDIProvider
         }
         
         return uow;
-    }
-
-    /********************************************************
-     *  Testing functionality
-    ********************************************************/
-    private static List<ApplicationFactory_UnitOfWorkBinding__mdt> mockBindingRecords = null;
-
-    @TestVisible
-    private static void setMock(List<ApplicationFactory_UnitOfWorkBinding__mdt> mocks)
-    {
-        mockBindingRecords = mocks;
     }
 }
