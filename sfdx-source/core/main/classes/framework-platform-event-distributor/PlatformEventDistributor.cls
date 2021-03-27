@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -87,21 +87,12 @@ public class PlatformEventDistributor
         // need to read all available PlatformEvents_Subscription__mdt records for this event SObjectType
         // SOQL targeting custom MDT tables does not support the OR operator.  Manually filter.
         // https://help.salesforce.com/articleView?id=custommetadatatypes_limitations.htm
-        List<PlatformEvents_Subscription__mdt> eventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
-        for
-        (
-            PlatformEvents_Subscription__mdt ped :
-            [
-                select
-                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                from PlatformEvents_Subscription__mdt
-                where IsActive__c = true AND EventBus__c = :platformEventBusDescribe.getName()
-            ]
-        )
+        List<PlatformEvents_Subscription__mdt> applicableEventSubscriptionRecords = new List<PlatformEvents_Subscription__mdt>();
+        for (PlatformEvents_Subscription__mdt ped : getRegisteredSubscribers(platformEventBusDescribe.getName()))
         {
             if (eventCategorySet.contains(ped.EventCategory__c) || eventNameSet.contains(ped.Event__c))
             {
-                eventSubscriptionRecords.add(ped);
+                applicableEventSubscriptionRecords.add(ped);
             }
         }
 
@@ -110,7 +101,7 @@ public class PlatformEventDistributor
             'eventCategorySet:\n\t' + eventCategorySet + '\n' +
             'CMDT records:\n\t' + [select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c from PlatformEvents_Subscription__mdt] + '\n' +
             'Event bus name: ' + platformEventBusDescribe.getName() + '\n' +
-            'eventSubscriptionRecords:\n\t' + eventSubscriptionRecords);
+            'applicableEventSubscriptionRecords:\n\t' + applicableEventSubscriptionRecords);
 
         IEventsConsumer consumer = null;
 
@@ -119,7 +110,7 @@ public class PlatformEventDistributor
         Set<String> platformEventBusAvailableFieldsSet = platformEventBusDescribe.fields.getMap().keyset();
 
         // for each PlatformEvents_Subscription__mdt record, instantiate the Apex class found in the Consumer field
-        for ( PlatformEvents_Subscription__mdt subscriptionRecord : eventSubscriptionRecords )
+        for ( PlatformEvents_Subscription__mdt subscriptionRecord : applicableEventSubscriptionRecords )
         {
             eventBatchForSubscriber.clear();
 
@@ -141,7 +132,7 @@ public class PlatformEventDistributor
                     && subscriptionRecord.EventCategory__c.equalsIgnoreCase( (String)event.get( CATEGORY_FIELD_NAME ) )
                     && subscriptionRecord.Event__c.equalsIgnoreCase( (String)event.get( EVENT_NAME_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #1');
+                    System.debug('match #1');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -151,7 +142,7 @@ public class PlatformEventDistributor
                     && platformEventBusAvailableFieldsSet.contains( CATEGORY_FIELD_NAME )
                     && subscriptionRecord.EventCategory__c.equalsIgnoreCase( (String)event.get( CATEGORY_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #2');
+                    System.debug('match #2');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -161,7 +152,7 @@ public class PlatformEventDistributor
                     && platformEventBusAvailableFieldsSet.contains( EVENT_NAME_FIELD_NAME )
                     && subscriptionRecord.Event__c.equalsIgnoreCase( (String)event.get( EVENT_NAME_FIELD_NAME ) ) )
                 {
-                    System.debug('<ojs> match #3');
+                    System.debug('match #3');
                     eventBatchForSubscriber.add( event );
                 }
 
@@ -169,30 +160,30 @@ public class PlatformEventDistributor
                 else if ( platformEventBusDescribe.getName().equalsIgnoreCase( subscriptionRecord.EventBus__c )
                     && MatcherRules.MatchEventBus.name().equalsIgnoreCase( subscriptionRecord.MatcherRule__c ) )
                 {
-                    System.debug('<ojs> match #4');
+                    System.debug('match #4');
                     eventBatchForSubscriber.add( event );
                 }
 
                 else
                 {
-                    System.debug('<ojs> no match');
+                    System.debug('no match');
                 }
             }
 
-            System.debug('<ojs> eventBatchForSubscriber:\n' + eventBatchForSubscriber);
+            System.debug('eventBatchForSubscriber:\n' + eventBatchForSubscriber);
 
             if ( ! eventBatchForSubscriber.isEmpty() )
             {
                 // now that the events have been sorted for this specific subscription, distribute them to that subscriber
                 try
                 {
-                    System.debug('<ojs> attempting to construct the consumer');
-                    System.debug('<ojs> subscriptionRecord.Consumer__c:\n' + subscriptionRecord.Consumer__c);
+                    System.debug('attempting to construct the consumer');
+                    System.debug('subscriptionRecord.Consumer__c:\n' + subscriptionRecord.Consumer__c);
 
                     // verify that the class exists and that class implements the IEventsConsumer interface
                     consumer = (IEventsConsumer)(Type.forName( subscriptionRecord.Consumer__c ).newInstance());
 
-                    System.debug('<ojs> successfully constructed');
+                    System.debug('successfully constructed');
 
                     Id thisJob = subscriptionRecord.Execute_Synchronous__c != null && subscriptionRecord.Execute_Synchronous__c
                         ? consumer.setEvents(eventBatchForSubscriber).setRunSynchronous().run()
@@ -212,7 +203,7 @@ public class PlatformEventDistributor
             }
         }
 
-        System.debug('<ojs> jobIdList: ' + jobIdList);
+        System.debug('jobIdList: ' + jobIdList);
     }
 
     private static Set<String> generateStringSetFromField(List<SObject> sobjList, SObjectField sobjField, Boolean includeBlankValues)
@@ -232,5 +223,29 @@ public class PlatformEventDistributor
         }
 
         return result;
+    }
+
+    @TestVisible
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+
+    private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
+    {
+        if (String.isBlank(eventBus))
+        {
+            throw new PlatformEventDistributorException('eventBus parameter is required');
+        }
+
+        registeredSubscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                        from PlatformEvents_Subscription__mdt
+                                       where IsActive__c = true
+                                         and EventBus__c = :eventBus]); 
+
+        return registeredSubscribers;
+    }
+
+    public class PlatformEventDistributorException
+        extends Exception
+    {
+        // Intentionally blank
     }
 }

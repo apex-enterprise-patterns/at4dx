@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020, John M. Daniel & John Storey
+ * Copyright (c) 2021, John M. Daniel & John Storey
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 

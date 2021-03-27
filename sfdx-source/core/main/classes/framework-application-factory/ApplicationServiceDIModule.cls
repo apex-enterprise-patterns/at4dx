@@ -31,12 +31,18 @@
 public class ApplicationServiceDIModule 
     extends di_Module
 {
+    @TestVisible
+    private static List<ApplicationFactory_ServiceBinding__mdt> bindingRecords = new List<ApplicationFactory_ServiceBinding__mdt>();
+
+    private static List<ApplicationFactory_ServiceBinding__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt]);
+        return bindingRecords;
+    }
+
     public override void configure() 
     {
-        Type interfaceType = null;
-
-        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : [select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c 
-                                                                         from ApplicationFactory_ServiceBinding__mdt])
+        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : getBindingRecords())
         {
             apex();
             try {

@@ -29,7 +29,23 @@ public class ApplicationSelectorFieldsetDIModule
 {
     private static Map<SObjectType, Set<String>> FIELDSETNAMES_BY_SOBJECTTYPE_MAP;
 
-    static 
+    @TestVisible
+    private static List<SelectorConfig_FieldSetInclusion__mdt> bindingRecords = new List<SelectorConfig_FieldSetInclusion__mdt>();
+
+    private static List<SelectorConfig_FieldSetInclusion__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll
+        ([
+            select
+            Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+            , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c, FieldsetName__c
+            from SelectorConfig_FieldSetInclusion__mdt
+            where IsActive__c = true
+        ]);
+        return bindingRecords;
+    }
+
+    public override void configure() 
     {
         FIELDSETNAMES_BY_SOBJECTTYPE_MAP = new Map<SObjectType, Set<String>>();
 
@@ -39,12 +55,7 @@ public class ApplicationSelectorFieldsetDIModule
 
         String bindingSObjectAPIName = null;
 
-        list<SelectorConfig_FieldSetInclusion__mdt> bindingRecords = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
-                                                                               , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c, FieldsetName__c
-                                                                            from SelectorConfig_FieldSetInclusion__mdt
-                                                                           where IsActive__c = true];
-
-        for (SelectorConfig_FieldSetInclusion__mdt scfi : bindingRecords )
+        for (SelectorConfig_FieldSetInclusion__mdt scfi : getBindingRecords())
         {
             bindingSObjectAPIName = String.isNotBlank(scfi.BindingSObject__c) ? scfi.BindingSObject__r.QualifiedApiName : scfi.BindingSObjectAlternate__c; 
 
@@ -65,10 +76,7 @@ public class ApplicationSelectorFieldsetDIModule
                 }
             }
         }
-    }
 
-    public override void configure() 
-    {
         // loop through the FIELDSETNAMES_BY_SOBJECTTYPE_MAP // Map<SObjectType, Set<String>>
         for (SObjectType sobjTypeKey : FIELDSETNAMES_BY_SOBJECTTYPE_MAP.keySet())
         {

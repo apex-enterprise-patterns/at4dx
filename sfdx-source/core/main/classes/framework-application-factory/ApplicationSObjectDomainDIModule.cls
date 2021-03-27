@@ -31,17 +31,24 @@
 public class ApplicationSObjectDomainDIModule 
     extends di_Module
 {
+    @TestVisible
+    private static list<ApplicationFactory_DomainBinding__mdt> bindingRecords = new list<ApplicationFactory_DomainBinding__mdt>();
+
+    private list<ApplicationFactory_DomainBinding__mdt> getBindingRecords()
+    {
+        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c
+                                        , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                    from ApplicationFactory_DomainBinding__mdt]);
+        return bindingRecords;
+    }
+
     public override void configure() 
     {
         Schema.DescribeSobjectResult[] results = null;
 
         String bindingSObjectAPIName = null;
 
-        list<ApplicationFactory_DomainBinding__mdt> bindingRecords = [select DeveloperName, QualifiedAPIName, To__c
-                                                                           , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                                                        from ApplicationFactory_DomainBinding__mdt];
-
-        for ( ApplicationFactory_DomainBinding__mdt bindingConfig : bindingRecords)
+        for ( ApplicationFactory_DomainBinding__mdt bindingConfig : getBindingRecords())
         {
             bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 
