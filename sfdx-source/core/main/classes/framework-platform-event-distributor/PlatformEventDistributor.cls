@@ -226,7 +226,7 @@ public class PlatformEventDistributor
     }
 
     @TestVisible
-    private static List<PlatformEvents_Subscription__mdt> registeredSibscribers = new List<PlatformEvents_Subscription__mdt>();
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
 
     private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
     {
@@ -235,12 +235,12 @@ public class PlatformEventDistributor
             throw new PlatformEventDistributorException('eventBus parameter is required');
         }
 
-        registeredSibscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+        registeredSubscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
                                         from PlatformEvents_Subscription__mdt
                                        where IsActive__c = true
                                          and EventBus__c = :eventBus]); 
 
-        return registeredSibscribers;
+        return registeredSubscribers;
     }
 
     public class PlatformEventDistributorException
