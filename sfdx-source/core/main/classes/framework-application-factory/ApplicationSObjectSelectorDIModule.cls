@@ -70,15 +70,4 @@ public class ApplicationSObjectSelectorDIModule
             to(bindingConfig.To__c);
         }
     }
-
-    /********************************************************
-     *  Testing functionality
-    ********************************************************/
-    private static List<ApplicationFactory_SelectorBinding__mdt> mockBindingRecords = null;
-
-    @TestVisible
-    private static void setMock(List<ApplicationFactory_SelectorBinding__mdt> mocks)
-    {
-        mockBindingRecords = mocks;
-    }
 }
