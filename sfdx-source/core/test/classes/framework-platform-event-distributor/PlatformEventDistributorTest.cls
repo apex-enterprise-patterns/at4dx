@@ -10,7 +10,7 @@
  * - Redistributions in binary form must reproduce the above copyright notice, 
  *      this list of conditions and the following disclaimer in the documentation 
  *      and/or other materials provided with the distribution.
- * - Neither the name of the John M. Daniel, nor the names of its contributors 
+ * - Neither the name of John M. Daniel, nor the names of its contributors 
  *      may be used to endorse or promote products derived from this software without 
  *      specific prior written permission.
  *
@@ -48,51 +48,66 @@ public class PlatformEventDistributorTest
     }
 
     @IsTest
-    private static void PlatformEventSubscriberTest()
+    private static void platformEventSubscriberTest()
     {
+        String eventName = 'TestOfPlatformEventDistributor';
+
         PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt();
         pes.DeveloperName = 'At4dxUnitTest';
-        pes.Consumer__c = 'TestPlatformEventsConsumer';
+        pes.Consumer__c = 'PlatformEventDistributorTest.TestPlatformEventsConsumer';
+        pes.IsActive__c = true;
         pes.EventCategory__c = Account.getSObjectType().getDescribe().getName();
-        pes.MatcherRule__c = 'MatchEventBusAndCategory';
-        pes.EventBus__c = 'AT4DXMessage__e';
+        pes.MatcherRule__c = 'MatchEventBusAndCategoryAndEventName';
+        pes.EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName();
+        pes.Event__c = eventName;
         pes.Execute_Synchronous__c = true;
 
         AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
-        platformEventbus.EventName__c = 'at4dx unit test';
+        platformEventbus.EventName__c = eventName;
         platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
         platformEventbus.Payload__c = 'hello_world';
 
-        PlatformEventDistributor.registeredSibscribers = (new List<PlatformEvents_Subscription__mdt> {pes});
-        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> {platformEventbus});
+        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> {pes});
 
-        System.assert(TestPlatformEventsConsumer.wasCalled);
-        System.assertEquals(platformEventbus.Payload__c, TestPlatformEventsConsumer.data);
-    }
+        System.debug('PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 before  == ' + PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 );
+        System.debug('PlatformEventDistributorTest.testPlatformEventsConsumerData before == ' + PlatformEventDistributorTest.testPlatformEventsConsumerData);
 
-    private static void configurePlatformEventMetadata()
-    {
-        PlatformEvents_Subscription__mdt subscription = new PlatformEvents_Subscription__mdt();
-        subscription.Consumer__c = TestPlatformEventsConsumer.class.getName();
-        subscription.EventCategory__c = 'Account';
-        subscription.IsActive__c = true;
-        subscription.MatcherRule__c = 'MatchEventBusAndCategory';
-        subscription.EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName();
-        subscription.Execute_Synchronous__c = true;
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventbus });
 
-        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt>{subscription};
+        System.debug('PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 after == ' + PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 );
+        System.debug('PlatformEventDistributorTest.testPlatformEventsConsumerData after == ' + PlatformEventDistributorTest.testPlatformEventsConsumerData);
+        System.assert(PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2);
+        System.assertEquals(platformEventbus.Payload__c, PlatformEventDistributorTest.testPlatformEventsConsumerData);
     }
 
     private static Integer getCurrentEventBusSubscriberPosition()
     {
         EventBusSubscriber at4dxMessageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
                                                           FROM EventBusSubscriber 
-                                                         WHERE Topic = 'AT4DXMessage__e' 
+                                                         WHERE Topic = :AT4DXMessage__e.SobjectType.getDescribe().getName()
                                                            AND Type = 'ApexTrigger'
                                                          LIMIT 1];
         
         System.assert(at4dxMessageBusSubscriber != null, 'Could not find the ' + AT4DXMessage__e.SobjectType + ' record');
 
         return at4dxMessageBusSubscriber.Position;
+    }
+
+    public static Boolean wasTestPlatformEventsConsumerCalled2 = false;
+    public static String testPlatformEventsConsumerData = null;
+
+    public class TestPlatformEventsConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 = true;
+
+            for (SObject sobj : events) 
+            {
+                AT4DXMessage__e evt = (AT4DXMessage__e) sobj;
+                PlatformEventDistributorTest.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+            }
+        }
     }
 }
