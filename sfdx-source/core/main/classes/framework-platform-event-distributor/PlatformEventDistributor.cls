@@ -225,6 +225,9 @@ public class PlatformEventDistributor
         return result;
     }
 
+    @TestVisible
+    private static List<PlatformEvents_Subscription__mdt> registeredSibscribers = new List<PlatformEvents_Subscription__mdt>();
+
     private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
     {
         if (String.isBlank(eventBus))
@@ -232,37 +235,17 @@ public class PlatformEventDistributor
             throw new PlatformEventDistributorException('eventBus parameter is required');
         }
 
-        List<PlatformEvents_Subscription__mdt> result =
-            [
-                select
-                    Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                from PlatformEvents_Subscription__mdt
-                where IsActive__c = true
-                AND EventBus__c = :eventBus
-            ];
+        registeredSibscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                        from PlatformEvents_Subscription__mdt
+                                       where IsActive__c = true
+                                         and EventBus__c = :eventBus]); 
 
-        if (mock_PlatformEventSubscribers != null)
-        {
-            result = mock_PlatformEventSubscribers;
-        }
-
-        return result;
+        return registeredSibscribers;
     }
 
     public class PlatformEventDistributorException
         extends Exception
     {
         // Intentionally blank
-    }
-
-    /********************************************************
-     *    Test Functionality
-    ********************************************************/
-    private static List<PlatformEvents_Subscription__mdt> mock_PlatformEventSubscribers = null;
-
-    @TestVisible
-    private static void setMockSubscribers(List<PlatformEvents_Subscription__mdt> mock_subscribers)
-    {
-        mock_PlatformEventSubscribers = mock_subscribers;
     }
 }

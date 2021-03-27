@@ -27,115 +27,161 @@
 public class PlatformEventDistributorDIModule
     extends di_Module
 {
+    // public override void configure()
+    // {
+    //     Schema.DescribeSobjectResult[] results = null;
+
+    //     for (ConfigWrapper bindingConfigWrapper : getConfigurationList())
+    //     {
+    //         // Validate the subscription record first.
+
+    //         if (String.isBlank(bindingConfigWrapper.EventBus))
+    //         {
+    //             System.debug(
+    //                 LoggingLevel.WARN, 
+    //                 SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
+    //                 ', does not have required field, ' + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel());
+    //             continue;
+    //         }
+
+    //         if (String.isBlank(bindingConfigWrapper.Consumer))
+    //         {
+    //             System.debug(
+    //                 LoggingLevel.WARN, 
+    //                 SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
+    //                 ', does not have required field, ' + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel());
+    //             continue;
+    //         }
+
+    //         apex();
+    //         bind(bindingConfigWrapper.EventBus);
+    //         bind(IEventsConsumer.class);
+    //         data(bindingConfigWrapper.record);
+    //         to(bindingConfigWrapper.Consumer);
+    //     }
+    // }
+
     public override void configure()
     {
-        Schema.DescribeSobjectResult[] results = null;
+        String warningMessage = '';
 
-        for (ConfigWrapper bindingConfigWrapper : getConfigurationList())
+        for ( PlatformEvents_Subscription__mdt registeredSubscriber : getRegisteredSubscribers())
         {
+            warningMessage = '';
+            
             // Validate the subscription record first.
-
-            if (String.isBlank(bindingConfigWrapper.EventBus))
+            if (String.isBlank(registeredSubscriber.EventBus__c))
             {
-                System.debug(
-                    LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel());
-                continue;
+                warningMessage += SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' 
+                                    + registeredSubscriber.DeveloperName + ', does not have required field, ' 
+                                    + PlatformEvents_Subscription__mdt.EventBus__c.getDescribe().getLabel();
+
             }
 
-            if (String.isBlank(bindingConfigWrapper.Consumer))
+            if (String.isBlank(registeredSubscriber.Consumer__c))
             {
-                System.debug(
-                    LoggingLevel.WARN, 
-                    SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' + bindingConfigWrapper.DeveloperName +
-                    ', does not have required field, ' + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel());
+                warningMessage += (String.isNotBlank(warningMessage) ? '\n' : '')
+                                    + SObjectType.PlatformEvents_Subscription__mdt.getLabel() + ' record named, ' 
+                                    + registeredSubscriber.DeveloperName + ', does not have required field, ' 
+                                    + PlatformEvents_Subscription__mdt.Consumer__c.getDescribe().getLabel();
+            }
+
+            if (String.isNotBlank(warningMessage))
+            {
+                System.debug( LoggingLevel.WARN, warningMessage );
                 continue;
             }
 
             apex();
-            bind(bindingConfigWrapper.EventBus);
+            bind(registeredSubscriber.EventBus__c);
             bind(IEventsConsumer.class);
-            data(bindingConfigWrapper.record);
-            to(bindingConfigWrapper.Consumer);
-        }
+            data(registeredSubscriber);
+            to(registeredSubscriber.Consumer__c);       
+        } 
     }
 
     @TestVisible
-    private List<ConfigWrapper> getConfigurationList()
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+
+    private List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers()
     {
-        List<ConfigWrapper> result = new List<ConfigWrapper>();
+        registeredSubscribers.addAll([select DeveloperName, Consumer__c, Event__c , EventCategory__c
+                                         , MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                      from PlatformEvents_Subscription__mdt 
+                                     where IsActive__c = true]);
 
-        for (
-            PlatformEvents_Subscription__mdt bindingConfig
-            :
-            [select 
-                DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                from PlatformEvents_Subscription__mdt where IsActive__c = true]
-        )
-        {
-            result.add(new ConfigWrapper(bindingConfig));
-        }
-
-        if (mock_BindingConfigurationWrappers != null) result = mock_BindingConfigurationWrappers;
-
-        return result;
+        return registeredSubscribers;
     }
 
-    @TestVisible
-    private class ConfigWrapper
-    {
-        public String DeveloperName = null;
-        public String Consumer = null;
-        public String Event = null;
-        public String EventCategory = null;
-        public String MatcherRule = null;
-        public String EventBus = null;
-        public Boolean ExecuteSynchronous = null;
-        public PlatformEvents_Subscription__mdt record = null;
+    // @TestVisible
+    // private List<ConfigWrapper> getConfigurationList()
+    // {
+        // List<ConfigWrapper> result = new List<ConfigWrapper>();
 
-        public ConfigWrapper(PlatformEvents_Subscription__mdt bindingConfig)
-        {
-            this.DeveloperName = bindingConfig.DeveloperName;
-            this.Consumer = bindingConfig.Consumer__c;
-            this.Event = bindingConfig.Event__c;
-            this.EventCategory = bindingConfig.EventCategory__c;
-            this.MatcherRule = bindingConfig.MatcherRule__c;
-            this.EventBus = bindingConfig.EventBus__c;
-            this.ExecuteSynchronous = bindingConfig.Execute_Synchronous__c;
-            this.record = bindingConfig;
-        }
+        // for ( PlatformEvents_Subscription__mdt bindingConfig : [select DeveloperName, Consumer__c, Event__c , EventCategory__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+        //         from PlatformEvents_Subscription__mdt where IsActive__c = true])
+        // {
+        //     result.add(new ConfigWrapper(bindingConfig));
+        // }
 
-        @TestVisible
-        private ConfigWrapper(
-            String DeveloperName,
-            String Consumer,
-            String Event,
-            String EventCategory,
-            String MatcherRule,
-            String EventBus,
-            Boolean ExecuteSynchronous
-        )
-        {
-            this.DeveloperName = DeveloperName;
-            this.Consumer = Consumer;
-            this.Event = Event;
-            this.EventCategory = EventCategory;
-            this.MatcherRule = MatcherRule;
-            this.EventBus = EventBus;
-            this.ExecuteSynchronous = ExecuteSynchronous;
+//        if (mock_BindingConfigurationWrappers != null) result = mock_BindingConfigurationWrappers;
 
-            this.record = new PlatformEvents_Subscription__mdt();
-            this.record.DeveloperName = DeveloperName;
-            this.record.Consumer__c = Consumer;
-            this.record.Event__c = Event;
-            this.record.EventCategory__c = EventCategory;
-            this.record.MatcherRule__c = MatcherRule;
-            this.record.EventBus__c = EventBus;
-            this.record.Execute_Synchronous__c = ExecuteSynchronous;
-        }
-    }
+        // return result;
+    // }
 
-    @TestVisible
-    private static List<ConfigWrapper> mock_BindingConfigurationWrappers = null;
+    // @TestVisible
+    // private class ConfigWrapper
+    // {
+    //     public String DeveloperName = null;
+    //     public String Consumer = null;
+    //     public String Event = null;
+    //     public String EventCategory = null;
+    //     public String MatcherRule = null;
+    //     public String EventBus = null;
+    //     public Boolean ExecuteSynchronous = null;
+    //     public PlatformEvents_Subscription__mdt record = null;
+
+    //     public ConfigWrapper(PlatformEvents_Subscription__mdt bindingConfig)
+    //     {
+    //         this.DeveloperName = bindingConfig.DeveloperName;
+    //         this.Consumer = bindingConfig.Consumer__c;
+    //         this.Event = bindingConfig.Event__c;
+    //         this.EventCategory = bindingConfig.EventCategory__c;
+    //         this.MatcherRule = bindingConfig.MatcherRule__c;
+    //         this.EventBus = bindingConfig.EventBus__c;
+    //         this.ExecuteSynchronous = bindingConfig.Execute_Synchronous__c;
+    //         this.record = bindingConfig;
+    //     }
+
+    //     @TestVisible
+    //     private ConfigWrapper(
+    //         String DeveloperName,
+    //         String Consumer,
+    //         String Event,
+    //         String EventCategory,
+    //         String MatcherRule,
+    //         String EventBus,
+    //         Boolean ExecuteSynchronous
+    //     )
+    //     {
+    //         this.DeveloperName = DeveloperName;
+    //         this.Consumer = Consumer;
+    //         this.Event = Event;
+    //         this.EventCategory = EventCategory;
+    //         this.MatcherRule = MatcherRule;
+    //         this.EventBus = EventBus;
+    //         this.ExecuteSynchronous = ExecuteSynchronous;
+
+    //         this.record = new PlatformEvents_Subscription__mdt();
+    //         this.record.DeveloperName = DeveloperName;
+    //         this.record.Consumer__c = Consumer;
+    //         this.record.Event__c = Event;
+    //         this.record.EventCategory__c = EventCategory;
+    //         this.record.MatcherRule__c = MatcherRule;
+    //         this.record.EventBus__c = EventBus;
+    //         this.record.Execute_Synchronous__c = ExecuteSynchronous;
+    //     }
+    // }
+
+    // private static List<ConfigWrapper> mock_BindingConfigurationWrappers = null;
 }

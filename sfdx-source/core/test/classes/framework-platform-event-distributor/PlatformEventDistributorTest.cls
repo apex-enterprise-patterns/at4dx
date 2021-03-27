@@ -63,7 +63,7 @@ public class PlatformEventDistributorTest
         platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
         platformEventbus.Payload__c = 'hello_world';
 
-        PlatformEventDistributor.setMockSubscribers(new List<PlatformEvents_Subscription__mdt> {pes});
+        PlatformEventDistributor.registeredSibscribers = (new List<PlatformEvents_Subscription__mdt> {pes});
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> {platformEventbus});
 
         System.assert(TestPlatformEventsConsumer.wasCalled);
@@ -72,22 +72,15 @@ public class PlatformEventDistributorTest
 
     private static void configurePlatformEventMetadata()
     {
-        List<PlatformEventDistributorDIModule.ConfigWrapper> platformEventConfigWrapperList =
-            new List<PlatformEventDistributorDIModule.ConfigWrapper>
-            {
-                new PlatformEventDistributorDIModule.ConfigWrapper
-                (
-                    null, //DeveloperName
-                    'TestPlatformEventsConsumer', //Consumer
-                    null, //Event
-                    'Account', //EventCategory
-                    'MatchEventBusAndCategory', //MatcherRule
-                    'AT4DXMessage__e', //EventBus
-                    true //ExecuteSynchronous
-                )
-            };
+        PlatformEvents_Subscription__mdt subscription = new PlatformEvents_Subscription__mdt();
+        subscription.Consumer__c = TestPlatformEventsConsumer.class.getName();
+        subscription.EventCategory__c = 'Account';
+        subscription.IsActive__c = true;
+        subscription.MatcherRule__c = 'MatchEventBusAndCategory';
+        subscription.EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName();
+        subscription.Execute_Synchronous__c = true;
 
-        PlatformEventDistributorDIModule.mock_BindingConfigurationWrappers = platformEventConfigWrapperList;
+        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt>{subscription};
     }
 
     private static Integer getCurrentEventBusSubscriberPosition()
