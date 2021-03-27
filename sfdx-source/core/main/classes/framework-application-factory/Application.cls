@@ -58,7 +58,6 @@ public class Application
 
         public IApplicationSObjectSelector newInstance(SObjectType sObjectType)
         {
-            // system.debug('Application.SelectorFactory.newInstance flag 1');
             return (IApplicationSObjectSelector) di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sObjectType );
         }
 
@@ -74,7 +73,7 @@ public class Application
         {
             // No point creating an empty Domain class, nor can we determine the SObjectType anyway
             if(recordIds == null || recordIds.isEmpty())
-                throw new DeveloperException('Invalid record Id\'s set');    
+                throw new DeveloperException('Invalid record Id\'s set');
 
             // Determine SObjectType
             SObjectType domainSObjectType = new List<Id>(recordIds)[0].getSObjectType();
@@ -98,7 +97,7 @@ public class Application
          *   Account selector to query the related Account records, e.g.
          *
          *     List<Account> accounts = 
-         *        (List<Account>) Applicaiton.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
+         *        (List<Account>) Application.Selector.selectByRelationship(myOpps, Opportunity.AccountId);
          *
          * @param relatedRecords used to extract the related record Ids, e.g. Opportunty records
          * @param relationshipField field in the passed records that contains the relationship records to query, e.g. Opportunity.AccountId
@@ -192,11 +191,22 @@ public class Application
             SObjectType domainSObjectType = records.getSObjectType();
             if (domainSObjectType == null)
                 throw new DeveloperException('Unable to determine SObjectType');
+                
+            Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
-            // Construct Domain class passing in the queried records
-            fflib_SObjectDomain.IConstructable domainConstructor = (fflib_SObjectDomain.IConstructable) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
+            // This would be the case in normal execution context
+            if (injector_return instanceOf fflib_SObjectDomain.IConstructable)
+            {
+                return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable) injector_return).construct(records);
+            }
 
-            return (IApplicationSObjectDomain) domainConstructor.construct(records);
+            // This would be the case in a unit test with a mocked domain class
+            if (injector_return instanceOf IApplicationSObjectDomain)
+            {
+                return (IApplicationSObjectDomain) injector_return;
+            }
+
+            throw new ApplicationException('Object returned by di_Injector is neither fflib_SObjectDomain.IConststructable nor IApplicationSObjectDomain.');
         }    
 
         /**
@@ -215,10 +225,21 @@ public class Application
             if(domainSObjectType == null)
                 throw new DeveloperException('Must specify sObjectType');
 
-            // Construct Domain class passing in the queried records
-            fflib_SObjectDomain.IConstructable2 domainConstructor = (fflib_SObjectDomain.IConstructable2) di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
+            Object injector_return = di_Injector.Org.getInstance( IApplicationSObjectDomain.class, domainSObjectType );
 
-            return (IApplicationSObjectDomain) domainConstructor.construct(records, domainSObjectType);
+            // This would be the case in normal execution context
+            if (injector_return instanceOf fflib_SObjectDomain.IConstructable2)
+            {
+                return (IApplicationSObjectDomain) ((fflib_SObjectDomain.IConstructable2) injector_return).construct(records, domainSObjectType);
+            }
+
+            // This would be the case in a unit test with a mocked domain class
+            if (injector_return instanceOf IApplicationSObjectDomain)
+            {
+                return (IApplicationSObjectDomain) injector_return;
+            }
+
+            throw new ApplicationException('Object returned by di_Injector is neither fflib_SObjectDomain.IConststructable2 nor IApplicationSObjectDomain.');
         }
 
         @TestVisible
@@ -300,21 +321,7 @@ public class Application
         }
     }
 
-    private static Type determineClassType( Object instantiatedClass )
-    {
-        String instantiatedClassName = 'DateTime';
-        try
-        {
-            DateTime typeCheck = (DateTime)instantiatedClass;
-        }
-        catch(System.TypeException te)
-        {
-            String message = te.getMessage().substringAfter('Invalid conversion from runtime type ');
-            instantiatedClassName = message.substringBefore(' to Datetime');
-        }
-
-        return Type.forName( instantiatedClassName );
-    }
+    public class ApplicationException extends Exception { }
 
     /**
      * Exception representing a developer coding error, not intended for end user eyes
