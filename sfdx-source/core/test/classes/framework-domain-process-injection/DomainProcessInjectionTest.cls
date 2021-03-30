@@ -258,6 +258,86 @@ public class DomainProcessInjectionTest
             }
         }
     }
+    
+    @isTest
+    private static void DomainProcessInjectionMethodTest() 
+    { 
+        List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsDallasCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'DomainMethodExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                DomainMethodToken__c = 'DallasProcess',
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.AccountIsRichmondCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'DomainMethodExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                DomainMethodToken__c = 'RichmondProcess',
+                Type__c = 'Criteria'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'DallasAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.DallasAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 10.10,
+                ProcessContext__c = 'DomainMethodExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                DomainMethodToken__c = 'DallasProcess',
+                Type__c = 'Action'
+            ),
+            new DomainProcessBinding__mdt(
+                Label = 'RichmondAccountAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.RichmondAccountActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 11.10,
+                ProcessContext__c = 'DomainMethodExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                DomainMethodToken__c = 'RichmondProcess',
+                Type__c = 'Action'
+            )
+        };
+
+        DomainProcessCoordinator.domainProcesses.addAll(config);
+
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test1', BillingCity='Dallas' ),
+            new Account(Name='Test2', BillingCity='Dallas' ),
+            new Account(Name='Test3', BillingCity='Richmond'),
+            new Account(Name='Test4', BillingCity='Richmond')
+        };
+
+        applicationSObjectUOW.register(accList);
+        AccountsTestDomain domain = (AccountsTestDomain)new AccountsTestDomainConstructor().Construct(accList);
+        DomainProcessCoordinator coord = new DomainProcessCoordinator(domain);
+        coord.processDomainLogicInjections('DallasProcess', applicationSObjectUOW);
+        //fflib_SObjectDomain.Test.Database.onInsert(accList);
+        //fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
+
+        List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
+
+		System.assertEquals(4, result.size(), '4 records should have been changed');
+        
+        for (SObject obj : result) {
+            Account acc = (Account) obj;
+            if (acc.BillingCity == 'Dallas' ) {
+                System.assert(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
+            }
+            else if (acc.BillingCity == 'Richmond') {
+                System.assert(acc.BillingState == null, 'Account with city Richmond does not have null value for State set correctly');
+            }
+            else {
+                System.assert(false, 'Account not matching any criteria');
+            }
+        }
+    }
 
     public with sharing class AccountsTestDomain 
     extends ApplicationSObjectDomain
@@ -369,7 +449,13 @@ public class DomainProcessInjectionTest
         }
     }
 
-//    ================Additional Tests By Bryan========================
+    public static final ApplicationSObjectUnitOfWork applicationSObjectUOW= 
+        new ApplicationSObjectUnitOfWork(
+            new List<Schema.SObjectType>{
+                Account.SObjectType
+            }
+    );
+
     @IsTest
     static void verifyDomainProcessCoordinatorConstructorException(){
         try{
@@ -410,31 +496,5 @@ public class DomainProcessInjectionTest
             );
         }
     }
-/* TODO: Get use cases for testing the ProcessDomainLogicInjections method
-    @isTest
-    private static void verifyProcessDomainLogicInjectionsWithString() {
-        RichmondAccountActionTest testAction = new RichmondAccountActionTest();
-        testAction.setNextQueueableActionInChain(null);
-        testAction.setRecordsRequired(true);
-        
-        List<Account> accList = new List<Account> {
-            new Account(Name='Test1', BillingCity='Dallas' ),
-            new Account(Name='Test2', BillingCity='Dallas' ),
-            new Account(Name='Test3', BillingCity='Richmond'),
-            new Account(Name='Test4', BillingCity='Richmond')
-        };
-
-        AccountsTestDomain domain = new AccountsTestDomain(accList);
-        DomainProcessCoordinator coordinator = new DomainProcessCoordinator(domain);e
-        try{
-            coordinator.processDomainLogicInjections('TriggerExecution');
-        }catch(DomainProcessCoordinator.ProcessInjectionException  ex){
-            System.assertEquals(
-                ex.getMessage(),
-                'Test',
-                'Exception Message Does Not match'
-            );
-        }
-    }
-    */
+    
 }
