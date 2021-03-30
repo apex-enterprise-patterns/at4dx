@@ -45,7 +45,7 @@ public class DomainProcessCoordinator
     }
 
     @TestVisible
-    private list<DomainProcessBinding__mdt> mockDomainProcesses = new list<DomainProcessBinding__mdt>();
+    private static list<DomainProcessBinding__mdt> domainProcesses = new list<DomainProcessBinding__mdt>();
 
     private void primeDomainLogicInjections()
     {
@@ -57,7 +57,7 @@ public class DomainProcessCoordinator
         // Unfortuantely, you cannot query MDTs with a where clause of "this or that".  If you do, it throws a "Disjunctions not supported" exception
         // So, you have to query the records with two queries and add them together.
         // first query the RelatedDomainBindingSObject__r.QualifiedApiName = :sobjAPIName
-        list<DomainProcessBinding__mdt> domainProcesses = [select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
+        domainProcesses.addAll([select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                          , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
                                                          , LogicalInverse__c, OrderOfExecution__c, PreventRecursive__c, ProcessContext__c
                                                          , RelatedDomainBindingSObject__c, RelatedDomainBindingSObject__r.QualifiedApiName, RelatedDomainBindingSObjectAlternate__c
@@ -65,7 +65,7 @@ public class DomainProcessCoordinator
                                                       from DomainProcessBinding__mdt
                                                      where RelatedDomainBindingSObject__r.QualifiedApiName = :sobjAPIName
                                                        and IsActive__c = true
-                                                     order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c];
+                                                     order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c]);
         // second, query RelatedDomainBindingSObjectAlternate__c = :sobjAPIName
         domainProcesses.addAll([select Id, DeveloperName, MasterLabel, Language, NamespacePrefix, Label, QualifiedApiName
                                                          , ClassToInject__c, Description__c, DomainMethodToken__c, ExecuteAsynchronous__c, IsActive__c
@@ -77,16 +77,6 @@ public class DomainProcessCoordinator
                                                        and IsActive__c = true
                                                      order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c]);
 
-        //if (System.Test.isRunningTest() && mockDomainProcesses != null)
-        //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
-
-        // TODO : Figure out how mock domain processes should be handled
-        if ( ! this.mockDomainProcesses.isEmpty() )
-        {
-            domainProcesses.clear();
-            domainProcesses.addAll( mockDomainProcesses );
-            //system.debug( 'this.mockDomainProcesses == ' + this.mockDomainProcesses );
-        }
 
         DomainProcessConstants.PROCESS_CONTEXT processContext = null;
         String domainProcessToken = null;
