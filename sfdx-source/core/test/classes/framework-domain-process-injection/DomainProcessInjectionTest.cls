@@ -76,7 +76,7 @@ public class DomainProcessInjectionTest
             )
         };
 
-        DomainProcessCoordinator.domainProcesses.addAll(config);
+        DomainProcessCoordinator.setMockDomainProcessBindings(config);
 
         List<Account> accList = new List<Account> {
             new Account(Name='Test1', BillingCity='Dallas' ),
@@ -151,7 +151,7 @@ public class DomainProcessInjectionTest
             )
         };
 
-        DomainProcessCoordinator.domainProcesses.addAll(config);
+        DomainProcessCoordinator.setMockDomainProcessBindings(config);
 
         List<Account> accList = new List<Account> {
             new Account(Name='Test1', BillingCity='Dallas', Id = fflib_idgenerator.generate(Account.SObjectType) ),
@@ -228,7 +228,7 @@ public class DomainProcessInjectionTest
             )
         };
 
-        DomainProcessCoordinator.domainProcesses.addAll(config);
+        DomainProcessCoordinator.setMockDomainProcessBindings(config);
 
         Test.startTest();
 
@@ -305,7 +305,7 @@ public class DomainProcessInjectionTest
             )
         };
 
-        DomainProcessCoordinator.domainProcesses.addAll(config);
+        DomainProcessCoordinator.setMockDomainProcessBindings(config);
 
         List<Account> accList = new List<Account> {
             new Account(Name='Test1', BillingCity='Dallas' ),
