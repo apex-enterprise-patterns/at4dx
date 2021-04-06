@@ -218,6 +218,8 @@ private class ApplicationFactoryTest
         };
 
         ApplicationSObjectDomainDIModule.bindingRecords.addAll(bindingList);
+
+        Application.Domain.setMock( new ApplicationFactoryTest.TestOnlyAccounts( new List<Account>() ) );
     }
 
     /********************************************************
