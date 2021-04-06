@@ -115,6 +115,10 @@ private class ApplicationFactoryTest
         };
 
         ApplicationSObjectSelectorDIModule.bindingRecords.addAll(bindingList);
+
+        // override the selector bindings just in case this method
+        //  executes in an org that already has an AccountsSelector.
+        Application.Selector.setMock(new TestAccountsSelector());
     }
 
     /********************************************************
