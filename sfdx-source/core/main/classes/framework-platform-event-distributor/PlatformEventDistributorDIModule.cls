@@ -27,11 +27,22 @@
 public class PlatformEventDistributorDIModule
     extends di_Module
 {
+    @TestVisible
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+
+    static
+    {
+        registeredSubscribers.addAll([select DeveloperName, Consumer__c, Event__c , EventCategory__c
+                                         , MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                      from PlatformEvents_Subscription__mdt 
+                                     where IsActive__c = true]);
+    }
+
     public override void configure()
     {
         String warningMessage = '';
 
-        for ( PlatformEvents_Subscription__mdt registeredSubscriber : getRegisteredSubscribers())
+        for ( PlatformEvents_Subscription__mdt registeredSubscriber : registeredSubscribers)
         {
             warningMessage = '';
             
@@ -64,19 +75,5 @@ public class PlatformEventDistributorDIModule
             data(registeredSubscriber);
             to(registeredSubscriber.Consumer__c);       
         } 
-    }
-
-    @TestVisible
-    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
-
-    @TestVisible
-    private List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers()
-    {
-        registeredSubscribers.addAll([select DeveloperName, Consumer__c, Event__c , EventCategory__c
-                                         , MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                                      from PlatformEvents_Subscription__mdt 
-                                     where IsActive__c = true]);
-
-        return registeredSubscribers;
     }
 }

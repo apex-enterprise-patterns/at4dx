@@ -1,4 +1,4 @@
-/**
+/** working draft
  * Copyright (c) 2020, John M. Daniel & John Storey
  * All rights reserved.
  *
@@ -174,31 +174,33 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
     @IsTest
     static void verifyRegisterNewWithParentRecord() {
-        Account singleAccount = getAcctList(1)[0];
+
+        Contact childContact = new Contact();
+        childContact.FirstName = 'sdfeoriwemnnwj';
+        childContact.LastName = 'kljasdlkjflajskdf';
 
         //Create account record to be parent
         Account parentAccount = new Account(name='parentAccount');
         insert parentAccount;
 
-        Schema.SObjectField parentField = Account.ParentId; 
+        Schema.SObjectField parentField = Contact.AccountId; 
 
         //Test register single new record
         applicationSObjectUOW.register(
-            singleAccount,
+            childContact,
             parentField,
             parentAccount
         );
         applicationSObjectUOW.commitWork();
 
         //Test getting new records registered
-        List<Account> returnedAccts = 
-            applicationSObjectUOW.getNewRecordsByType(Account.SObjectType);
+        List<Contact> returnedContacts = applicationSObjectUOW.getNewRecordsByType(Contact.SObjectType);
 
-        Account returnedAcct = returnedAccts[0];
+        Contact returnedContact = returnedContacts[0];
            
         System.assertEquals(
             parentAccount.Id,
-            returnedAcct.ParentId,
+            returnedContact.AccountId,
             'Parent Id Not Equal'
         );
     }
@@ -209,31 +211,32 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         Account parentAccount = new Account(name='parentAccount');
         insert parentAccount;
 
-        Account singleAccount = getAcctList(1)[0];
-        insert singleAccount;
+        Contact childContact = new Contact();
+        childContact.FirstName = 'sdfeoriwemnnwj';
+        childContact.LastName = 'kljasdlkjflajskdf';
+        insert childContact;
 
-       Schema.SObjectField parentField = Account.ParentId; 
+       Schema.SObjectField parentField = Contact.AccountId;
 
         //Test register single Dirty record
         applicationSObjectUOW.register(
-            singleAccount,
+            childContact,
             parentField,
             parentAccount
         );
         applicationSObjectUOW.commitWork();
 
         //Test Return Dirty Records By Type to Map
-        Map<Id,SObject> returnedAcctsMap = 
-            applicationSObjectUOW.getDirtyRecordsByType(singleAccount.getSObjectType());
+        Map<Id,SObject> returnedAcctsMap = applicationSObjectUOW.getDirtyRecordsByType(Contact.SObjectType);
 
         //Put mapped values in list for assertion
-        List<Account> returnedAcctsList = returnedAcctsMap.values();
+        List<Contact> returnedContactsList = returnedAcctsMap.values();
 
-        Account returnedAcct = returnedAcctsList[0];
+        Contact returnedContact = returnedContactsList[0];
 
         System.assertEquals(
             parentAccount.Id,
-            returnedAcct.ParentId,
+            returnedContact.AccountId,
             'Lists Do Not Match'
         );
     }
@@ -336,7 +339,8 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
     public static final ApplicationSObjectUnitOfWork applicationSObjectUOW= 
         new ApplicationSObjectUnitOfWork(
             new List<Schema.SObjectType>{
-                Account.SObjectType
+                Account.SObjectType, 
+                Contact.SObjectType
             }
     );
 
