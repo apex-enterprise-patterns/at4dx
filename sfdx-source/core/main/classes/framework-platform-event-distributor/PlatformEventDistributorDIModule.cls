@@ -69,6 +69,7 @@ public class PlatformEventDistributorDIModule
     @TestVisible
     private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
 
+    @TestVisible
     private List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers()
     {
         registeredSubscribers.addAll([select DeveloperName, Consumer__c, Event__c , EventCategory__c
