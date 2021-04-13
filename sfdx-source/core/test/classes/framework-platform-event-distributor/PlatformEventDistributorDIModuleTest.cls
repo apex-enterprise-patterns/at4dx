@@ -29,9 +29,9 @@ private class PlatformEventDistributorDIModuleTest {
         dimod.configure();
 
         System.assertEquals(
-        new List<PlatformEvents_Subscription__mdt> { pes, pes2 },
-        PlatformEventDistributorDIModule.registeredSubscribers,
-        'Registered Subscirbers Not Equal'
+            new List<PlatformEvents_Subscription__mdt> { pes, pes2 },
+            PlatformEventDistributorDIModule.registeredSubscribers,
+            'Registered Subscirbers Not Equal'
         );
     }
 }
