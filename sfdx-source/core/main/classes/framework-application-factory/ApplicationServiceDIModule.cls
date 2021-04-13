@@ -34,15 +34,14 @@ public class ApplicationServiceDIModule
     @TestVisible
     private static List<ApplicationFactory_ServiceBinding__mdt> bindingRecords = new List<ApplicationFactory_ServiceBinding__mdt>();
 
-    private static List<ApplicationFactory_ServiceBinding__mdt> getBindingRecords()
+    static
     {
         bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt]);
-        return bindingRecords;
     }
 
     public override void configure() 
     {
-        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : getBindingRecords())
+        for ( ApplicationFactory_ServiceBinding__mdt bindingConfig : bindingRecords )
         {
             apex();
             try {

@@ -23,25 +23,23 @@
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-
 public class ApplicationSObjectUnitOfWorkDIProvider 
     implements di_Binding.Provider
 {
-    private fflib_SObjectUnitOfWork.IDML dmlParam = null;
-    private List<Schema.SObjectType> sObjTypesParam = null;
-
     @TestVisible
     private static List<ApplicationFactory_UnitOfWorkBinding__mdt> bindingRecords = new List<ApplicationFactory_UnitOfWorkBinding__mdt>();
 
-    private static List<ApplicationFactory_UnitOfWorkBinding__mdt> getBindingRecords()
+    static 
     {
         bindingRecords.addAll([select DeveloperName, QualifiedAPIName, BindingSequence__c
-                                    , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-                                from ApplicationFactory_UnitOfWorkBinding__mdt
-                                order by BindingSequence__c]
-                            );
-        return bindingRecords;
+                                        , BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+                                    from ApplicationFactory_UnitOfWorkBinding__mdt
+                                    order by BindingSequence__c]
+                                );
     }
+
+    private fflib_SObjectUnitOfWork.IDML dmlParam = null;
+    private List<Schema.SObjectType> sObjTypesParam = null;
 
     private void parseParamType(Object param)
     {
@@ -96,7 +94,7 @@ public class ApplicationSObjectUnitOfWorkDIProvider
 
             String bindingSObjectAPIName = null;
 
-            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : getBindingRecords())
+            for ( ApplicationFactory_UnitOfWorkBinding__mdt bindingConfig : bindingRecords)
             {
                 bindingSObjectAPIName = String.isNotBlank(bindingConfig.BindingSObject__c) ? bindingConfig.BindingSObject__r.QualifiedApiName : bindingConfig.BindingSObjectAlternate__c;
 

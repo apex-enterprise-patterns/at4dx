@@ -37,6 +37,24 @@ public class PlatformEventDistributor
     private static string CATEGORY_FIELD_NAME = 'Category__c'.toLowerCase();
     private static string EVENT_NAME_FIELD_NAME = 'EventName__c'.toLowerCase();
 
+    @TestVisible
+    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+
+    private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
+    {
+        if (String.isBlank(eventBus))
+        {
+            throw new PlatformEventDistributorException('eventBus parameter is required');
+        }
+
+        registeredSubscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
+                                        from PlatformEvents_Subscription__mdt
+                                       where IsActive__c = true
+                                         and EventBus__c = :eventBus]); 
+
+        return registeredSubscribers;
+    }
+
     private Map<String, List<PlatformEvents_Subscription__mdt>> eventBusToConfigurationMap = new Map<String, List<PlatformEvents_Subscription__mdt>>();
 
     @TestVisible
@@ -223,24 +241,6 @@ public class PlatformEventDistributor
         }
 
         return result;
-    }
-
-    @TestVisible
-    private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
-
-    private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
-    {
-        if (String.isBlank(eventBus))
-        {
-            throw new PlatformEventDistributorException('eventBus parameter is required');
-        }
-
-        registeredSubscribers.addAll([select Consumer__c, EventCategory__c, Event__c, IsActive__c, MatcherRule__c, EventBus__c, Execute_Synchronous__c
-                                        from PlatformEvents_Subscription__mdt
-                                       where IsActive__c = true
-                                         and EventBus__c = :eventBus]); 
-
-        return registeredSubscribers;
     }
 
     public class PlatformEventDistributorException

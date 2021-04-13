@@ -32,7 +32,7 @@ public class ApplicationSelectorFieldsetDIModule
     @TestVisible
     private static List<SelectorConfig_FieldSetInclusion__mdt> bindingRecords = new List<SelectorConfig_FieldSetInclusion__mdt>();
 
-    private static List<SelectorConfig_FieldSetInclusion__mdt> getBindingRecords()
+    static
     {
         bindingRecords.addAll
         ([
@@ -42,7 +42,6 @@ public class ApplicationSelectorFieldsetDIModule
             from SelectorConfig_FieldSetInclusion__mdt
             where IsActive__c = true
         ]);
-        return bindingRecords;
     }
 
     public override void configure() 
@@ -55,7 +54,7 @@ public class ApplicationSelectorFieldsetDIModule
 
         String bindingSObjectAPIName = null;
 
-        for (SelectorConfig_FieldSetInclusion__mdt scfi : getBindingRecords())
+        for (SelectorConfig_FieldSetInclusion__mdt scfi : bindingRecords)
         {
             bindingSObjectAPIName = String.isNotBlank(scfi.BindingSObject__c) ? scfi.BindingSObject__r.QualifiedApiName : scfi.BindingSObjectAlternate__c; 
 

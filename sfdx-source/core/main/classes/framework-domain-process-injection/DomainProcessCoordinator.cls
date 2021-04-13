@@ -44,8 +44,44 @@ public class DomainProcessCoordinator
         return this.domainProcessMap;
     }
 
+    private static Map<String, List<DomainProcessBinding__mdt>> mockDomainProcessBindingsBySObjectMap = new Map<String, List<DomainProcessBinding__mdt>>();
+
     @TestVisible
-    private static list<DomainProcessBinding__mdt> domainProcesses = new list<DomainProcessBinding__mdt>();
+    private static void setMockDomainProcessBindings(list<DomainProcessBinding__mdt> mockDomainProcessBindings)
+    {
+        System.debug(mockDomainProcessBindings.size() + ' mock records supplied by test class');
+        
+        if ( mockDomainProcessBindings != null )
+        {
+            String sobjAPIName = null;
+
+            for ( DomainPRocessBinding__mdt mockDomainProcessBinding : mockDomainProcessBindings )
+            {
+                if ( String.isNotBlank(mockDomainProcessBinding.RelatedDomainBindingSObject__c) )
+                {
+                    sobjAPIName = mockDomainProcessBinding.RelatedDomainBindingSObject__c;
+                }
+                else if ( String.isNotBlank(mockDomainProcessBinding.RelatedDomainBindingSObjectAlternate__c) )
+                {
+                    sobjAPIName = mockDomainProcessBinding.RelatedDomainBindingSObjectAlternate__c;
+                }
+                else 
+                {
+                    System.Debug( LoggingLevel.WARN, 'SObject API name could not be descerned from mockDomainProcessBinding == ' + mockDomainProcessBinding);
+                    continue;
+                }
+
+                if ( ! mockDomainProcessBindingsBySObjectMap.containsKey(sobjAPIName) )
+                {
+                    mockDomainProcessBindingsBySObjectMap.put(sobjAPIName, new List<DomainProcessBinding__mdt>() );
+                }
+
+                mockDomainProcessBindingsBySObjectMap.get(sobjAPIName).add( mockDomainProcessBinding );
+            }
+        }
+    }
+
+    private list<DomainProcessBinding__mdt> domainProcesses = new list<DomainProcessBinding__mdt>();
 
     private void primeDomainLogicInjections()
     {
@@ -77,6 +113,10 @@ public class DomainProcessCoordinator
                                                        and IsActive__c = true
                                                      order by ProcessContext__c, TriggerOperation__c, OrderOfExecution__c, Type__c]);
 
+        if ( mockDomainProcessBindingsBySObjectMap.containsKey(sobjAPIName) )
+        {
+            domainProcesses.addAll( mockDomainProcessBindingsBySObjectMap.get(sobjAPIName) );
+        }
 
         DomainProcessConstants.PROCESS_CONTEXT processContext = null;
         String domainProcessToken = null;
@@ -332,6 +372,7 @@ public class DomainProcessCoordinator
                         catch (Exception e)
                         {
                             system.debug( e );
+// potentially clear domainProcesses here 
                             throw new ProcessInjectionException( e );
                         }
 
@@ -417,9 +458,10 @@ public class DomainProcessCoordinator
                             system.debug( e );
                             throw new ProcessInjectionException( e );
                         }
-                    }
-                }
-            }
+                    } // end of for ( Decimal orderOfExecutionKey : orderOfExecutionKeysSorted )
+                } // end of if ( domainProcessesToExecuteMap.get( sequenceKey ).containsKey( DomainProcessConstants.PROCESS_TYPE.ACTION ) && ! qualifiedRecords.isempty() )
+
+            } // end of for( Integer sequenceKey : sequenceKeysSorted )
         }
     }
 
