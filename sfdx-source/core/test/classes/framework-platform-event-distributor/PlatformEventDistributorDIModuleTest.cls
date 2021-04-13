@@ -3,15 +3,13 @@ public with sharing class PlatformEventDistributorDIModuleTest {
     @IsTest
     private static void platformEventDIModuleCoverage()
     {
-        String eventName = 'TestOfPlatformEventDistributor';
-
         //leaving out consumer and eventbus values will trigger warning messages code
         PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt(
             DeveloperName = 'At4dxUnitTest',
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            Event__c = eventName,
+            Event__c = 'TestOfPlatformEventDistributor',
             Execute_Synchronous__c = true
         );
 
@@ -22,7 +20,7 @@ public with sharing class PlatformEventDistributorDIModuleTest {
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
             EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
-            Event__c = eventName,
+            Event__c = 'TestOfPlatformEventDistributor',
             Execute_Synchronous__c = true
         );
 
