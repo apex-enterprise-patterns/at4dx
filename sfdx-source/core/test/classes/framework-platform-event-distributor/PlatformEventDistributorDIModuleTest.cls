@@ -1,5 +1,5 @@
 @IsTest
-public with sharing class PlatformEventDistributorDIModuleTest {
+private class PlatformEventDistributorDIModuleTest {
     @IsTest
     private static void platformEventDIModuleCoverage()
     {
@@ -30,7 +30,7 @@ public with sharing class PlatformEventDistributorDIModuleTest {
 
         System.assertEquals(
         new List<PlatformEvents_Subscription__mdt> { pes, pes2 },
-        dimod.getRegisteredSubscribers(),
+        PlatformEventDistributorDIModule.registeredSubscribers,
         'Registered Subscirbers Not Equal'
         );
     }
