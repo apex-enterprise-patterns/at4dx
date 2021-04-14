@@ -88,4 +88,28 @@ private class PlatformEventDistributorDIModuleTest {
             'Warning Message Is Not Equal'
         );
     }
+
+    @IsTest
+    private static void noConsumerWarningNoEventBusMessageTest(){
+
+        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'At4dxUnitTest',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
+            Event__c = 'TestOfPlatformEventDistributor',
+            Execute_Synchronous__c = true
+        );
+
+        PlatformEventDistributorDIModule dimod = new PlatformEventDistributorDIModule();
+        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt> { pes };
+        dimod.configure();
+        
+        System.assertEquals(
+            'Platform Events - Subscription record named, At4dxUnitTest, does not have required field, Event Bus'+
+                '\nPlatform Events - Subscription record named, At4dxUnitTest, does not have required field, Consumer',
+            PlatformEventDistributorDIModule.configureWarningMessage,
+            'Warning Message Is Not Equal'
+        );
+    }
 }
