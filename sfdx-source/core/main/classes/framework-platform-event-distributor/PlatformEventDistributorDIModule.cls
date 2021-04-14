@@ -29,6 +29,9 @@ public class PlatformEventDistributorDIModule
 {
     @TestVisible
     private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
+    
+    @TestVisible
+    private static String configureWarningMessage;
 
     static
     {
@@ -66,6 +69,7 @@ public class PlatformEventDistributorDIModule
             if (String.isNotBlank(warningMessage))
             {
                 System.debug( LoggingLevel.WARN, warningMessage );
+                configureWarningMessage = warningMessage;
                 continue;
             }
 
