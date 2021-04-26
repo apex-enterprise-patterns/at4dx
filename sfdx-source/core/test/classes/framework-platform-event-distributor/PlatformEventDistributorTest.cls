@@ -47,6 +47,26 @@ public class PlatformEventDistributorTest
         System.assertEquals(true, sr.isSuccess());
     }
 
+    @isTest
+    private static void basicTestToActivateCodeCoverageImmediate() 
+    {
+        AT4DXImmediateMessage__e platformEventbus = new AT4DXImmediateMessage__e();
+        platformEventbus.EventName__c = 'bluefish';
+        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
+        platformEventbus.Payload__c = json.serialize( new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType ) } );
+
+        Test.startTest();
+        Database.SaveResult sr = EventBus.publish(platformEventbus);
+
+        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition();
+        
+        Test.stopTest();
+
+        System.assert( initialSubscriberPosition < getCurrentImmediateEventBusSubscriberPosition(), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.' );
+
+        System.assertEquals(true, sr.isSuccess());
+    }
+
     @IsTest
     private static void platformEventSubscriberTest()
     {
@@ -91,6 +111,19 @@ public class PlatformEventDistributorTest
         System.assert(at4dxMessageBusSubscriber != null, 'Could not find the ' + AT4DXMessage__e.SobjectType + ' record');
 
         return at4dxMessageBusSubscriber.Position;
+    }
+
+    private static Integer getCurrentImmediateEventBusSubscriberPosition()
+    {
+        EventBusSubscriber at4dxImmediateMessageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
+                                                          FROM EventBusSubscriber 
+                                                         WHERE Topic = :AT4DXImmediateMessage__e.SobjectType.getDescribe().getName()
+                                                           AND Type = 'ApexTrigger'
+                                                         LIMIT 1];
+        
+        System.assert(at4dxImmediateMessageBusSubscriber != null, 'Could not find the ' + AT4DXImmediateMessage__e.SobjectType + ' record');
+
+        return at4dxImmediateMessageBusSubscriber.Position;
     }
 
     public static Boolean wasTestPlatformEventsConsumerCalled2 = false;
