@@ -96,11 +96,21 @@ public class PlatformEventDistributor
 
         if (events == null || events.isEmpty()) return;
 
-        // extract the event payloads
-        Set<String> eventNameSet = generateStringSetFromField(events, AT4DXMessage__e.EventName__c, false);
-        Set<String> eventCategorySet = generateStringSetFromField(events, AT4DXMessage__e.Category__c, false);
-
         Schema.DescribeSObjectResult platformEventBusDescribe = events.getSobjectType().getDescribe();
+        Schema.SObjectField categoryField = platformEventBusDescribe.fields.getMap().get(CATEGORY_FIELD_NAME);
+        Schema.SObjectField eventNameField = platformEventBusDescribe.fields.getMap().get(EVENT_NAME_FIELD_NAME);
+
+        if (categoryField == null) {
+            throw new PlatformEventDistributorException('Platform Event must implement the Category field!');
+        }
+
+        if (eventNameField == null) {
+            throw new PlatformEventDistributorException('Platform Event must implement the Event Name field!');
+        }
+
+        // extract the event payloads
+        Set<String> eventCategorySet = generateStringSetFromFieldValues(events, categoryField, false);
+        Set<String> eventNameSet = generateStringSetFromFieldValues(events, eventNameField, false);
 
         // need to read all available PlatformEvents_Subscription__mdt records for this event SObjectType
         // SOQL targeting custom MDT tables does not support the OR operator.  Manually filter.
@@ -224,7 +234,7 @@ public class PlatformEventDistributor
         System.debug('jobIdList: ' + jobIdList);
     }
 
-    private static Set<String> generateStringSetFromField(List<SObject> sobjList, SObjectField sobjField, Boolean includeBlankValues)
+    private static Set<String> generateStringSetFromFieldValues(List<SObject> sobjList, SObjectField sobjField, Boolean includeBlankValues)
     {
         Set<String> result = new Set<String>();
 
