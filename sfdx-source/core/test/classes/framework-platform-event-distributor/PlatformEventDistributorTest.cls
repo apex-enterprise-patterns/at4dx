@@ -159,7 +159,6 @@ public class PlatformEventDistributorTest
         System.assertEquals('Test Payload', matchEventBusAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');    
     }
 
-
     @IsTest
     private static void whenTriggerHandlerInvokedWithMatchEventBus() 
     {
@@ -199,6 +198,88 @@ public class PlatformEventDistributorTest
 
         System.assertEquals(true, matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
         System.assertEquals('Test Payload', matchEventBusResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');    
+    }
+
+    @IsTest
+    private static void whenTriggerHandlerInvokedWithMatchEventBusWithAsynchronousSubscriber() 
+    {
+        String eventName = 'TestMatchEventBusAsynchronous';
+
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBusAsynchronous',
+            Consumer__c = 'PlatformEventDistributorTest.MatchEventBusConsumerAsynchronous',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBus',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = false
+        );
+
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
+
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
+
+        // Inject the platform event directly into the trigger handler, bypassing event publishing
+        PlatformEventDistributor pedInstance = new PlatformEventDistributor();
+        pedInstance.triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
+
+        System.assertEquals(false, pedInstance.jobIdList.isEmpty(), 'Job id was not found in the job id list');  
+    }
+
+    @IsTest
+    private static void whenInvalidConsumerSuppliedExceptionThrown() 
+    {
+        String eventName = 'TestMatchEventBusInvalidConsumer';
+
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBusInvalidConsumer',
+            Consumer__c = 'PlatformEventDistributorTest.InvalidConsumer',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBus',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = true
+        );
+
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
+
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
+
+        try {
+            new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
+        } catch (Exception ex) {
+            System.assertEquals('Attempt to de-reference a null object', ex.getMessage(), 'Null pointer exception was not thrown');
+        }
     }
 
     @IsTest
@@ -291,6 +372,21 @@ public class PlatformEventDistributorTest
     }
 
     public class MatchEventBusConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            matchEventBusResult.wasTestPlatformEventsConsumerCalled = true;
+
+            for (SObject sobj : events) 
+            {
+                AT4DXMessage__e eventPayload = (AT4DXMessage__e) sobj;
+                matchEventBusResult.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+            }
+        }
+    }
+
+    public class MatchEventBusConsumerAsynchronous
         extends PlatformEventAbstractConsumer
     {
         public override void runInProcess()
