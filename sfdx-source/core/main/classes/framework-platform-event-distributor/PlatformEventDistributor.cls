@@ -151,7 +151,7 @@ public class PlatformEventDistributor
 
                 else
                 {
-                    // This should ideally never happen
+                    // This should never happen
                     // TODO: Validate that this never occurs due to the force-di filtering that occurs previous to the manual filtering
                     System.debug('Subscriber did not match this event');
                 }
