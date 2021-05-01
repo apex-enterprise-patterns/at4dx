@@ -27,17 +27,7 @@
 public class PlatformEventDistributorTest
 {
     @IsTest
-    private static void whenGetRegisteredSubscribersCalledWithBlankEventBusExceptionThrown() 
-    {
-        try {
-            PlatformEventDistributor.getRegisteredSubscribers('');
-        } catch (PlatformEventDistributor.PlatformEventDistributorException ex) {
-            System.assertEquals('eventBus parameter is required', ex.getMessage(), 'Unexpected exception message');
-        }
-    }
-
-    @IsTest
-    private static void whenTriggerHandlerInvokedWithEventsWithoutCategoryFieldExceptionThrown() 
+    private static void whenTriggerHandlerInvokedWithEventsWithoutCategoryOrEventNameFieldExceptionThrown() 
     {
         try {
             new PlatformEventDistributor().triggerHandler(new List<Account>{new Account()});
@@ -63,8 +53,15 @@ public class PlatformEventDistributorTest
             Execute_Synchronous__c = true
         );
 
-        // Inject the subscription into the platform even distributor
-        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
 
         // Setup a platform event to be published to the event bus
         AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
@@ -97,8 +94,15 @@ public class PlatformEventDistributorTest
             Execute_Synchronous__c = true
         );
 
-        // Inject the subscription into the platform even distributor
-        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
 
         // Setup a platform event to be published to the event bus
         AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
@@ -131,8 +135,15 @@ public class PlatformEventDistributorTest
             Execute_Synchronous__c = true
         );
 
-        // Inject the subscription into the platform even distributor
-        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
 
         // Setup a platform event to be published to the event bus
         AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
@@ -166,8 +177,15 @@ public class PlatformEventDistributorTest
             Execute_Synchronous__c = true
         );
 
-        // Inject the subscription into the platform even distributor
-        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+        // Inject the subscription into the force-di cache
+        di_Injector.Org.Bindings.add(
+            new di_Module()
+                .apex()
+                .bind(AT4DXMessage__e.SObjectType)
+                .bind(IEventsConsumer.class)
+                .data(platformEventSubscription)
+                .to(platformEventSubscription.Consumer__c)
+        );
 
         // Setup a platform event to be published to the event bus
         AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
