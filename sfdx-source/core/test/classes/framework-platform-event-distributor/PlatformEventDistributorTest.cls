@@ -40,132 +40,263 @@ public class PlatformEventDistributorTest
     private static void whenTriggerHandlerInvokedWithEventsWithoutCategoryFieldExceptionThrown() 
     {
         try {
-            new PlatformEventDistributor().triggerHandler(new List<Account>{new Account(Name = 'test')});
+            new PlatformEventDistributor().triggerHandler(new List<Account>{new Account()});
         } catch (PlatformEventDistributor.PlatformEventDistributorException ex) {
             System.assertEquals('Platform Event must implement the Category and Event Name fields', ex.getMessage(), 'Unexpected exception message');
         }
     }
 
     @IsTest
-    private static void whenTrigger() 
+    private static void whenTriggerHandlerInvokedWithMatchEventBusAndCategoryAndEventName() 
     {
-        
-    }
+        String eventName = 'TestMatchEventBusAndCategoryAndEventName';
 
-    @isTest
-    private static void basicTestToActivateCodeCoverage() 
-    {
-        AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
-        platformEventbus.EventName__c = 'bluefish';
-        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
-        platformEventbus.Payload__c = json.serialize( new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType ) } );
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBusAndCategoryAndEventName',
+            Consumer__c = 'PlatformEventDistributorTest.MatchEventBusAndCategoryAndEventNameConsumer',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = true
+        );
 
-        Test.startTest();
-        Database.SaveResult sr = EventBus.publish(platformEventbus);
+        // Inject the subscription into the platform even distributor
+        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
 
-        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition();
-        
-        Test.stopTest();
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
 
-        System.assert( initialSubscriberPosition < getCurrentEventBusSubscriberPosition(), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.' );
+        // Inject the platform event directly into the trigger handler, bypassing event publishing
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        System.assertEquals(true, sr.isSuccess());
-    }
-
-    @isTest
-    private static void basicTestToActivateCodeCoverageImmediate() 
-    {
-        AT4DXImmediateMessage__e platformEventbus = new AT4DXImmediateMessage__e();
-        platformEventbus.EventName__c = 'bluefish';
-        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
-        platformEventbus.Payload__c = json.serialize( new Set<Id>{ fflib_IDGenerator.generate(Account.SObjectType ) } );
-
-        Test.startTest();
-        Database.SaveResult sr = EventBus.publish(platformEventbus);
-
-        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition();
-        
-        Test.stopTest();
-
-        System.assert( initialSubscriberPosition < getCurrentImmediateEventBusSubscriberPosition(), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.' );
-
-        System.assertEquals(true, sr.isSuccess());
+        System.assertEquals(true, matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.assertEquals('Test Payload', matchEventBusAndCategoryAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
     @IsTest
-    private static void platformEventSubscriberTest()
+    private static void whenTriggerHandlerInvokedWithMatchEventBusAndCategory() 
     {
-        String eventName = 'TestOfPlatformEventDistributor';
+        String eventName = 'TestMatchEventBusAndCategory';
 
-        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt();
-        pes.DeveloperName = 'At4dxUnitTest';
-        pes.Consumer__c = 'PlatformEventDistributorTest.TestPlatformEventsConsumer';
-        pes.IsActive__c = true;
-        pes.EventCategory__c = Account.getSObjectType().getDescribe().getName();
-        pes.MatcherRule__c = 'MatchEventBusAndCategoryAndEventName';
-        pes.EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName();
-        pes.Event__c = eventName;
-        pes.Execute_Synchronous__c = true;
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBusAndCategory',
+            Consumer__c = 'PlatformEventDistributorTest.MatchEventBusAndCategoryConsumer',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBusAndCategory',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = true
+        );
 
-        AT4DXMessage__e platformEventbus = new AT4DXMessage__e();
-        platformEventbus.EventName__c = eventName;
-        platformEventbus.Category__c = Account.getSObjectType().getDescribe().getName();
-        platformEventbus.Payload__c = 'hello_world';
+        // Inject the subscription into the platform even distributor
+        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
 
-        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> {pes});
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
 
-        System.debug('PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 before  == ' + PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 );
-        System.debug('PlatformEventDistributorTest.testPlatformEventsConsumerData before == ' + PlatformEventDistributorTest.testPlatformEventsConsumerData);
+        // Inject the platform event directly into the trigger handler, bypassing event publishing
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventbus });
-
-        System.debug('PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 after == ' + PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 );
-        System.debug('PlatformEventDistributorTest.testPlatformEventsConsumerData after == ' + PlatformEventDistributorTest.testPlatformEventsConsumerData);
-        System.assert(PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2);
-        System.assertEquals(platformEventbus.Payload__c, PlatformEventDistributorTest.testPlatformEventsConsumerData);
+        System.assertEquals(true, matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.assertEquals('Test Payload', matchEventBusAndCategoryResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');        
     }
 
-    private static Integer getCurrentEventBusSubscriberPosition()
+    @IsTest
+    private static void whenTriggerHandlerInvokedWithMatchEventBusAndEventName() 
     {
-        EventBusSubscriber at4dxMessageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
-                                                          FROM EventBusSubscriber 
-                                                         WHERE Topic = :AT4DXMessage__e.SobjectType.getDescribe().getName()
-                                                           AND Type = 'ApexTrigger'
-                                                         LIMIT 1];
-        
-        System.assert(at4dxMessageBusSubscriber != null, 'Could not find the ' + AT4DXMessage__e.SobjectType + ' record');
+        String eventName = 'TestMatchEventBusAndEventName';
 
-        return at4dxMessageBusSubscriber.Position;
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBusAndEventName',
+            Consumer__c = 'PlatformEventDistributorTest.MatchEventBusAndEventNameConsumer',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBusAndEventName',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = true
+        );
+
+        // Inject the subscription into the platform even distributor
+        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
+
+        // Inject the platform event directly into the trigger handler, bypassing event publishing
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
+
+        System.assertEquals(true, matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.assertEquals('Test Payload', matchEventBusAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');    
     }
 
-    private static Integer getCurrentImmediateEventBusSubscriberPosition()
-    {
-        EventBusSubscriber at4dxImmediateMessageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
-                                                          FROM EventBusSubscriber 
-                                                         WHERE Topic = :AT4DXImmediateMessage__e.SobjectType.getDescribe().getName()
-                                                           AND Type = 'ApexTrigger'
-                                                         LIMIT 1];
-        
-        System.assert(at4dxImmediateMessageBusSubscriber != null, 'Could not find the ' + AT4DXImmediateMessage__e.SobjectType + ' record');
 
-        return at4dxImmediateMessageBusSubscriber.Position;
+    @IsTest
+    private static void whenTriggerHandlerInvokedWithMatchEventBus() 
+    {
+        String eventName = 'TestMatchEventBus';
+
+        // Setup a platform event subscription
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'TestMatchEventBus',
+            Consumer__c = 'PlatformEventDistributorTest.MatchEventBusConsumer',
+            IsActive__c = true,
+            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
+            MatcherRule__c = 'MatchEventBus',
+            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            Event__c = eventName,
+            Execute_Synchronous__c = true
+        );
+
+        // Inject the subscription into the platform even distributor
+        PlatformEventDistributor.registeredSubscribers = (new List<PlatformEvents_Subscription__mdt> { platformEventSubscription });
+
+        // Setup a platform event to be published to the event bus
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = eventName,
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
+
+        // Inject the platform event directly into the trigger handler, bypassing event publishing
+        new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
+
+        System.assertEquals(true, matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.assertEquals('Test Payload', matchEventBusResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');    
     }
 
-    public static Boolean wasTestPlatformEventsConsumerCalled2 = false;
-    public static String testPlatformEventsConsumerData = null;
+    @IsTest
+    private static void whenAT4DXMessagePublishedToEventBusTriggerHandlerProcessesEvent() {
+        AT4DXMessage__e platformEventMessage = new AT4DXMessage__e(
+            EventName__c = 'TestTrigger',
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
 
-    public class TestPlatformEventsConsumer
+        Test.startTest();
+        Database.SaveResult sr = EventBus.publish(platformEventMessage);
+        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType);
+        Test.stopTest();
+
+        System.assertEquals(true, sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        System.assert(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
+    }
+
+    @IsTest
+    private static void whenAT4DXImmediateMessagePublishedToEventBusTriggerHandlerProcessesEvent() {
+        AT4DXImmediateMessage__e platformEventMessage = new AT4DXImmediateMessage__e(
+            EventName__c = 'TestTrigger',
+            Category__c = Account.getSObjectType().getDescribe().getName(),
+            Payload__c = 'Test Payload'
+        );
+
+        Test.startTest();
+        Database.SaveResult sr = EventBus.publish(platformEventMessage);
+        Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType);
+        Test.stopTest();
+
+        System.assertEquals(true, sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        System.assert(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
+    }
+
+    private class PlatformEventConsumerResult {
+        public Boolean wasTestPlatformEventsConsumerCalled = false;
+        public String testPlatformEventsConsumerData = null;
+    }
+
+    private static PlatformEventConsumerResult matchEventBusAndCategoryAndEventNameResult = new PlatformEventConsumerResult();
+    private static PlatformEventConsumerResult matchEventBusAndCategoryResult = new PlatformEventConsumerResult();
+    private static PlatformEventConsumerResult matchEventBusAndEventNameResult = new PlatformEventConsumerResult();
+    private static PlatformEventConsumerResult matchEventBusResult = new PlatformEventConsumerResult();
+
+    public class MatchEventBusAndCategoryAndEventNameConsumer
         extends PlatformEventAbstractConsumer
     {
         public override void runInProcess()
         {
-            PlatformEventDistributorTest.wasTestPlatformEventsConsumerCalled2 = true;
+            matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled = true;
 
             for (SObject sobj : events) 
             {
-                AT4DXMessage__e evt = (AT4DXMessage__e) sobj;
-                PlatformEventDistributorTest.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+                AT4DXMessage__e eventPayload = (AT4DXMessage__e) sobj;
+                matchEventBusAndCategoryAndEventNameResult.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
             }
         }
+    }
+
+    public class MatchEventBusAndCategoryConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled = true;
+
+            for (SObject sobj : events) 
+            {
+                AT4DXMessage__e eventPayload = (AT4DXMessage__e) sobj;
+                matchEventBusAndCategoryResult.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+            }
+        }
+    }
+
+    public class MatchEventBusAndEventNameConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled = true;
+
+            for (SObject sobj : events) 
+            {
+                AT4DXMessage__e eventPayload = (AT4DXMessage__e) sobj;
+                matchEventBusAndEventNameResult.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+            }
+        }
+    }
+
+    public class MatchEventBusConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            matchEventBusResult.wasTestPlatformEventsConsumerCalled = true;
+
+            for (SObject sobj : events) 
+            {
+                AT4DXMessage__e eventPayload = (AT4DXMessage__e) sobj;
+                matchEventBusResult.testPlatformEventsConsumerData = ((AT4DXMessage__e) sobj).Payload__c;
+            }
+        }
+    }
+
+    private static Integer getCurrentEventBusSubscriberPosition(SobjectType sobjtype)
+    {
+        EventBusSubscriber messageBusSubscriber = [SELECT Id, ExternalId, Name, Type, Topic, Position, Tip, Retries, LastError, Status 
+                                                          FROM EventBusSubscriber 
+                                                         WHERE Topic = :sobjtype.getDescribe().getName()
+                                                           AND Type = 'ApexTrigger'
+                                                         LIMIT 1];
+        
+        System.assert(messageBusSubscriber != null, 'Could not find the ' + sobjtype + ' record');
+
+        return messageBusSubscriber.Position;
     }
 }
