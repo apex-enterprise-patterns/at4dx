@@ -23,7 +23,6 @@
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-
 public class PlatformEventDistributor
 {
     private enum MatcherRules
@@ -40,6 +39,7 @@ public class PlatformEventDistributor
     @TestVisible
     private static List<PlatformEvents_Subscription__mdt> registeredSubscribers = new List<PlatformEvents_Subscription__mdt>();
 
+    @TestVisible
     private static List<PlatformEvents_Subscription__mdt> getRegisteredSubscribers(String eventBus)
     {
         if (String.isBlank(eventBus))
@@ -100,12 +100,8 @@ public class PlatformEventDistributor
         Schema.SObjectField categoryField = platformEventBusDescribe.fields.getMap().get(CATEGORY_FIELD_NAME);
         Schema.SObjectField eventNameField = platformEventBusDescribe.fields.getMap().get(EVENT_NAME_FIELD_NAME);
 
-        if (categoryField == null) {
-            throw new PlatformEventDistributorException('Platform Event must implement the Category field!');
-        }
-
-        if (eventNameField == null) {
-            throw new PlatformEventDistributorException('Platform Event must implement the Event Name field!');
+        if (categoryField == null || eventNameField == null) {
+            throw new PlatformEventDistributorException('Platform Event must implement the Category and Event Name fields');
         }
 
         // extract the event payloads

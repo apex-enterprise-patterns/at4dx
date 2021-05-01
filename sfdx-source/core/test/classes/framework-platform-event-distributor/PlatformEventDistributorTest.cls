@@ -23,10 +23,35 @@
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
-
 @IsTest
 public class PlatformEventDistributorTest
 {
+    @IsTest
+    private static void whenGetRegisteredSubscribersCalledWithBlankEventBusExceptionThrown() 
+    {
+        try {
+            PlatformEventDistributor.getRegisteredSubscribers('');
+        } catch (PlatformEventDistributor.PlatformEventDistributorException ex) {
+            System.assertEquals('eventBus parameter is required', ex.getMessage(), 'Unexpected exception message');
+        }
+    }
+
+    @IsTest
+    private static void whenTriggerHandlerInvokedWithEventsWithoutCategoryFieldExceptionThrown() 
+    {
+        try {
+            new PlatformEventDistributor().triggerHandler(new List<Account>{new Account(Name = 'test')});
+        } catch (PlatformEventDistributor.PlatformEventDistributorException ex) {
+            System.assertEquals('Platform Event must implement the Category and Event Name fields', ex.getMessage(), 'Unexpected exception message');
+        }
+    }
+
+    @IsTest
+    private static void whenTrigger() 
+    {
+        
+    }
+
     @isTest
     private static void basicTestToActivateCodeCoverage() 
     {
