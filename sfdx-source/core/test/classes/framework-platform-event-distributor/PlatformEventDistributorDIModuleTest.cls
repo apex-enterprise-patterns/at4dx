@@ -60,7 +60,7 @@ private class PlatformEventDistributorDIModuleTest {
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            EventBus__c = AT4DXMessage__e.getSObjectType().getDescribe().getName(),
             Event__c = 'PlatformEventDistributorBlankEventBus',
             Execute_Synchronous__c = true
         );
@@ -88,10 +88,12 @@ private class PlatformEventDistributorDIModuleTest {
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
+            EventBus__c = AT4DXMessage__e.getSObjectType().getDescribe().getName(),
             Event__c = 'PlatformEventDistributor',
             Execute_Synchronous__c = true
         );
+
+        Integer existingSubscriberCount = PlatformEventDistributorDIModule.registeredSubscribers.size();
 
         // Inject platform event subscription into the DI module
         PlatformEventDistributorDIModule.registeredSubscribers.add(platformEventSubscription);
@@ -99,7 +101,7 @@ private class PlatformEventDistributorDIModuleTest {
         di_Module peModule = new PlatformEventDistributorDIModule();
         peModule.configure();
 
-        System.assertEquals(1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
+        System.assertEquals(existingSubscriberCount + 1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
     }
 
     public class MockConsumer
