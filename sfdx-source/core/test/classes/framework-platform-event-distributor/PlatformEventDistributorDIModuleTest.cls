@@ -96,7 +96,10 @@ private class PlatformEventDistributorDIModuleTest {
         // Inject platform event subscription into the DI module
         PlatformEventDistributorDIModule.registeredSubscribers.add(platformEventSubscription);
 
-        new PlatformEventDistributorDIModule().configure();
+        di_Module peModule = new PlatformEventDistributorDIModule();
+        peModule.configure();
+
+        System.assertEquals(1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
     }
 
     public class MockConsumer
