@@ -1,115 +1,115 @@
+/**
+ * Copyright (c) 2021, John M. Daniel & John Storey
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, 
+ *   are permitted provided that the following conditions are met:
+ *
+ * - Redistributions of source code must retain the above copyright notice, 
+ *      this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *      this list of conditions and the following disclaimer in the documentation 
+ *      and/or other materials provided with the distribution.
+ * - Neither the name of John M. Daniel, nor the names of its contributors 
+ *      may be used to endorse or promote products derived from this software without 
+ *      specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+ *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**/
 @IsTest
 private class PlatformEventDistributorDIModuleTest {
     @IsTest
-    private static void registeredSubscirbersTest()
+    private static void whenPlatformEventSubscriptionEventBusBlankExceptionThrown()
     {
-        PlatformEvents_Subscription__mdt pes1 = new PlatformEvents_Subscription__mdt(
-            DeveloperName = 'At4dxUnitTest1',
-            Consumer__c = 'PlatformEventDistributorTest.TestPlatformEventsConsumer',
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'PlatformEventDistributorBlankEventBus',
+            Consumer__c = 'PlatformEventDistributorDIModuleTest.MockConsumer',
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
-            Event__c = 'TestOfPlatformEventDistributor',
-            Execute_Synchronous__c = true
-
-        );PlatformEvents_Subscription__mdt pes2 = new PlatformEvents_Subscription__mdt(
-            DeveloperName = 'At4dxUnitTest2',
-            Consumer__c = 'PlatformEventDistributorTest.TestPlatformEventsConsumer',
-            IsActive__c = true,
-            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
-            MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
-            Event__c = 'TestOfPlatformEventDistributor',
+            Event__c = 'PlatformEventDistributorBlankEventBus',
             Execute_Synchronous__c = true
         );
 
-        PlatformEventDistributorDIModule dimod = new PlatformEventDistributorDIModule();
-        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt> { pes1, pes2 };
-        dimod.configure();
+        // Inject platform event subscription into the DI module
+        PlatformEventDistributorDIModule.registeredSubscribers.add(platformEventSubscription);
 
-        System.assertEquals(
-            new List<PlatformEvents_Subscription__mdt> { pes1, pes2 },
-            PlatformEventDistributorDIModule.registeredSubscribers,
-            'Registered Subscirbers Not Equal'
-        );
-
-        System.assertEquals(
-            null,
-            PlatformEventDistributorDIModule.configureWarningMessage,
-            'Warning message Not Equal'
-        );
+        try {
+            new PlatformEventDistributorDIModule().configure();
+        } catch (di_Module.ModuleException ex) {
+            System.assertEquals(
+                'Platform Events - Subscription record named, PlatformEventDistributorBlankEventBus, does not have required field, Event Bus', 
+                ex.getMessage(), 
+                'Event Bus exception does not match'
+            );
+        }
     }
 
     @IsTest
-    private static void noEventBusWarningMessageTest(){
-
-        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt(
-            DeveloperName = 'At4dxUnitTest',
-            Consumer__c = 'PlatformEventDistributorTest.TestPlatformEventsConsumer',
+    private static void whenPlatformEventSubscriptionConsumerBlankExceptionThrown()
+    {
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'PlatformEventDistributorBlankEventBus',
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            Event__c = 'TestOfPlatformEventDistributor',
+            EventBus__c = AT4DXMessage__e.getSObjectType().getDescribe().getName(),
+            Event__c = 'PlatformEventDistributorBlankEventBus',
             Execute_Synchronous__c = true
         );
 
-        PlatformEventDistributorDIModule dimod = new PlatformEventDistributorDIModule();
-        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt> { pes };
-        dimod.configure();
-        
-        System.assertEquals(
-            'Platform Events - Subscription record named, At4dxUnitTest, does not have required field, Event Bus',
-            PlatformEventDistributorDIModule.configureWarningMessage,
-            'Warning Message Is Not Equal'
-        );
+        // Inject platform event subscription into the DI module
+        PlatformEventDistributorDIModule.registeredSubscribers.add(platformEventSubscription);
+
+        try {
+            new PlatformEventDistributorDIModule().configure();
+        } catch (di_Module.ModuleException ex) {
+            System.assertEquals(
+                'Platform Events - Subscription record named, PlatformEventDistributorBlankEventBus, does not have required field, Consumer', 
+                ex.getMessage(), 
+                'Event Bus exception does not match'
+            );
+        }
     }
 
     @IsTest
-    private static void noConsumerWarningMessageTest(){
-
-        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt(
-            DeveloperName = 'At4dxUnitTest',
+    private static void whenPlatformEventSubscriptionCustomMetadataPresentVerifyForceDIBinding()
+    {
+        PlatformEvents_Subscription__mdt platformEventSubscription = new PlatformEvents_Subscription__mdt(
+            DeveloperName = 'PlatformEventDistributor',
+            Consumer__c = 'PlatformEventDistributorDIModuleTest.MockConsumer',
             IsActive__c = true,
             EventCategory__c = Account.getSObjectType().getDescribe().getName(),
             MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            EventBus__c = AT4DXMessage__e.SobjectType.getDescribe().getName(),
-            Event__c = 'TestOfPlatformEventDistributor',
+            EventBus__c = AT4DXMessage__e.getSObjectType().getDescribe().getName(),
+            Event__c = 'PlatformEventDistributor',
             Execute_Synchronous__c = true
         );
 
-        PlatformEventDistributorDIModule dimod = new PlatformEventDistributorDIModule();
-        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt> { pes };
-        dimod.configure();
-        
-        System.assertEquals(
-            'Platform Events - Subscription record named, At4dxUnitTest, does not have required field, Consumer',
-            PlatformEventDistributorDIModule.configureWarningMessage,
-            'Warning Message Is Not Equal'
-        );
+        Integer existingSubscriberCount = PlatformEventDistributorDIModule.registeredSubscribers.size();
+
+        // Inject platform event subscription into the DI module
+        PlatformEventDistributorDIModule.registeredSubscribers.add(platformEventSubscription);
+
+        di_Module peModule = new PlatformEventDistributorDIModule();
+        peModule.configure();
+
+        System.assertEquals(existingSubscriberCount + 1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
     }
 
-    @IsTest
-    private static void noConsumerWarningNoEventBusMessageTest(){
-
-        PlatformEvents_Subscription__mdt pes = new PlatformEvents_Subscription__mdt(
-            DeveloperName = 'At4dxUnitTest',
-            IsActive__c = true,
-            EventCategory__c = Account.getSObjectType().getDescribe().getName(),
-            MatcherRule__c = 'MatchEventBusAndCategoryAndEventName',
-            Event__c = 'TestOfPlatformEventDistributor',
-            Execute_Synchronous__c = true
-        );
-
-        PlatformEventDistributorDIModule dimod = new PlatformEventDistributorDIModule();
-        PlatformEventDistributorDIModule.registeredSubscribers = new List<PlatformEvents_Subscription__mdt> { pes };
-        dimod.configure();
-        
-        System.assertEquals(
-            'Platform Events - Subscription record named, At4dxUnitTest, does not have required field, Event Bus'+
-                '\nPlatform Events - Subscription record named, At4dxUnitTest, does not have required field, Consumer',
-            PlatformEventDistributorDIModule.configureWarningMessage,
-            'Warning Message Is Not Equal'
-        );
+    public class MockConsumer
+        extends PlatformEventAbstractConsumer
+    {
+        public override void runInProcess()
+        {
+            System.debug('Mock Consumer');
+        }
     }
 }
