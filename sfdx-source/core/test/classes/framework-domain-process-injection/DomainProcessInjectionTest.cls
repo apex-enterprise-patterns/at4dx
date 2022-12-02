@@ -101,7 +101,7 @@ public class DomainProcessInjectionTest
                 Assert.isTrue(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
-                Assert.isTrue(false, 'Account not matching any criteria');
+                Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -174,7 +174,7 @@ public class DomainProcessInjectionTest
                 Assert.isTrue(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
-                Assert.isTrue(false, 'Account not matching any criteria');
+                Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -254,7 +254,7 @@ public class DomainProcessInjectionTest
                 Assert.isTrue(true, 'Account with city Richmond has state correctly set to Virginia');
             }
             else {
-                Assert.isTrue(false, 'Account not matching any criteria');
+                Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -334,7 +334,7 @@ public class DomainProcessInjectionTest
                 Assert.isNull(acc.BillingState, 'Account with city Richmond does not have null value for State set correctly');
             }
             else {
-                Assert.isTrue(false, 'Account not matching any criteria');
+                Assert.fail('Account not matching any criteria');
             }
         }
     }
