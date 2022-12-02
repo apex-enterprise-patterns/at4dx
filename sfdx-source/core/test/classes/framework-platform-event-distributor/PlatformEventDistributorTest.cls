@@ -73,7 +73,7 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.areEqual(true, matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        Assert.isTrue(matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
         Assert.areEqual('Test Payload', matchEventBusAndCategoryAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
@@ -295,7 +295,7 @@ public class PlatformEventDistributorTest
         Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType);
         Test.stopTest();
 
-        Assert.areEqual(true, sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
         Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
     }
 
@@ -312,7 +312,7 @@ public class PlatformEventDistributorTest
         Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType);
         Test.stopTest();
 
-        Assert.areEqual(true, sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
         Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
     }
 
@@ -409,7 +409,7 @@ public class PlatformEventDistributorTest
                                                            AND Type = 'ApexTrigger'
                                                          LIMIT 1];
         
-        Assert.isTrue(messageBusSubscriber != null, 'Could not find the ' + sobjtype + ' record');
+        Assert.isNotNull(messageBusSubscriber, 'Could not find the ' + sobjtype + ' record');
 
         return messageBusSubscriber.Position;
     }

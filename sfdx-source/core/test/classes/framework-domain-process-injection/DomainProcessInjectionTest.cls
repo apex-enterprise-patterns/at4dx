@@ -95,7 +95,7 @@ public class DomainProcessInjectionTest
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' ) {
-                Assert.isTrue(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
+                Assert.areEqual(acc.BillingState, 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
                 Assert.isTrue(true, 'Account with city Richmond does not have state correctly set to Virginia');
@@ -328,10 +328,10 @@ public class DomainProcessInjectionTest
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' ) {
-                Assert.isTrue(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
+                Assert.areEqual(acc.BillingState, 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond') {
-                Assert.isTrue(acc.BillingState == null, 'Account with city Richmond does not have null value for State set correctly');
+                Assert.isNull(acc.BillingState, 'Account with city Richmond does not have null value for State set correctly');
             }
             else {
                 Assert.isTrue(false, 'Account not matching any criteria');

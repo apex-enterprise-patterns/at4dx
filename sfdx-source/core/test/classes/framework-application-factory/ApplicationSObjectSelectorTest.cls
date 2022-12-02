@@ -35,8 +35,8 @@ private class ApplicationSObjectSelectorTest
         TestAccountsSelector sel = (TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
         List<SObjectField> fieldList = sel.getSObjectFieldList();
 
-        Assert.isTrue(fieldList != null);
-        Assert.areEqual(false, fieldList.isEmpty());
+        Assert.isNotNull(fieldList);
+        Assert.isFalse(fieldList.isEmpty());
     }
 
     @IsTest
@@ -50,7 +50,7 @@ private class ApplicationSObjectSelectorTest
         TestAccountsSelector sel = (TestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
         List<Account> accountList = sel.selectInjection(TestSelectorMethod.class, queryParams);
 
-        Assert.isTrue(accountList != null);
+        Assert.isNotNull(accountList);
         Assert.isTrue(accountList.isEmpty());
     }
 
