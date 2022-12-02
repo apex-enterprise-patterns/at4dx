@@ -50,14 +50,14 @@ private class AbstractSelectorMethodInjectableTest
         );
         test.stopTest();
         
-        System.assertEquals(
+        Assert.areEqual(
             1,
             acctsReturned.size(),
             'Incorrect Amount of Records Returned'
         );
 
         Account acctToCheck = acctsReturned[0];
-        System.assertEquals( 
+        Assert.areEqual(
             keyName,
             acctToCheck.Name,
             'Account Name Not Equal'
