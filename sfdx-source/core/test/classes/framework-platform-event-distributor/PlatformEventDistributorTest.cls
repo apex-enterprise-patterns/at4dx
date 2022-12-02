@@ -32,7 +32,7 @@ public class PlatformEventDistributorTest
         try {
             new PlatformEventDistributor().triggerHandler(new List<Account>{new Account()});
         } catch (PlatformEventDistributor.PlatformEventDistributorException ex) {
-            Assert.areEqual('Platform Event must implement the Category and Event Name fields', ex.getMessage(), 'Unexpected exception message');
+            System.Assert.areEqual('Platform Event must implement the Category and Event Name fields', ex.getMessage(), 'Unexpected exception message');
         }
     }
 
@@ -73,8 +73,8 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.isTrue(matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
-        Assert.areEqual('Test Payload', matchEventBusAndCategoryAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
+        System.Assert.isTrue(matchEventBusAndCategoryAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.areEqual('Test Payload', matchEventBusAndCategoryAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
     @IsTest
@@ -114,8 +114,8 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.areEqual(true, matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
-        Assert.areEqual('Test Payload', matchEventBusAndCategoryResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
+        System.Assert.areEqual(true, matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.areEqual('Test Payload', matchEventBusAndCategoryResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
     @IsTest
@@ -155,8 +155,8 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.areEqual(true, matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
-        Assert.areEqual('Test Payload', matchEventBusAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
+        System.Assert.areEqual(true, matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.areEqual('Test Payload', matchEventBusAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
     @IsTest
@@ -196,8 +196,8 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.areEqual(true, matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
-        Assert.areEqual('Test Payload', matchEventBusResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
+        System.Assert.areEqual(true, matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.areEqual('Test Payload', matchEventBusResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
     @IsTest
@@ -238,7 +238,7 @@ public class PlatformEventDistributorTest
         PlatformEventDistributor pedInstance = new PlatformEventDistributor();
         pedInstance.triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        Assert.areEqual(false, pedInstance.jobIdList.isEmpty(), 'Job id was not found in the job id list');
+        System.Assert.areEqual(false, pedInstance.jobIdList.isEmpty(), 'Job id was not found in the job id list');
     }
 
     @IsTest
@@ -278,7 +278,7 @@ public class PlatformEventDistributorTest
         try {
             new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
         } catch (Exception ex) {
-            Assert.areEqual('Attempt to de-reference a null object', ex.getMessage(), 'Null pointer exception was not thrown');
+            System.Assert.areEqual('Attempt to de-reference a null object', ex.getMessage(), 'Null pointer exception was not thrown');
         }
     }
 
@@ -295,8 +295,8 @@ public class PlatformEventDistributorTest
         Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType);
         Test.stopTest();
 
-        Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
-        Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
+        System.Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        System.Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
     }
 
     @IsTest
@@ -312,8 +312,8 @@ public class PlatformEventDistributorTest
         Integer initialSubscriberPosition = getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType);
         Test.stopTest();
 
-        Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
-        Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
+        System.Assert.isTrue(sr.isSuccess(), 'Platform event was not successfully published to the bus');
+        System.Assert.isTrue(initialSubscriberPosition < getCurrentEventBusSubscriberPosition(AT4DXImmediateMessage__e.SobjectType), 'The current event bus subscriber position did not change.  This indicates that the Apex Platform event subscriber trigger did not activate.');
     }
 
     private class PlatformEventConsumerResult {
@@ -409,7 +409,7 @@ public class PlatformEventDistributorTest
                                                            AND Type = 'ApexTrigger'
                                                          LIMIT 1];
         
-        Assert.isNotNull(messageBusSubscriber, 'Could not find the ' + sobjtype + ' record');
+        System.Assert.isNotNull(messageBusSubscriber, 'Could not find the ' + sobjtype + ' record');
 
         return messageBusSubscriber.Position;
     }

@@ -44,7 +44,7 @@ private class PlatformEventDistributorDIModuleTest {
         try {
             new PlatformEventDistributorDIModule().configure();
         } catch (di_Module.ModuleException ex) {
-            Assert.areEqual(
+            System.Assert.areEqual(
                 'Platform Events - Subscription record named, PlatformEventDistributorBlankEventBus, does not have required field, Event Bus', 
                 ex.getMessage(), 
                 'Event Bus exception does not match'
@@ -71,7 +71,7 @@ private class PlatformEventDistributorDIModuleTest {
         try {
             new PlatformEventDistributorDIModule().configure();
         } catch (di_Module.ModuleException ex) {
-            Assert.areEqual(
+            System.Assert.areEqual(
                 'Platform Events - Subscription record named, PlatformEventDistributorBlankEventBus, does not have required field, Consumer', 
                 ex.getMessage(), 
                 'Event Bus exception does not match'
@@ -101,7 +101,7 @@ private class PlatformEventDistributorDIModuleTest {
         di_Module peModule = new PlatformEventDistributorDIModule();
         peModule.configure();
 
-        Assert.areEqual(existingSubscriberCount + 1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
+        System.Assert.areEqual(existingSubscriberCount + 1, peModule.getBindings().size(), 'Incorrect number of bindings configured');
     }
 
     public class MockConsumer
