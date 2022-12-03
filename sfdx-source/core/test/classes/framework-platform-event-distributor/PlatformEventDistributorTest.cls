@@ -114,7 +114,7 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        System.Assert.areEqual(true, matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.isTrue(matchEventBusAndCategoryResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
         System.Assert.areEqual('Test Payload', matchEventBusAndCategoryResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
@@ -155,7 +155,7 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        System.Assert.areEqual(true, matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.isTrue(matchEventBusAndEventNameResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
         System.Assert.areEqual('Test Payload', matchEventBusAndEventNameResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
@@ -196,7 +196,7 @@ public class PlatformEventDistributorTest
         // Inject the platform event directly into the trigger handler, bypassing event publishing
         new PlatformEventDistributor().triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        System.Assert.areEqual(true, matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
+        System.Assert.isTrue(matchEventBusResult.wasTestPlatformEventsConsumerCalled, 'Platform events consumer was not called');
         System.Assert.areEqual('Test Payload', matchEventBusResult.testPlatformEventsConsumerData, 'Payload to consumer did not match');
     }
 
@@ -238,7 +238,7 @@ public class PlatformEventDistributorTest
         PlatformEventDistributor pedInstance = new PlatformEventDistributor();
         pedInstance.triggerHandler(new List<AT4DXMessage__e> { platformEventMessage });
 
-        System.Assert.areEqual(false, pedInstance.jobIdList.isEmpty(), 'Job id was not found in the job id list');
+        System.Assert.isFalse(pedInstance.jobIdList.isEmpty(), 'Job id was not found in the job id list');
     }
 
     @IsTest

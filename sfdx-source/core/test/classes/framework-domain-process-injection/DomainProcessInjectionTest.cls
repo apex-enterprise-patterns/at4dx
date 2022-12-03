@@ -331,7 +331,7 @@ public class DomainProcessInjectionTest
                 System.Assert.areEqual(acc.BillingState, 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond') {
-                System.Assert.isNull(acc.BillingState, 'Account with city Richmond does not have null value for State set correctly');
+                System.Assert.areEqual(null, acc.BillingState, 'Account with city Richmond does not have null value for State set correctly');
             }
             else {
                 System.Assert.fail('Account not matching any criteria');
