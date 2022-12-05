@@ -52,9 +52,9 @@ public class Application
     /**
      * Class implements a Selector class factory
      **/
-    public class SelectorFactory
+    public virtual class SelectorFactory
     {
-        private SelectorFactory() {  }
+        protected SelectorFactory() {  }
 
         public IApplicationSObjectSelector newInstance(SObjectType sObjectType)
         {
@@ -117,7 +117,7 @@ public class Application
         }
 
         @TestVisible
-        private void setMock(IApplicationSObjectSelector selectorInstance)
+        protected void setMock(IApplicationSObjectSelector selectorInstance)
         {
             // system.debug('Application.SelectorFactory.setMock flag 1');
             di_Injector.Org.Bindings.byName( IApplicationSObjectSelector.class.getName() )
@@ -130,9 +130,9 @@ public class Application
     /**
      * Simple Service Factory implementaiton
      **/
-    public class ServiceFactory
+    public virtual class ServiceFactory
     {
-        private ServiceFactory() {  }
+        protected ServiceFactory() {  }
 
         /**
          * Returns a new instance of the Apex class associated with the given Apex interface
@@ -149,7 +149,7 @@ public class Application
         }
 
         @TestVisible
-        private void setMock(System.Type serviceInterfaceType, Object serviceImpl)
+        protected void setMock(System.Type serviceInterfaceType, Object serviceImpl)
         {
             // system.debug('Application.ServiceFactory.setMock flag 1');
             di_Injector.Org.Bindings.byName( serviceInterfaceType.getName() )
@@ -161,9 +161,9 @@ public class Application
     /**
      * Class implements a Domain class factory
      **/
-    public class DomainFactory 
+    public virtual class DomainFactory
     {
-        private DomainFactory() {  }
+        protected DomainFactory() {  }
 
         /**
          * Dynamically constructs an instance of a Domain class for the given record Ids
@@ -243,7 +243,7 @@ public class Application
         }
 
         @TestVisible
-        private void setMock(IApplicationSObjectDomain mockDomain)
+        protected void setMock(IApplicationSObjectDomain mockDomain)
         {
             di_Injector.Org.Bindings.byName( IApplicationSObjectDomain.class.getName() )
                                     .bySObject( mockDomain.sObjectType() )
@@ -254,9 +254,9 @@ public class Application
     /**
      * Class implements a Unit of Work factory
      **/
-    public class UnitOfWorkFactory
+    public virtual class UnitOfWorkFactory
     {
-        private UnitOfWorkFactory() {  }
+        protected UnitOfWorkFactory() {  }
 
         /**
          * Returns a new IApplicationSObjectUnitOfWork configured with the 
@@ -314,7 +314,7 @@ public class Application
         }
 
         @TestVisible
-        private void setMock(IApplicationSObjectUnitOfWork mockUow)
+        protected void setMock(IApplicationSObjectUnitOfWork mockUow)
         {
             di_Injector.Org.Bindings.byName( IApplicationSObjectUnitOfWork.class.getName() )
                         .replaceBindingWith( mockUow );
