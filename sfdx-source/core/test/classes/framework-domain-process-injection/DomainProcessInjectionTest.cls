@@ -90,18 +90,18 @@ public class DomainProcessInjectionTest
 
         List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
 
-		System.assertEquals(4, result.size(), '4 records should have been changed');
+		System.Assert.areEqual(4, result.size(), '4 records should have been changed');
         
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' ) {
-                System.assert(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
+                System.Assert.areEqual(acc.BillingState, 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
-                System.assert(true, 'Account with city Richmond does not have state correctly set to Virginia');
+                System.Assert.isTrue(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
-                System.assert(false, 'Account not matching any criteria');
+                System.Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -164,17 +164,17 @@ public class DomainProcessInjectionTest
         fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
 
         List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
-		System.assertEquals(4, result.size(), '4 records should have been changed');
+		System.Assert.areEqual(4, result.size(), '4 records should have been changed');
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
-                System.assert(true, 'Account with city Dallas does not have state correctly set to Texas');
+                System.Assert.isTrue(true, 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
-                System.assert(true, 'Account with city Richmond does not have state correctly set to Virginia');
+                System.Assert.isTrue(true, 'Account with city Richmond does not have state correctly set to Virginia');
             }
             else {
-                System.assert(false, 'Account not matching any criteria');
+                System.Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -244,17 +244,17 @@ public class DomainProcessInjectionTest
         Test.stopTest();
 
         List<SObject> result = DomainProcessInjectionTest.processedRecords;
-		System.assertEquals(4, result.size(), '4 records should have been changed');
+		System.Assert.areEqual(4, result.size(), '4 records should have been changed');
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' && acc.BillingState == 'Texas') {
-                System.assert(true, 'Account with city Dallas has state correctly set to Texas');
+                System.Assert.isTrue(true, 'Account with city Dallas has state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond' && acc.BillingState == 'Virginia') {
-                System.assert(true, 'Account with city Richmond has state correctly set to Virginia');
+                System.Assert.isTrue(true, 'Account with city Richmond has state correctly set to Virginia');
             }
             else {
-                System.assert(false, 'Account not matching any criteria');
+                System.Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -323,18 +323,18 @@ public class DomainProcessInjectionTest
 
         List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
 
-		System.assertEquals(4, result.size(), '4 records should have been changed');
+		System.Assert.areEqual(4, result.size(), '4 records should have been changed');
         
         for (SObject obj : result) {
             Account acc = (Account) obj;
             if (acc.BillingCity == 'Dallas' ) {
-                System.assert(acc.BillingState == 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
+                System.Assert.areEqual(acc.BillingState, 'Texas', 'Account with city Dallas does not have state correctly set to Texas');
             }
             else if (acc.BillingCity == 'Richmond') {
-                System.assert(acc.BillingState == null, 'Account with city Richmond does not have null value for State set correctly');
+                System.Assert.areEqual(null, acc.BillingState, 'Account with city Richmond does not have null value for State set correctly');
             }
             else {
-                System.assert(false, 'Account not matching any criteria');
+                System.Assert.fail('Account not matching any criteria');
             }
         }
     }
@@ -461,7 +461,7 @@ public class DomainProcessInjectionTest
         try{
             DomainProcessCoordinator domainProcessCoordinator = new DomainProcessCoordinator(null);
         }catch(DomainProcessCoordinator.ProcessInjectionException ex){
-            System.assertEquals(
+            System.Assert.areEqual(
                 ex.getMessage(),
                 'The DomainProcessCoordinator must be used in conjunction with a IApplicationSObjectDomain as a constructor parameter.',
                 'Message Does Not Match'
@@ -475,7 +475,7 @@ public class DomainProcessInjectionTest
         try{
             domainProcessCoordinator.newInstance(null);
         }catch(di_Binding.BindingException ex){
-            System.assertEquals(
+            System.Assert.areEqual(
                 ex.getMessage(),
                 'No params object supplied',
                 'Message Does Not Match'
@@ -489,7 +489,7 @@ public class DomainProcessInjectionTest
         try{
             domainProcessCoordinator.newInstance('Test Bad Params');
         }catch(di_Binding.BindingException ex){
-            System.assertEquals(
+            System.Assert.areEqual(
                 ex.getMessage(),
                 'The params object must implement IApplicationSObjectDomain',
                 'Message Does Not Match'

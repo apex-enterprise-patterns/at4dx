@@ -37,7 +37,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         List<Account> returnedAccts = 
             applicationSObjectUOW.getNewRecordsByType(Account.SObjectType);
 
-        System.assertEquals(
+        System.Assert.areEqual(
             acctList,
             returnedAccts,
             'Account Lists Not Equal'
@@ -58,7 +58,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         //Put Single account in list for assertion
         List<Account> expectedList = new List<Account>{singleAccount};
           
-        System.assertEquals(
+        System.Assert.areEqual(
             expectedList,
             returnedAccts,
             'Account Lists Not Equal'
@@ -81,7 +81,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         //Put mapped values to list
         List<Account> returnedAcctsList = returnedAcctsMap.values(); 
 
-        System.assertEquals(
+        System.Assert.areEqual(
             acctList,
             returnedAcctsList,
             'Lists Do Not Match'
@@ -106,7 +106,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         //Put Single account in list for assertion
         List<Account> expectedList = new List<Account>{singleAccount};
 
-        System.assertEquals(
+        System.Assert.areEqual(
             expectedList,
             returnedAcctsList,
             'Lists Do Not Match'
@@ -140,7 +140,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         //Put Single account in list for assertion
         List<Account> expectedList = new List<Account>{singleAccount};
 
-        System.assertEquals(
+        System.Assert.areEqual(
             expectedList,
             returnedAcctsList,
             'Lists Do Not Match'
@@ -165,7 +165,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
         //Group accounts for assertion
         List<Account> returnedDeletedAcctsList = returnedDeletedAcctsMap.values(); 
 
-        System.assertEquals(
+        System.Assert.areEqual(
             acctList,
             returnedDeletedAcctsList,
             'Lists Do Not Match'
@@ -198,7 +198,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         Contact returnedContact = returnedContacts[0];
            
-        System.assertEquals(
+        System.Assert.areEqual(
             parentAccount.Id,
             returnedContact.AccountId,
             'Parent Id Not Equal'
@@ -234,7 +234,7 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
 
         Contact returnedContact = returnedContactsList[0];
 
-        System.assertEquals(
+        System.Assert.areEqual(
             parentAccount.Id,
             returnedContact.AccountId,
             'Lists Do Not Match'
@@ -267,11 +267,11 @@ public with sharing class ApplicationSObjectUnitOfWorkTest {
             applicationSObjectUOW.getNewRecordsByType(singleAccount.getSObjectType()); 
 
         // assert that mock email functionality was called
-        system.assert(((Mock_SendEmailWork) applicationSObjectUOW.m_emailWork).doWorkWasCalled,
+        System.Assert.isTrue(((Mock_SendEmailWork) applicationSObjectUOW.m_emailWork).doWorkWasCalled,
             'Email Not Registered'
         );
 
-        System.assertEquals(
+        System.Assert.areEqual(
             1, 
             accts.size(),
             'Account Not Registered'
