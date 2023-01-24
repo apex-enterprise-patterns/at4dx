@@ -27,7 +27,7 @@
 /**
  *  Application Factory
  */
-public class Application
+public virtual class Application
 {
     /**
      * Configure and create the DomainFactory for this  mm_Application
@@ -56,7 +56,7 @@ public class Application
     {
         protected SelectorFactory() {  }
 
-        public IApplicationSObjectSelector newInstance(SObjectType sObjectType)
+        public virtual IApplicationSObjectSelector newInstance(SObjectType sObjectType)
         {
             return (IApplicationSObjectSelector) di_Injector.Org.getInstance( IApplicationSObjectSelector.class, sObjectType );
         }
@@ -69,7 +69,7 @@ public class Application
          * @param recordIds The SObject record Ids, must be all the same SObjectType
          * @exception Is thrown if the record Ids are not all the same or the SObjectType is not registered
          **/
-        public List<SObject> selectById(Set<Id> recordIds)
+        public virtual List<SObject> selectById(Set<Id> recordIds)
         {
             // No point creating an empty Domain class, nor can we determine the SObjectType anyway
             if(recordIds == null || recordIds.isEmpty())
@@ -102,7 +102,7 @@ public class Application
          * @param relatedRecords used to extract the related record Ids, e.g. Opportunty records
          * @param relationshipField field in the passed records that contains the relationship records to query, e.g. Opportunity.AccountId
          **/
-        public List<SObject> selectByRelationship(List<SObject> relatedRecords, SObjectField relationshipField)
+        public virtual List<SObject> selectByRelationship(List<SObject> relatedRecords, SObjectField relationshipField)
         {
             Set<Id> relatedIds = new Set<Id>();
             for (SObject relatedRecord : relatedRecords)
@@ -117,7 +117,7 @@ public class Application
         }
 
         @TestVisible
-        protected void setMock(IApplicationSObjectSelector selectorInstance)
+        protected virtual void setMock(IApplicationSObjectSelector selectorInstance)
         {
             // system.debug('Application.SelectorFactory.setMock flag 1');
             di_Injector.Org.Bindings.byName( IApplicationSObjectSelector.class.getName() )
@@ -142,14 +142,14 @@ public class Application
          * @param serviceInterfaceType Apex interface type
          * @exception Is thrown if there is no registered Apex class for the interface type
          **/
-        public Object newInstance(System.Type serviceInterfaceType)
+        public virtual Object newInstance(System.Type serviceInterfaceType)
         {
             // system.debug('Application.ServiceFactory.newInstance flag 1');
             return di_Injector.Org.getInstance( serviceInterfaceType );
         }
 
         @TestVisible
-        protected void setMock(System.Type serviceInterfaceType, Object serviceImpl)
+        protected virtual void setMock(System.Type serviceInterfaceType, Object serviceImpl)
         {
             // system.debug('Application.ServiceFactory.setMock flag 1');
             di_Injector.Org.Bindings.byName( serviceInterfaceType.getName() )
@@ -173,7 +173,7 @@ public class Application
          * @param recordIds A list of Id's of the same type
          * @exception Throws an exception via the Selector Factory if the Ids are not all of the same SObjectType
          **/
-        public IApplicationSObjectDomain newInstance(Set<Id> recordIds)
+        public virtual IApplicationSObjectDomain newInstance(Set<Id> recordIds)
         {
             return newInstance( Application.Selector.selectById(recordIds) );
         }    
@@ -186,7 +186,7 @@ public class Application
          * @exception Throws an exception if the SObjectType cannot be determined from the list 
          *              or the constructor for Domain class was not registered for the SOBjectType
          **/
-        public IApplicationSObjectDomain newInstance(List<SObject> records)
+        public virtual IApplicationSObjectDomain newInstance(List<SObject> records)
         {
             SObjectType domainSObjectType = records.getSObjectType();
             if (domainSObjectType == null)
@@ -220,7 +220,7 @@ public class Application
          * @remark Will support List<SObject> but all records in the list will be assumed to be of
          *         the type specified in sObjectType
          **/
-        public IApplicationSObjectDomain newInstance(List<SObject> records, SObjectType domainSObjectType)
+        public virtual IApplicationSObjectDomain newInstance(List<SObject> records, SObjectType domainSObjectType)
         {
             if(domainSObjectType == null)
                 throw new DeveloperException('Must specify sObjectType');
@@ -243,7 +243,7 @@ public class Application
         }
 
         @TestVisible
-        protected void setMock(IApplicationSObjectDomain mockDomain)
+        protected virtual void setMock(IApplicationSObjectDomain mockDomain)
         {
             di_Injector.Org.Bindings.byName( IApplicationSObjectDomain.class.getName() )
                                     .bySObject( mockDomain.sObjectType() )
@@ -264,7 +264,7 @@ public class Application
          *
          *  @returns IApplicationSObjectUnitOfWork
          **/
-        public IApplicationSObjectUnitOfWork newInstance()
+        public virtual IApplicationSObjectUnitOfWork newInstance()
         {
             return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class );
         }
@@ -276,7 +276,7 @@ public class Application
          *  @param list of SObjectTypes
          *  @returns IApplicationSObjectUnitOfWork
          **/
-        public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes)
+        public virtual IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes)
         {
             return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class, objectTypes );
         }
@@ -289,7 +289,7 @@ public class Application
          *  @param an implementation of fflib_SObjectUnitOfWork.IDML to replace the standard fflib_SObjectUnitOfWork.SimpleDML implementation.
          *  @returns IApplicationSObjectUnitOfWork
          **/
-        public IApplicationSObjectUnitOfWork newInstance(fflib_SObjectUnitOfWork.IDML dml)
+        public virtual IApplicationSObjectUnitOfWork newInstance(fflib_SObjectUnitOfWork.IDML dml)
         {
             return (IApplicationSObjectUnitOfWork) di_Injector.Org.getInstance( IApplicationSObjectUnitOfWork.class, dml );
         }
@@ -303,7 +303,7 @@ public class Application
          *  @param an implementation of fflib_SObjectUnitOfWork.IDML to replace the standard fflib_SObjectUnitOfWork.SimpleDML implementation.
          *  @returns IApplicationSObjectUnitOfWork
          **/
-        public IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes, fflib_SObjectUnitOfWork.IDML dml)
+        public virtual IApplicationSObjectUnitOfWork newInstance(List<SObjectType> objectTypes, fflib_SObjectUnitOfWork.IDML dml)
         {
             List<Object> params = new List<Object>();
 
@@ -314,7 +314,7 @@ public class Application
         }
 
         @TestVisible
-        protected void setMock(IApplicationSObjectUnitOfWork mockUow)
+        protected virtual void setMock(IApplicationSObjectUnitOfWork mockUow)
         {
             di_Injector.Org.Bindings.byName( IApplicationSObjectUnitOfWork.class.getName() )
                         .replaceBindingWith( mockUow );
