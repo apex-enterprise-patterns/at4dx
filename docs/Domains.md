@@ -62,6 +62,27 @@ Domain processes are defined via the `Domain Process Binding` custom metadata ty
 - Execute Asynchronous
   - Runs the domain process in a Queueable and not in the primary execution thread.
 
+### Can `Criteria` and `Action` classes be reused in different Domain Processes?
+
+Yes.
+
+Each domain process will be treated in isolation. If the criteria classes from domain process 1 criteria filter the active record set down to a subset for the domain process 1 actions, it will only be for those actions. When domain process 2 begins, it will start fresh with the original set of records and the domain process 2 criteria will filter that original record set down to a subset that the domain process 2 actions will work on. The same is true for when domain process 3 begins. Each domain process begins with the same original group of records. This is true regardless of whether or not the same physical crtiera or action class is utililzed in multiple domain processes.
+
+Also note that these domain process ids are specific to the other defining traits of the domain process. What I mean is a domain process is classified by multiple elements:
+
+the SObject involved,
+Trigger or Domain Method context,
+If Domain Method context, then what is the unique "domain method token",
+If Trigger context, then what type of Trigger context -- Before Insert, After Update, etc.
+So, you could see a domain process id of "1" for all of the following combination examples:
+
+Account - Trigger context - BeforeInsert
+Account - Trigger context - AfterUpdate
+Contact - Trigger context - BeforeInsert
+Account - Domain Method context - unique "domain method token"
+Contact - Domain Method context - unique "domain method token"
+etc...
+
 #### Triggers
 
 Order of Operations
@@ -86,14 +107,14 @@ flowchart TD;
     C--Executed Second-->E;
     
     D-->
-    F(1.00 - Criteria)-->
-    G(1.01 - Criteria)-->
-    H(1.02 - Action);
+    F(1.00 - Criteria - A1)-->
+    G(1.01 - Criteria - A2)-->
+    H(1.02 - Action - A3);
     
     E-->
-    I(2.00 - Criteria)-->
-    J(2.02 - Action)-->
-    K(2.03 - Action);
+    I(2.00 - Criteria - B1)-->
+    J(2.02 - Action - B2)-->
+    K(2.03 - Action - B3);
 
 ```
 
