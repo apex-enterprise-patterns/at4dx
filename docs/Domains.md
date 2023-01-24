@@ -1,5 +1,7 @@
 # Domains
 
+What are domain classes... TBD
+
 ## Domain Processes
 
 Domain Processes are an ordered series of classes that filter and mutate SObjects for a defined business process.
@@ -145,10 +147,35 @@ casesDomain
 Class that filters records to be processed by a `Domain Process Action` class.
 
 ```apex
-public class PriorityGreaterThanThree_Criteria
+public class AccountNameContainsFishCriteria
         implements IDomainProcessCriteria
 {
-    
+  private list<Account> records = new list<Account>();
+
+  public IDomainProcessCriteria setRecordsToEvaluate(List<SObject> records)
+  {
+    this.records.clear();
+    this.records.addAll( (list<Account>)records );
+
+    return this;
+  }
+
+  public List<SObject> run()
+  {
+    list<Account> qualifiedRecords = new list<Account>();
+
+    // Loop through the Account records.
+    for ( Account record : this.records )
+    {
+      // We are only interested in Account records that have the word fish in their name
+      if ( record.Name.containsIgnoreCase('fish') )
+      {
+        qualifiedRecords.add( record );
+      }
+    }
+
+    return qualifiedRecords;
+  }
 }
 ```
 
@@ -157,9 +184,18 @@ public class PriorityGreaterThanThree_Criteria
 Class that mutates an SObject.
 
 ```apex
-public class AddUrgentToSubject_Action
+public class DefaultAccountSloganBasedOnNameAction
         extends DomainProcessAbstractAction
 {
-    
+  public override void runInProcess()
+  {
+    Account accountRecord = null;
+
+    for ( SObject record : this.records )
+    {
+      accountRecord = (Account)record;
+      accountRecord.Slogan__c = accountRecord.name + ' is a fishy business';
+    }
+  }
 }
 ```
