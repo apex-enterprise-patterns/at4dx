@@ -24,6 +24,10 @@ build.properties
 salesforce.schema
 Referenced Packages/
 
+# Intellij / Illuminated Cloud
+/.idea/
+/IlluminatedCloud/
+
 # VS Code IDE Related
 .vscode/
 .history/
@@ -45,7 +49,3 @@ package-lock.json
 
 sfdx-source/group*
 research/
-
-fflib-apex-mocks/
-fflib-apex-common/
-force-di/
