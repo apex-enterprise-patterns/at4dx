@@ -36,9 +36,11 @@ public class ApplicationSObjectSelectorDIModule
 
     static
     {
-        bindingRecords.addAll(
-            [select DeveloperName, QualifiedAPIName, To__c, BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
-            from ApplicationFactory_SelectorBinding__mdt]
+        bindingRecords = prioritizeBindings(
+            [SELECT DeveloperName, QualifiedAPIName, To__c, BindingSObject__c, BindingSObject__r.QualifiedApiName, BindingSObjectAlternate__c
+            FROM ApplicationFactory_SelectorBinding__mdt ORDER BY Priority__c DESC NULLS FIRST]
+            // Lower priority records are added first and overwritten if higher priority items exist.
+            // If priority value is duplicated, the priority item is indeterminant.
         );
     }
 
@@ -68,5 +70,16 @@ public class ApplicationSObjectSelectorDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
+    }
+
+    private static List<ApplicationFactory_SelectorBinding__mdt> prioritizeBindings(List<ApplicationFactory_SelectorBinding__mdt> rawBindings)
+    {
+        Map<String, ApplicationFactory_SelectorBinding__mdt> prioritizedMap = new Map<String, ApplicationFactory_SelectorBinding__mdt>();
+        for (ApplicationFactory_SelectorBinding__mdt binding : rawBindings)
+        {
+            String sobjTypeName = String.isNotBlank(binding.BindingSObject__c) ? binding.BindingSObject__r.QualifiedApiName : binding.BindingSObjectAlternate__c;
+            prioritizedMap.put(sobjTypeName, binding);
+        }
+        return prioritizedMap.values();
     }
 }
