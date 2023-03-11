@@ -162,11 +162,13 @@ private class ApplicationFactoryTest
         binding.To__c = 'ApplicationFactoryTest.TestServiceImpl';
         bindingList.add(binding);
 
-        // Add a higher-priority binding to the same Interface
+        // NOTE: As of 2023-3-11, CMDT records cannot be inserted in the test context.  Still.
+        // Normally the canonical SOQL orders the bindings from lowest to highest priority with Nulls first.
+        // Being later in the list simulates being higher priority, per the SOQL Order By.
+        // This second, higher-priority service binding should be the one instanced by the Factory.
         binding = new ApplicationFactory_ServiceBinding__mdt();
         binding.BindingInterface__c = 'ApplicationFactoryTest.ITestService';
         binding.To__c = 'ApplicationFactoryTest.TestServiceMockImpl';
-        binding.Priority__c = 10;
         bindingList.add(binding);
 
         ApplicationServiceDIModule.resetBindingForTest(bindingList);

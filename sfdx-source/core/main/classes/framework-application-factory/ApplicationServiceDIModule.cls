@@ -70,6 +70,7 @@ public class ApplicationServiceDIModule
         return prioritizedMap.values();
     }
 
+    // Workaround for inability to insert CMDT records in the testing context.
     @TestVisible
     private static void resetBindingForTest(List<ApplicationFactory_ServiceBinding__mdt> testBindings)
     {
