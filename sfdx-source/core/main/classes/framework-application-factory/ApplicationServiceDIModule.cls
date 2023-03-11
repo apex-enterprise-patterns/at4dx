@@ -69,4 +69,10 @@ public class ApplicationServiceDIModule
         }
         return prioritizedMap.values();
     }
+
+    @TestVisible
+    private static void resetBindingForTest(List<ApplicationFactory_ServiceBinding__mdt> testBindings)
+    {
+        bindingRecords = prioritizeBindings(testBindings);
+    }
 }

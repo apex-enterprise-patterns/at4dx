@@ -152,6 +152,28 @@ private class ApplicationFactoryTest
         System.Assert.areEqual('this is the mock', phrase);
     }
 
+    @IsTest
+    private static void Application_Service_MultiServiceTest()
+    {
+        List<ApplicationFactory_ServiceBinding__mdt> bindingList = new List<ApplicationFactory_ServiceBinding__mdt>();
+
+        ApplicationFactory_ServiceBinding__mdt binding = new ApplicationFactory_ServiceBinding__mdt();
+        binding.BindingInterface__c = 'ApplicationFactoryTest.ITestService';
+        binding.To__c = 'ApplicationFactoryTest.TestServiceImpl';
+        bindingList.add(binding);
+
+        // Add a higher-priority binding to the same Interface
+        binding = new ApplicationFactory_ServiceBinding__mdt();
+        binding.BindingInterface__c = 'ApplicationFactoryTest.ITestService';
+        binding.To__c = 'ApplicationFactoryTest.TestServiceMockImpl';
+        binding.Priority__c = 10;
+        bindingList.add(binding);
+
+        ApplicationServiceDIModule.resetBindingForTest(bindingList);
+
+        Assert.areEqual('this is the mock', new TestService().getHelloWorldPhrase('doesnt-matter-what-this-is'));
+    }
+
     private static void configureServices()
     {
         ApplicationFactory_ServiceBinding__mdt binding = new ApplicationFactory_ServiceBinding__mdt();
