@@ -10,5 +10,5 @@
     <length>255</length>
     <required>true</required>
     <type>Text</type>
-    <unique>true</unique>
+    <unique>false</unique>
 </CustomField>

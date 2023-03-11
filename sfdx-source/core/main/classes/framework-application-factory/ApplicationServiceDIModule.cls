@@ -36,7 +36,12 @@ public class ApplicationServiceDIModule
 
     static
     {
-        bindingRecords.addAll([select DeveloperName, QualifiedAPIName, To__c, BindingInterface__c from ApplicationFactory_ServiceBinding__mdt]);
+        bindingRecords = prioritizeBindings(
+            [SELECT DeveloperName, QualifiedAPIName, To__c, BindingInterface__c, Priority__c
+            FROM ApplicationFactory_ServiceBinding__mdt
+            ORDER BY Priority__c DESC NULLS FIRST]);
+            // Lower priority records are added first and overwritten if higher priority items exist.
+            // If priority value is duplicated, the priority item is indeterminant.
     }
 
     public override void configure() 
@@ -53,5 +58,15 @@ public class ApplicationServiceDIModule
             data(bindingConfig);
             to(bindingConfig.To__c);
         }
+    }
+
+    private static List<ApplicationFactory_ServiceBinding__mdt> prioritizeBindings(List<ApplicationFactory_ServiceBinding__mdt> rawBindings)
+    {
+        Map<String, ApplicationFactory_ServiceBinding__mdt> prioritizedMap = new Map<String, ApplicationFactory_ServiceBinding__mdt>();
+        for (ApplicationFactory_ServiceBinding__mdt binding : rawBindings)
+        {
+            prioritizedMap.put(binding.BindingInterface__c, binding);
+        }
+        return prioritizedMap.values();
     }
 }
