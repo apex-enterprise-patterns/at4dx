@@ -54,7 +54,7 @@ public class TestDataSupplementer
 
     public static void supplement(List<SObject> sobjectList)
     {
-        if (sobjectList != null && !sobjectList.isEmpty())
+        if (sobjectList != null && !sobjectList.isEmpty() && supplementerMap.containsKey(sobjectList.getSObjectType()))
         {
             for (ITestDataSupplement supplementer : supplementerMap.get(sobjectList.getSObjectType()))
             {
