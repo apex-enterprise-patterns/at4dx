@@ -72,6 +72,7 @@ public class ApplicationSObjectSelectorDIModule
         }
     }
 
+    @TestVisible
     private static List<ApplicationFactory_SelectorBinding__mdt> prioritizeBindings(List<ApplicationFactory_SelectorBinding__mdt> rawBindings)
     {
         Map<String, ApplicationFactory_SelectorBinding__mdt> prioritizedMap = new Map<String, ApplicationFactory_SelectorBinding__mdt>();
@@ -81,12 +82,5 @@ public class ApplicationSObjectSelectorDIModule
             prioritizedMap.put(sobjTypeName, binding);
         }
         return prioritizedMap.values();
-    }
-
-    // Workaround for inability to insert CMDT records from test context.
-    @TestVisible
-    private static void resetBindingsForTest(List<ApplicationFactory_SelectorBinding__mdt> bindingList)
-    {
-        bindingRecords = prioritizeBindings(bindingList);
     }
 }

@@ -113,11 +113,10 @@ private class ApplicationFactoryTest
         accountsSelectorBinding.To__c = 'ApplicationFactoryTest.MockAccountsSelector';
         bindingList.add(accountsSelectorBinding);
 
-        ApplicationSObjectSelectorDIModule.resetBindingsForTest(bindingList);
+        List<ApplicationFactory_SelectorBinding__mdt> refinedBindingList = ApplicationSObjectSelectorDIModule.prioritizeBindings(bindingList);
 
-        ITestAccountsSelector sel = (ITestAccountsSelector) Application.Selector.newInstance(Account.SObjectType);
-
-        Assert.isTrue(sel instanceof ApplicationFactoryTest.MockAccountsSelector);
+        Assert.areEqual(bindingList.get(1).To__c, refinedBindingList.get(0).To__c);
+        Assert.areEqual(1, refinedBindingList.size());
     }
 
     /********************************************************
