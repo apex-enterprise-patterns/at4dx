@@ -60,6 +60,7 @@ public class ApplicationServiceDIModule
         }
     }
 
+    @TestVisible
     private static List<ApplicationFactory_ServiceBinding__mdt> prioritizeBindings(List<ApplicationFactory_ServiceBinding__mdt> rawBindings)
     {
         Map<String, ApplicationFactory_ServiceBinding__mdt> prioritizedMap = new Map<String, ApplicationFactory_ServiceBinding__mdt>();
@@ -68,12 +69,5 @@ public class ApplicationServiceDIModule
             prioritizedMap.put(binding.BindingInterface__c, binding);
         }
         return prioritizedMap.values();
-    }
-
-    // Workaround for inability to insert CMDT records in the testing context.
-    @TestVisible
-    private static void resetBindingForTest(List<ApplicationFactory_ServiceBinding__mdt> testBindings)
-    {
-        bindingRecords = prioritizeBindings(testBindings);
     }
 }

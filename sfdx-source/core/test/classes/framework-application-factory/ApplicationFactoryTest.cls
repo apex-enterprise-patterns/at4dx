@@ -171,9 +171,10 @@ private class ApplicationFactoryTest
         binding.To__c = 'ApplicationFactoryTest.TestServiceMockImpl';
         bindingList.add(binding);
 
-        ApplicationServiceDIModule.resetBindingForTest(bindingList);
+        List<ApplicationFactory_ServiceBinding__mdt> refinedBindingList = ApplicationServiceDIModule.prioritizeBindings(bindingList);
 
-        Assert.areEqual('this is the mock', new TestService().getHelloWorldPhrase('doesnt-matter-what-this-is'));
+        Assert.areEqual(bindingList.get(1).To__c, refinedBindingList.get(0).To__c);
+        Assert.areEqual(1, refinedBindingList.size());
     }
 
     private static void configureServices()
