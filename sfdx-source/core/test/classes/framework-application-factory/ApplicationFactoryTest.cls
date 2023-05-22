@@ -152,6 +152,31 @@ private class ApplicationFactoryTest
         System.Assert.areEqual('this is the mock', phrase);
     }
 
+    @IsTest
+    private static void Application_Service_MultiServiceTest()
+    {
+        List<ApplicationFactory_ServiceBinding__mdt> bindingList = new List<ApplicationFactory_ServiceBinding__mdt>();
+
+        ApplicationFactory_ServiceBinding__mdt binding = new ApplicationFactory_ServiceBinding__mdt();
+        binding.BindingInterface__c = 'ApplicationFactoryTest.ITestService';
+        binding.To__c = 'ApplicationFactoryTest.TestServiceImpl';
+        bindingList.add(binding);
+
+        // NOTE: As of 2023-3-11, CMDT records cannot be inserted in the test context.  Still.
+        // Normally the canonical SOQL orders the bindings from lowest to highest priority with Nulls first.
+        // Being later in the list simulates being higher priority, per the SOQL Order By.
+        // This second, higher-priority service binding should be the one instanced by the Factory.
+        binding = new ApplicationFactory_ServiceBinding__mdt();
+        binding.BindingInterface__c = 'ApplicationFactoryTest.ITestService';
+        binding.To__c = 'ApplicationFactoryTest.TestServiceMockImpl';
+        bindingList.add(binding);
+
+        List<ApplicationFactory_ServiceBinding__mdt> refinedBindingList = ApplicationServiceDIModule.prioritizeBindings(bindingList);
+
+        Assert.areEqual(bindingList.get(1).To__c, refinedBindingList.get(0).To__c);
+        Assert.areEqual(1, refinedBindingList.size());
+    }
+
     private static void configureServices()
     {
         ApplicationFactory_ServiceBinding__mdt binding = new ApplicationFactory_ServiceBinding__mdt();

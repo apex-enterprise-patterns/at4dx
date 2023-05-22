@@ -19,6 +19,10 @@
                 <field>BindingInterface__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Priority__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Required</behavior>
                 <field>To__c</field>
             </layoutItems>
