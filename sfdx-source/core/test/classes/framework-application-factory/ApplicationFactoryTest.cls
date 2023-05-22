@@ -94,6 +94,31 @@ private class ApplicationFactoryTest
         System.Assert.areEqual(acct.Id, accountList.get(0).Id);
     }
 
+    @IsTest
+    private static void Application_Selector_PrioritizationTest()
+    {
+        List<ApplicationFactory_SelectorBinding__mdt> bindingList = new List<ApplicationFactory_SelectorBinding__mdt>();
+
+        ApplicationFactory_SelectorBinding__mdt accountsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
+        accountsSelectorBinding.BindingSObjectAlternate__c = 'Account';
+        accountsSelectorBinding.To__c = 'ApplicationFactoryTest.TestAccountsSelector';
+        bindingList.add(accountsSelectorBinding);
+
+        // NOTE: As of 2023-3-11, CMDT records cannot be inserted in the test context.  Still.
+        // Normally the canonical SOQL orders the bindings from lowest to highest priority with Nulls first.
+        // Being later in the list simulates being higher priority, per the SOQL Order By.
+        // This second, higher-priority selector binding should be the one instanced by the Factory.
+        accountsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
+        accountsSelectorBinding.BindingSObjectAlternate__c = 'Account';
+        accountsSelectorBinding.To__c = 'ApplicationFactoryTest.MockAccountsSelector';
+        bindingList.add(accountsSelectorBinding);
+
+        List<ApplicationFactory_SelectorBinding__mdt> refinedBindingList = ApplicationSObjectSelectorDIModule.prioritizeBindings(bindingList);
+
+        Assert.areEqual(bindingList.get(1).To__c, refinedBindingList.get(0).To__c);
+        Assert.areEqual(1, refinedBindingList.size());
+    }
+
     /********************************************************
      *    Configures CMD records for two selectors
      *    for Account and Contact

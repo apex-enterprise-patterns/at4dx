@@ -11,5 +11,5 @@
     <relationshipName>ApplicationFactory_SelectorBindings</relationshipName>
     <required>false</required>
     <type>MetadataRelationship</type>
-    <unique>true</unique>
+    <unique>false</unique>
 </CustomField>
