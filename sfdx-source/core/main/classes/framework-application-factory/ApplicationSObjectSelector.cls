@@ -187,6 +187,42 @@ public abstract class ApplicationSObjectSelector
         }
     }
 
+    public Database.QueryLocator selectQueryLocatorInjection( System.Type methodClazzType, ISelectorMethodParameterable params )
+    {
+        if ( methodClazzType == null )
+        {
+            throw new ApplicationSObjectSelector.ApplicationSObjectSelectorException('methodClazz cannot be null');
+        }
+
+        try 
+        {
+            ISelectorQueryLocatorMethodInjectable injectionQueryLocatorClazz = (ISelectorQueryLocatorMethodInjectable)methodClazzType.newInstance();
+
+            if ( injectionQueryLocatorClazz instanceOf ISelectorMethodSetable)
+            {
+                ISelectorMethodSetable selectorMethodSetterClazz = (ISelectorMethodSetable)injectionQueryLocatorClazz;
+                if (params != null)
+                {
+                    selectorMethodSetterClazz.setParameters( params );
+                }
+                
+                selectorMethodSetterClazz.setQueryFactory(newQueryFactory());
+            }
+            
+            return injectionQueryLocatorClazz.selectQueryLocator();
+        }
+        catch (System.TypeException te)
+        {
+            System.debug(LoggingLevel.ERROR, te);
+            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorQueryLocatorMethodInjectable.class.getName() + '\'');
+        }
+        catch (System.Exception e)
+        {
+            System.debug(LoggingLevel.ERROR, e);
+            throw new ApplicationSObjectSelectorException(e);
+        }
+    }
+
     public class ApplicationSObjectSelectorException
         extends Exception
     {

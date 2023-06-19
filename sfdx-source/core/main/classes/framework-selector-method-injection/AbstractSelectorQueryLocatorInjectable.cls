@@ -1,5 +1,5 @@
-public abstract class AbstractSelectorMethodInjectable 
-    implements ISelectorMethodInjectable, ISelectorMethodSetable
+public abstract class AbstractSelectorQueryLocatorInjectable 
+    implements ISelectorQueryLocatorMethodInjectable, ISelectorMethodSetable
 {
     private fflib_QueryFactory qf;
     private ISelectorMethodParameterable params;
@@ -22,11 +22,5 @@ public abstract class AbstractSelectorMethodInjectable
     protected ISelectorMethodParameterable getParameters()
     {
         return this.params;
-    }
-
-    protected ISelectorMethodParameterable getParams()
-    {
-        System.debug(LoggingLevel.WARN, 'getParams() method is deprecated.  Please use AbstractSelectorMethodInjectable.getParameters() instead.');
-        return this.getParameters();
     }
 }

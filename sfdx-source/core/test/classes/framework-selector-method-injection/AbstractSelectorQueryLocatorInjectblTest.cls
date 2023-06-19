@@ -24,10 +24,10 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 @IsTest
-private class AbstractSelectorMethodInjectableTest 
+private class AbstractSelectorQueryLocatorInjectblTest 
 {
     @IsTest
-    private static void verifyAbstractSelectorMethodInjection() 
+    private static void verifyAbstractSelectorQueryLocatorInjection() 
     {
         // Given
         String keyName = 'fishy';
@@ -45,27 +45,26 @@ private class AbstractSelectorMethodInjectableTest
 
         // When
         Test.startTest(); 
-        List<Account> acctsReturned = testAppSOSelector.selectInjection( SelectByNameSelectorMethod.class, queryParams );
+        Database.QueryLocator ql = testAppSOSelector.selectQueryLocatorInjection( SelectByNameSelectorQueryLocatorMethod.class, queryParams );
         Test.stopTest();
         
         // Then
-        System.Assert.areEqual( 1, acctsReturned.size(), 'Incorrect Amount of Records Returned' );
-
-        Account acctToCheck = acctsReturned[0];
-        System.Assert.areEqual( keyName, acctToCheck.Name, 'Account Name Not Equal' );
+        System.Assert.isNotNull(ql, 'Query Locator should not be null');
+        System.debug(ql.getQuery());
+        System.Assert.isNotNull(ql.getQuery(), 'Query Locator query should not be null');
     }
 
-    private class SelectByNameSelectorMethod
-        extends AbstractSelectorMethodInjectable
-        implements ISelectorMethodInjectable
+    private class SelectByNameSelectorQueryLocatorMethod
+        extends AbstractSelectorQueryLocatorInjectable
+        implements ISelectorQueryLocatorMethodInjectable
     {
-        public List<SObject> selectQuery()
+        public Database.QueryLocator selectQueryLocator()
         {
-            Parameters params = (Parameters)getParams(); 
+            Parameters params = (Parameters)getParameters(); 
             
             Set<String> nameSet = params.nameSet;
             
-            return Database.query(newQueryFactory().setCondition(Account.Name+ ' in :nameSet').toSOQL());
+            return Database.getQueryLocator(newQueryFactory().setCondition(Account.Name+ ' in :nameSet').toSOQL());
         }
     }
         
