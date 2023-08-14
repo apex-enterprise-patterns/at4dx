@@ -39,6 +39,11 @@ public interface IApplicationSObjectSelector
      * Selector Method Injection // executes an injected method against a pre-existing selector
      */
     List<SObject> selectInjection( System.Type methodClazz, ISelectorMethodParameterable params );
+
+    /**
+     * Selector Method Injection // executes an injected method against a pre-existing selector
+     */
+    Database.QueryLocator selectQueryLocatorInjection( System.Type methodClazzType, ISelectorMethodParameterable params );
     
     /**
      * Adds specified fields to the provided queryFactory preserving reference pathing.
