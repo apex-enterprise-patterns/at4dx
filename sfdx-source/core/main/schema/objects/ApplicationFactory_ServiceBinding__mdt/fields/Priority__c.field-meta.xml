@@ -7,7 +7,7 @@
     <inlineHelpText>When multiple concrete classes are specified for an interface, the number specifies which concretion should be returned.  Higher numbers are higher priority; null values are the least priority.</inlineHelpText>
     <label>Priority</label>
     <precision>4</precision>
-    <required>true</required>
+    <required>false</required>
     <scale>0</scale>
     <type>Number</type>
     <unique>false</unique>
