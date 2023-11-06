@@ -3,7 +3,7 @@
     <fullName>LogicalInverseValidOnlyOnTypeCriteria</fullName>
     <active>true</active>
     <description>The LogicalInverse__c field is only valid when the type is Criteria.</description>
-    <errorConditionFormula>TEXT(Type__c) != "Criteria" &amp;&amp; LogicalInverse__c</errorConditionFormula>
+    <errorConditionFormula>TEXT(Type__c) != &quot;Criteria&quot; &amp;&amp; LogicalInverse__c</errorConditionFormula>
     <errorDisplayField>LogicalInverse__c</errorDisplayField>
-    <errorMessage>"Logical Inverse" can only be true when Type is "Criteria"</errorMessage>
+    <errorMessage>&quot;Logical Inverse&quot; can only be true when Type is &quot;Criteria&quot;</errorMessage>
 </ValidationRule>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>BindingSObject__c</fullName>
-    <description>Specifies the selector, via the SObject Type, to which the fieldset&#39;s items will be added.</description>
+    <description>Specifies the selector, via the SObject Type, to which the fieldset&apos;s items will be added.</description>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
-    <inlineHelpText>Specifies the selector, via the SObject Type, to which the fieldset&#39;s items will be added.</inlineHelpText>
+    <inlineHelpText>Specifies the selector, via the SObject Type, to which the fieldset&apos;s items will be added.</inlineHelpText>
     <label>Binding SObject</label>
     <referenceTo>EntityDefinition</referenceTo>
     <relationshipLabel>Selector_Config_Fieldset_Inclusions</relationshipLabel>
