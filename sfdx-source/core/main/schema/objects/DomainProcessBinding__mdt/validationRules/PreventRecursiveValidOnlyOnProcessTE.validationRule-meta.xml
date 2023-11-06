@@ -2,8 +2,8 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>PreventRecursiveValidOnlyOnProcessTE</fullName>
     <active>true</active>
-    <description>PreventRecursive__c can only be active for ProcessContext__c = "TriggerExecution"</description>
-    <errorConditionFormula>PreventRecursive__c &amp;&amp; text( ProcessContext__c ) != "TriggerExecution"</errorConditionFormula>
+    <description>PreventRecursive__c can only be active for ProcessContext__c = &quot;TriggerExecution&quot;</description>
+    <errorConditionFormula>PreventRecursive__c &amp;&amp; text( ProcessContext__c ) != &quot;TriggerExecution&quot;</errorConditionFormula>
     <errorDisplayField>PreventRecursive__c</errorDisplayField>
-    <errorMessage>"Prevent Recursive" is only valid when the process context is "Trigger Execution"</errorMessage>
+    <errorMessage>&quot;Prevent Recursive&quot; is only valid when the process context is &quot;Trigger Execution&quot;</errorMessage>
 </ValidationRule>
