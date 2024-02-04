@@ -441,7 +441,9 @@ public class DomainProcessCoordinator
                             actionClazz.setRecordsToActOn( qualifiedRecords );
 
                             // Should the action process execute in async/queueable mode?
-                            if (currentDomainProcess.ExecuteAsynchronous__c != null) {
+                            if (actionClazz instanceOf IDomainProcessQueueableAction
+                                && currentDomainProcess.ExecuteAsynchronous__c) 
+                            {
                                 ((IDomainProcessQueueableAction)actionClazz).setActionToRunInQueue( currentDomainProcess.ExecuteAsynchronous__c );
                             }
                             
