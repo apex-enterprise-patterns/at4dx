@@ -1,5 +1,5 @@
 # Advanced Techniques To Adopt SalesforceDX Unlocked Packages
-This is an example set of code to demonstrate the techniques that [@ImJohnMDaniel](https://twitter.com/ImJohnMDaniel) and [@Stohn777](https://twitter.com/stohn777) used to adopt Salesforce DX Unlocked Packages.
+This is an example set of code to demonstrate the techniques that [@ImJohnMDaniel](https://twitter.com/ImJohnMDaniel) and [@stohn777](https://www.linkedin.com/in/stohn/) used to adopt Salesforce DX Unlocked Packages.
 
 The [Wiki](https://github.com/apex-enterprise-patterns/at4dx/wiki) for this codebase goes over these concepts in depth.
 
