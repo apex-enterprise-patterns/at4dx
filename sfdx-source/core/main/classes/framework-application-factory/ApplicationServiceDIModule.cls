@@ -40,7 +40,8 @@ public class ApplicationServiceDIModule
             [SELECT DeveloperName, QualifiedAPIName, To__c, BindingInterface__c, Priority__c
             FROM ApplicationFactory_ServiceBinding__mdt
             ORDER BY Priority__c DESC NULLS FIRST]);
-            // Lower priority records are added first and overwritten if higher priority items exist.
+            // Higher priority records are added first and overwritten if lower priority items exist.
+            // Null priority records are added first of all
             // If priority value is duplicated, the priority item is indeterminant.
     }
 
