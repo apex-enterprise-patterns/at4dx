@@ -139,19 +139,19 @@ public abstract class ApplicationSObjectSelector
         return standardFields;
     }
 
-    public IApplicationSObjectSelector addQueryFactoryParentSelect(fflib_QueryFactory parentQueryFactory, Schema.SObjectField relationshipField)
+    public virtual IApplicationSObjectSelector addQueryFactoryParentSelect(fflib_QueryFactory parentQueryFactory, Schema.SObjectField relationshipField)
     {
         this.configureQueryFactoryFields( parentQueryFactory, relationshipField.getDescribe().getRelationshipName());
 
         return this;
     }
 
-    public String selectSObjectsByIdQuery()
+    public virtual String selectSObjectsByIdQuery()
     {
         return newQueryFactory().setCondition('id in :idSet').toSOQL();
     }
 
-    public List<SObject> selectInjection( System.Type methodClazzType, ISelectorMethodParameterable params )
+    public virtual List<SObject> selectInjection( System.Type methodClazzType, ISelectorMethodParameterable params )
     {
         if ( methodClazzType == null )
         {
