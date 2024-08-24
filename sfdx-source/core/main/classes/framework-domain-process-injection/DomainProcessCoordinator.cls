@@ -369,10 +369,13 @@ public class DomainProcessCoordinator
                             List<SObject> criteriaRunResult = criteriaClazz.run();
                             if (currentDomainProcess.LogicalInverse__c == true)
                             {
-                                for (SObject currentSObject : criteriaRunResult) {
-                                    for (Integer i = 0; i < qualifiedRecords.size(); i++) {
+                                for (SObject currentSObject : criteriaRunResult) 
+                                {
+                                    for (Integer i = 0; i < qualifiedRecords.size(); i++) 
+                                    {
                                         SObject currentQualifiedRecord = qualifiedRecords[i];
-                                        if (currentSObject == currentQualifiedRecord) {
+                                        if (currentSObject == currentQualifiedRecord) 
+                                        {
                                             qualifiedRecords.remove(i);
                                             break;
                                         }
