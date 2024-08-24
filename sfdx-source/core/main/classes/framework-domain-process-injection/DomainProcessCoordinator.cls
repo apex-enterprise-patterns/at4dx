@@ -366,8 +366,26 @@ public class DomainProcessCoordinator
                                 ((IDomainProcessWithParamsCriteria)criteriaClazz).setParams(params);
                             }
 
-                            // TODO: Still need to figure out how to make use of currentDomainProcess.LogicalInverse__c here.
-                            qualifiedRecords = criteriaClazz.run();
+                            List<SObject> criteriaRunResult = criteriaClazz.run();
+                            if (currentDomainProcess.LogicalInverse__c == true)
+                            {
+                                for (SObject currentSObject : criteriaRunResult) 
+                                {
+                                    for (Integer i = 0; i < qualifiedRecords.size(); i++) 
+                                    {
+                                        SObject currentQualifiedRecord = qualifiedRecords[i];
+                                        if (currentSObject == currentQualifiedRecord) 
+                                        {
+                                            qualifiedRecords.remove(i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                qualifiedRecords = criteriaRunResult;
+                            }
                         }
                         catch (Exception e)
                         {
