@@ -87,6 +87,17 @@ public abstract class ApplicationSObjectSelector
         incorporateAdditionalSObjectFields();
     }
 
+    public ApplicationSObjectSelector(DataAccess dataAccess) {
+        // first parameter -- includeFieldSetFields -- must be true for the selector field injection to work
+        this(true, dataAccess);
+    }
+
+    public ApplicationSObjectSelector(Boolean includeFieldSetFields, DataAccess dataAccess) {
+        // Super constructor disables CRUD/FLS security checking, and disables sorting
+        super(includeFieldSetFields, dataAccess);
+        incorporateAdditionalSObjectFields();
+    }
+
     public override virtual List<Schema.FieldSet> getSObjectFieldSetList()
     {
         return this.sObjectFieldSetList;
