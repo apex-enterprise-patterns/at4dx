@@ -2,8 +2,8 @@
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ExecuteAsynchronousValidOnlyOnTypeAction</fullName>
     <active>true</active>
-    <description>ExecuteAsynchronous__c can only be active for Type__c = "Action"</description>
-    <errorConditionFormula>TEXT(Type__c) != "Action" &amp;&amp;  ExecuteAsynchronous__c</errorConditionFormula>
+    <description>ExecuteAsynchronous__c can only be active for Type__c = &quot;Action&quot;</description>
+    <errorConditionFormula>TEXT(Type__c) != &quot;Action&quot; &amp;&amp;  ExecuteAsynchronous__c</errorConditionFormula>
     <errorDisplayField>ExecuteAsynchronous__c</errorDisplayField>
-    <errorMessage>"Execute Asynchronous" can only be true when Type is "Action"</errorMessage>
+    <errorMessage>&quot;Execute Asynchronous&quot; can only be true when Type is &quot;Action&quot;</errorMessage>
 </ValidationRule>
