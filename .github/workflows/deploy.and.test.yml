@@ -54,7 +54,8 @@ jobs:
       # - run: sf shane github src install --convert --githubuser apex-enterprise-patterns --repo at4dx-samplecode --path sfdx-source/reference-implementation-sales
       # - run: sf shane github src install --convert --githubuser apex-enterprise-patterns --repo at4dx-samplecode --path sfdx-source/reference-implementation-service
       - name: Install sample code project to verify with
-        run: git clone https://github.com/apex-enterprise-patterns/at4dx-samplecode.git "temp/at4dx-samplecode" && cd temp/at4dx-samplecode
+        run: git clone https://github.com/apex-enterprise-patterns/at4dx-samplecode.git "temp/at4dx-samplecode"
+      - run: cd temp/at4dx-samplecode
       - run: sf project deploy start --ignore-conflicts --target-org at4dx-ci-check --source-dir sfdx-source/reference-implementation-common
       - run: sf project deploy start --ignore-conflicts --target-org at4dx-ci-check --source-dir sfdx-source/reference-implementation-marketing
       - run: sf project deploy start --ignore-conflicts --target-org at4dx-ci-check --source-dir sfdx-source/reference-implementation-sales
