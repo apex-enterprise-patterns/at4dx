@@ -366,8 +366,33 @@ public class DomainProcessCoordinator
                                 ((IDomainProcessWithParamsCriteria)criteriaClazz).setParams(params);
                             }
 
-                            // TODO: Still need to figure out how to make use of currentDomainProcess.LogicalInverse__c here.
-                            qualifiedRecords = criteriaClazz.run();
+                            // let the criteria class reduce the list of records further
+                            List<SObject> criteriaRunResult = criteriaClazz.run();
+                            // if the domain process is logical inverse
+                            if (currentDomainProcess.LogicalInverse__c == true)
+                            {
+                                // then look through all of the records returned from the criteria class
+                                for (SObject currentSObject : criteriaRunResult) 
+                                {
+                                    // and look through all qualifiedRecords 
+                                    for (Integer i = 0; i < qualifiedRecords.size(); i++) 
+                                    {
+                                        // take the current qualified record
+                                        SObject currentQualifiedRecord = qualifiedRecords[i];
+                                        // compare the sobjects
+                                        if (currentSObject == currentQualifiedRecord) 
+                                        {
+                                            // remove that record from the 
+                                            qualifiedRecords.remove(i);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                qualifiedRecords = criteriaRunResult;
+                            }
                         }
                         catch (Exception e)
                         {
