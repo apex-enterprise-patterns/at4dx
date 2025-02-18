@@ -54,6 +54,28 @@ private class ApplicationSObjectSelectorTest
         System.Assert.isTrue(accountList.isEmpty());
     }
 
+    @IsTest
+    private static void testConstructors()
+    {
+        TestAccountsSelector defaultConstructor = new TestAccountsSelector();
+        Assert.isTrue(defaultConstructor.isIncludeFieldSetFields(), 'Expected the including field set flag to be true.');
+        Assert.isFalse(defaultConstructor.isEnforcingCRUD(), 'Expected the enforcing CRUD to be false.');
+        Assert.isFalse(defaultConstructor.isEnforcingFLS(), 'Expected the enforcing FLS to be false.');
+        Assert.areEqual(fflib_SObjectSelector.DataAccess.LEGACY, defaultConstructor.getDataAccess(), 'Expected the data access to be LEGACY.');
+
+        TestAccountsSelector systemModeConstructor = new TestAccountsSelector(fflib_SObjectSelector.DataAccess.SYSTEM_MODE);
+        Assert.isTrue(systemModeConstructor.isIncludeFieldSetFields(), 'Expected the including field set flag to be true.');
+        Assert.isFalse(systemModeConstructor.isEnforcingCRUD(), 'Expected the enforcing CRUD to be false.');
+        Assert.isFalse(systemModeConstructor.isEnforcingFLS(), 'Expected the enforcing FLS to be false.');
+        Assert.areEqual(fflib_SObjectSelector.DataAccess.SYSTEM_MODE, systemModeConstructor.getDataAccess(), 'Expected the data accesss to be SYSTEM_MODE');
+
+        TestAccountsSelector userModeConstructor = new TestAccountsSelector(fflib_SObjectSelector.DataAccess.USER_MODE);
+        Assert.isTrue(userModeConstructor.isIncludeFieldSetFields(), 'Expected the including field set flag to be true.');
+        Assert.isFalse(userModeConstructor.isEnforcingCRUD(), 'Expected the enforcing CRUD to be false.');
+        Assert.isFalse(userModeConstructor.isEnforcingFLS(), 'Expected the enforcing FLS to be false.');
+        Assert.areEqual(fflib_SObjectSelector.DataAccess.USER_MODE, userModeConstructor.getDataAccess(), 'Expected the data access to be USER_MODE.');
+    }
+
     private static void configureSelectors()
     {
         ApplicationFactory_SelectorBinding__mdt accountsSelectorBinding = new ApplicationFactory_SelectorBinding__mdt();
@@ -108,6 +130,16 @@ private class ApplicationSObjectSelectorTest
         extends ApplicationSObjectSelector
         implements ITestAccountsSelector
     {
+        public TestAccountsSelector()
+        {
+            super();
+        }
+
+        public TestAccountsSelector(DataAccess dataAccess)
+        {
+            super(dataAccess);
+        }
+
         public Schema.sObjectType getSObjectType()
         {
             return Account.SObjectType;
