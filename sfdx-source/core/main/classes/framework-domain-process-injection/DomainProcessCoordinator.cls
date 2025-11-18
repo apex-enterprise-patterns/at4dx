@@ -24,7 +24,7 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-public class DomainProcessCoordinator 
+public inherited sharing class DomainProcessCoordinator 
     implements IDomainProcessCoordinator, di_Binding.Provider
 {
     private IApplicationSObjectDomain sObjectDomain = null;
@@ -275,7 +275,6 @@ public class DomainProcessCoordinator
     public void processDomainLogicInjections(DomainProcessConstants.PROCESS_CONTEXT processContext, String domainProcessToken, Map<Id,SObject> existingRecords, IDomainLogicInjectionsParameterable params, IApplicationSObjectUnitOfWork uow )
     {
         domainProcessToken = domainProcessToken.toLowerCase();
-        system.debug( 'mark 1 -- processContext : ' + processContext +  ' -- domainProcessToken : ' + domainProcessToken);
         if ( getDomainProcessMap().containsKey( processContext ) )
         {
             System.debug('processContext is found and domainProcessToken was ' + (getDomainProcessMap().get( processContext ).containsKey( domainProcessToken ) ? 'found' : 'not found'));
@@ -315,8 +314,6 @@ public class DomainProcessCoordinator
 
             for( Integer sequenceKey : sequenceKeysSorted )
             {
-                system.debug('Starting sequence ' + sequenceKey + ' for processContext ' + processContext + ' and domainProcessToken ' + domainProcessToken);
-
                 // reset the qualifiedRecords
                 qualifiedRecords.clear();
 
