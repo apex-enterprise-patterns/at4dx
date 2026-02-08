@@ -30,12 +30,12 @@
 public class Application
 {
     /**
-     * Configure and create the DomainFactory for this  mm_Application
+     * Configure and create the DomainFactory for this Application
      */
     public static final Application.DomainFactory Domain = new Application.DomainFactory();
 
     /**
-     *  Configure and create the SelectorFactory for this mm_Application
+     *  Configure and create the SelectorFactory for this Application
      */
     public static final Application.SelectorFactory Selector = new Application.SelectorFactory();
 

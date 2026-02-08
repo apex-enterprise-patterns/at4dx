@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>ClassToInject__c</fullName>
-    <description>This is the Apex class that will be injected into the process execution.  If the domain process type is &quot;Criteria&quot;, then the class has to implement mmlib_ICriteria or mmlib_ICriteriaWithExistingRecords.  If the domain process type is &quot;Action&quot;, then the class has to implement mmlib_IAction.</description>
+    <description>This is the Apex class that will be injected into the process execution.  If the domain process type is &quot;Criteria&quot;, then the class has to implement IDomainProcessCriteria or IDomainProcessCriteriaWithExistingRecs.  If the domain process type is &quot;Action&quot;, then the class has to implement IDomainProcessAction or IDomainProcessActionWithExistingRecs</description>
     <externalId>false</externalId>
     <fieldManageability>SubscriberControlled</fieldManageability>
     <inlineHelpText>This is the Apex class that will be injected into the process execution.</inlineHelpText>
