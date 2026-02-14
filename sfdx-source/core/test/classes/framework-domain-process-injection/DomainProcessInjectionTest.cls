@@ -339,6 +339,54 @@ public class DomainProcessInjectionTest
         }
     }
 
+
+
+    @isTest
+    private static void whenTriggerFiredMultipleTimeThenClassToInjectNotRecursiveIfNeeded() {
+        List<DomainProcessBinding__mdt> config = new List<DomainProcessBinding__mdt> {
+            new DomainProcessBinding__mdt(
+                Label = 'PreventRecursiveInTriggerCriteria',
+                ClassToInject__c = 'DomainProcessInjectionTest.PreventRecursiveInTriggerCriteriaTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 100853107.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = false,
+                Type__c = 'Criteria',
+                PreventRecursive__c = true
+            ),
+
+            new DomainProcessBinding__mdt(
+                Label = 'PreventRecursiveInTriggerAction',
+                ClassToInject__c = 'DomainProcessInjectionTest.PreventRecursiveInTriggerActionTest',
+                IsActive__c = true,
+                OrderOfExecution__c = 100853107.10,
+                ProcessContext__c = 'TriggerExecution',
+                RelatedDomainBindingSObject__c = 'Account',
+                TriggerOperation__c = 'Before_Update',
+                ExecuteAsynchronous__c = false,
+                Type__c = 'Action',
+                PreventRecursive__c = true
+            )
+
+        };
+
+
+        DomainProcessCoordinator.setMockDomainProcessBindings(config);
+
+        List<Account> accList = new List<Account> {
+            new Account(Name='Test',  Id = fflib_idgenerator.generate(Account.SObjectType) )
+        };
+        fflib_SObjectDomain.Test.Database.onUpdate(accList, new Map<Id, SObject>(accList));
+        fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
+        fflib_SObjectDomain.triggerHandler(DomainProcessInjectionTest.AccountsTestDomainConstructor.class);
+
+        List<SObject> result = DomainProcessInjectionTest.lastConstructed.getRecords();
+		System.Assert.areEqual('Test&', ((Account) result[0]).Name, 'Account Name should have been modified only once');
+
+    }
+
     public with sharing class AccountsTestDomain 
     extends ApplicationSObjectDomain
     {
@@ -444,6 +492,39 @@ public class DomainProcessInjectionTest
             {
                 accountRecord = (Account)record;
                 accountRecord.BillingState = 'Virginia';
+                DomainProcessInjectionTest.processedRecords.add(accountRecord);
+            }
+        }
+    }
+
+    public class PreventRecursiveInTriggerCriteriaTest implements IDomainProcessCriteria
+    {   
+        private list<Account> records = new list<Account>();
+
+        public IDomainProcessCriteria setRecordsToEvaluate(List<SObject> records)
+        {
+            this.records.clear();
+            this.records.addAll( (list<Account>)records );
+
+            return this;
+        }
+
+        public List<SObject> run()
+        {
+            return this.records;
+        }
+    }
+
+    public class PreventRecursiveInTriggerActionTest extends DomainProcessAbstractAction
+    {
+        public override void runInProcess()
+        {
+            Account accountRecord = null;
+
+            for ( SObject record : this.records )
+            {
+                accountRecord = (Account)record;
+                accountRecord.Name = accountRecord.Name+'&';
                 DomainProcessInjectionTest.processedRecords.add(accountRecord);
             }
         }
