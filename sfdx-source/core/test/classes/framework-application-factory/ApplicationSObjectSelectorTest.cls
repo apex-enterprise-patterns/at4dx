@@ -55,6 +55,80 @@ private class ApplicationSObjectSelectorTest
     }
 
     @IsTest
+    private static void selectInjectionPreservesExceptionDetails()
+    {
+        TestAccountsSelector selector = new TestAccountsSelector();
+
+        try
+        {
+            selector.selectInjection(ThrowingSelectorMethod.class, null);
+            Assert.fail('Expected selector injection to throw an exception.');
+        }
+        catch (ApplicationSObjectSelector.ApplicationSObjectSelectorException exceptionThrown)
+        {
+            Assert.areEqual('Selector method failure', exceptionThrown.getMessage(), 'The wrapped exception message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The wrapped exception cause should be preserved.');
+            Assert.areEqual('Selector method failure', exceptionThrown.getCause().getMessage(), 'The original exception message should remain available from the cause.');
+        }
+    }
+
+    @IsTest
+    private static void queryLocatorInjectionPreservesExceptionDetails()
+    {
+        TestAccountsSelector selector = new TestAccountsSelector();
+
+        try
+        {
+            selector.selectQueryLocatorInjection(ThrowingSelectorQueryLocatorMethod.class, null);
+            Assert.fail('Expected query locator injection to throw an exception.');
+        }
+        catch (ApplicationSObjectSelector.ApplicationSObjectSelectorException exceptionThrown)
+        {
+            Assert.areEqual('Query locator failure', exceptionThrown.getMessage(), 'The wrapped exception message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The wrapped exception cause should be preserved.');
+            Assert.areEqual('Query locator failure', exceptionThrown.getCause().getMessage(), 'The original exception message should remain available from the cause.');
+        }
+    }
+
+    @IsTest
+    private static void selectInjectionPreservesTypeExceptionCause()
+    {
+        TestAccountsSelector selector = new TestAccountsSelector();
+
+        try
+        {
+            // NonInjectableClass instantiates fine but does not implement
+            //  ISelectorMethodInjectable, so the cast raises a System.TypeException.
+            selector.selectInjection(NonInjectableClass.class, null);
+            Assert.fail('Expected selector injection to throw an exception.');
+        }
+        catch (ApplicationSObjectSelector.ApplicationSObjectSelectorException exceptionThrown)
+        {
+            Assert.isTrue(exceptionThrown.getMessage().contains('does not implement the interface'), 'The descriptive interface message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The underlying TypeException cause should be preserved.');
+            Assert.isInstanceOfType(exceptionThrown.getCause(), System.TypeException.class, 'The cause should be the original TypeException.');
+        }
+    }
+
+    @IsTest
+    private static void queryLocatorInjectionPreservesTypeExceptionCause()
+    {
+        TestAccountsSelector selector = new TestAccountsSelector();
+
+        try
+        {
+            selector.selectQueryLocatorInjection(NonInjectableClass.class, null);
+            Assert.fail('Expected query locator injection to throw an exception.');
+        }
+        catch (ApplicationSObjectSelector.ApplicationSObjectSelectorException exceptionThrown)
+        {
+            Assert.isTrue(exceptionThrown.getMessage().contains('does not implement the interface'), 'The descriptive interface message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The underlying TypeException cause should be preserved.');
+            Assert.isInstanceOfType(exceptionThrown.getCause(), System.TypeException.class, 'The cause should be the original TypeException.');
+        }
+    }
+
+    @IsTest
     private static void testConstructors()
     {
         TestAccountsSelector defaultConstructor = new TestAccountsSelector();
@@ -117,6 +191,31 @@ private class ApplicationSObjectSelectorTest
         implements ISelectorMethodParameterable
     {
         public Set<String> accountNumberSet;
+    }
+
+    public class ThrowingSelectorMethod
+        implements ISelectorMethodInjectable
+    {
+        public List<SObject> selectQuery()
+        {
+            throw new IllegalArgumentException('Selector method failure');
+        }
+    }
+
+    public class ThrowingSelectorQueryLocatorMethod
+        implements ISelectorQueryLocatorMethodInjectable
+    {
+        public Database.QueryLocator selectQueryLocator()
+        {
+            throw new IllegalArgumentException('Query locator failure');
+        }
+    }
+
+    // Instantiable class that intentionally does not implement either injectable
+    //  interface, so casting it inside the injection methods raises a TypeException.
+    public class NonInjectableClass
+    {
+        public NonInjectableClass() {}
     }
 
     public interface ITestAccountsSelector

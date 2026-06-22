@@ -398,7 +398,7 @@ public class DomainProcessCoordinator
                         {
                             system.debug( e );
 // potentially clear domainProcesses here 
-                            throw new ProcessInjectionException( e );
+                            throw new ProcessInjectionException( e.getMessage(), e );
                         }
 
                         // if all records have been removed from qualification, then exit out of the loop
@@ -483,7 +483,7 @@ public class DomainProcessCoordinator
                         catch (Exception e)
                         {
                             system.debug( e );
-                            throw new ProcessInjectionException( e );
+                            throw new ProcessInjectionException( e.getMessage(), e );
                         }
                     } // end of for ( Decimal orderOfExecutionKey : orderOfExecutionKeysSorted )
                 } // end of if ( domainProcessesToExecuteMap.get( sequenceKey ).containsKey( DomainProcessConstants.PROCESS_TYPE.ACTION ) && ! qualifiedRecords.isempty() )

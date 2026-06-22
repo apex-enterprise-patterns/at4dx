@@ -189,12 +189,12 @@ public abstract class ApplicationSObjectSelector
         catch (System.TypeException te)
         {
             System.debug(LoggingLevel.ERROR, te);
-            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorMethodInjectable.class.getName() + '\'');
+            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorMethodInjectable.class.getName() + '\'', te);
         }
         catch (System.Exception e)
         {
             System.debug(LoggingLevel.ERROR, e);
-            throw new ApplicationSObjectSelectorException(e);
+            throw new ApplicationSObjectSelectorException(e.getMessage(), e);
         }
     }
 
@@ -225,12 +225,12 @@ public abstract class ApplicationSObjectSelector
         catch (System.TypeException te)
         {
             System.debug(LoggingLevel.ERROR, te);
-            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorQueryLocatorMethodInjectable.class.getName() + '\'');
+            throw new ApplicationSObjectSelectorException('Parameter methodClazzType of type \'' + methodClazzType.getName() + '\' does not implement the interface \'' + ISelectorQueryLocatorMethodInjectable.class.getName() + '\'', te);
         }
         catch (System.Exception e)
         {
             System.debug(LoggingLevel.ERROR, e);
-            throw new ApplicationSObjectSelectorException(e);
+            throw new ApplicationSObjectSelectorException(e.getMessage(), e);
         }
     }
 

@@ -27,6 +27,9 @@
 @IsTest
 public class DomainProcessInjectionTest
 {
+    private static final String CRITERIA_EXCEPTION_MESSAGE = 'Criteria failure';
+    private static final String ACTION_EXCEPTION_MESSAGE = 'Action failure';
+
     public static AccountsTestDomain lastConstructed;
     public static List<Account> processedRecords = new List<Account>();
     
@@ -339,6 +342,70 @@ public class DomainProcessInjectionTest
         }
     }
 
+    @IsTest
+    private static void criteriaInjectionPreservesExceptionDetails()
+    {
+        DomainProcessCoordinator coordinator = createCoordinatorWithThrowingProcess('ThrowingCriteriaTest', 'Criteria');
+
+        try
+        {
+            coordinator.processDomainLogicInjections('ExceptionTest');
+            Assert.fail('Expected criteria injection to throw an exception.');
+        }
+        catch (DomainProcessCoordinator.ProcessInjectionException exceptionThrown)
+        {
+            Assert.areEqual(CRITERIA_EXCEPTION_MESSAGE, exceptionThrown.getMessage(), 'The wrapped criteria exception message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The wrapped criteria exception cause should be preserved.');
+            Assert.areEqual(CRITERIA_EXCEPTION_MESSAGE, exceptionThrown.getCause().getMessage(), 'The original criteria exception message should remain available from the cause.');
+        }
+    }
+
+    @IsTest
+    private static void actionInjectionPreservesExceptionDetails()
+    {
+        DomainProcessCoordinator coordinator = createCoordinatorWithThrowingProcess('ThrowingActionTest', 'Action');
+
+        try
+        {
+            coordinator.processDomainLogicInjections('ExceptionTest');
+            Assert.fail('Expected action injection to throw an exception.');
+        }
+        catch (DomainProcessCoordinator.ProcessInjectionException exceptionThrown)
+        {
+            Assert.areEqual(ACTION_EXCEPTION_MESSAGE, exceptionThrown.getMessage(), 'The wrapped action exception message should be preserved.');
+            Assert.isNotNull(exceptionThrown.getCause(), 'The wrapped action exception cause should be preserved.');
+            Assert.areEqual(ACTION_EXCEPTION_MESSAGE, exceptionThrown.getCause().getMessage(), 'The original action exception message should remain available from the cause.');
+        }
+    }
+
+    private static DomainProcessCoordinator createCoordinatorWithThrowingProcess(String className, String processType)
+    {
+        DomainProcessCoordinator.setMockDomainProcessBindings(
+            new List<DomainProcessBinding__mdt>
+            {
+                new DomainProcessBinding__mdt(
+                    Label = 'ExceptionTest',
+                    ClassToInject__c = 'DomainProcessInjectionTest.' + className,
+                    IsActive__c = true,
+                    OrderOfExecution__c = 1,
+                    ProcessContext__c = 'DomainMethodExecution',
+                    RelatedDomainBindingSObject__c = 'Account',
+                    DomainMethodToken__c = 'ExceptionTest',
+                    Type__c = processType
+                )
+            }
+        );
+
+        return new DomainProcessCoordinator(
+            new AccountsTestDomain(
+                new List<Account>
+                {
+                    new Account(Name = 'Exception Test')
+                }
+            )
+        );
+    }
+
     public with sharing class AccountsTestDomain 
     extends ApplicationSObjectDomain
     {
@@ -419,6 +486,19 @@ public class DomainProcessInjectionTest
         }
     }
 
+    public class ThrowingCriteriaTest implements IDomainProcessCriteria
+    {
+        public IDomainProcessCriteria setRecordsToEvaluate(List<SObject> records)
+        {
+            return this;
+        }
+
+        public List<SObject> run()
+        {
+            throw new IllegalArgumentException(CRITERIA_EXCEPTION_MESSAGE);
+        }
+    }
+
     public class DallasAccountActionTest extends DomainProcessAbstractAction
     {
         public override void runInProcess()
@@ -446,6 +526,14 @@ public class DomainProcessInjectionTest
                 accountRecord.BillingState = 'Virginia';
                 DomainProcessInjectionTest.processedRecords.add(accountRecord);
             }
+        }
+    }
+
+    public class ThrowingActionTest extends DomainProcessAbstractAction
+    {
+        public override void runInProcess()
+        {
+            throw new IllegalArgumentException(ACTION_EXCEPTION_MESSAGE);
         }
     }
 

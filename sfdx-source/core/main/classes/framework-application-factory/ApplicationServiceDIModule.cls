@@ -53,7 +53,7 @@ public class ApplicationServiceDIModule
             try {
                 Type.forName(bindingConfig.BindingInterface__c);
             } catch (TypeException te) {
-                throw new di_Injector.InjectorException('Service Interface ' + bindingConfig.BindingInterface__c + ' referened by binding ' + bindingConfig.DeveloperName + ' does not exist.');
+                throw new di_Injector.InjectorException('Service Interface ' + bindingConfig.BindingInterface__c + ' referened by binding ' + bindingConfig.DeveloperName + ' does not exist.', te);
             }
             bind(bindingConfig.BindingInterface__c);
             data(bindingConfig);
